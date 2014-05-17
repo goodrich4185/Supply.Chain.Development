@@ -1,0 +1,592 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{amsmath,amssymb,mathrsfs,fancyhdr,syntonly,lastpage,hyperref,enumitem,graphicx,gensymb}
+
+\hypersetup{colorlinks=true,urlcolor=black}
+
+\topmargin      -1.5cm   % read Lamport p.163
+\oddsidemargin  -0.04cm  % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth      16.59cm
+\textheight     23.94cm
+\parskip         7.2pt   % sets spacing between paragraphs
+\parindent         0pt   % sets leading space for paragraphs
+\pagestyle{empty}        % Uncomment if don't want page numbers
+\pagestyle{fancyplain}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document}
+\lhead{\today}
+\chead{Supply Chain Design Comparison Project}
+\rhead{Ryan Goodrich}
+
+\section{Research Questions}
+\begin{enumerate}
+\item What set of policies would need to be in place to give cellulosic ethanol a competitive edge over corn based ethanol?
+\item What is the relationship between farm size and willingness to provide stover?
+\end{enumerate}
+
+\section{Textbook Notes}
+\subsection{Biorenewable Resources: Engineering new Products from Agriculture (2nd edition)}
+\textbf{Authors:} Robert C. Brown and Tristan Brown \\
+\textbf{Written:} 2014 \\
+
+\textbf{\underline{Chapter 1: Introduction}} \\
+
+\underline{Definitions}: \\
+\begin{itemize}
+\item biorenewable resources--organic materials of recent biological origin
+\item biosphere--the thin region near the surface of the Earth that supports living organisms
+\item bioeconomy--an economy in which human societies obtain sustainable sources of energy and carbon from the biosphere
+\item bioenergy--energy from biorenewable resources
+\item biobased products--products from biorenewable resources which contain chemical energy in their carbon bonds
+\end{itemize}
+
+Bioenergy has three forms: \\
+process heat--thermal energy used for industrial processing; energy used for residential and commercial thermal energy demand \\
+biopower--conversion of biorenewable resources into electrical power \\
+biofuels--chemicals derived from biorenewable resources that have sufficient volumetric energy densities \\
+
+Biobased products include: \\ 
+biobased chemicals--pharmaceuticals and nutraceuticals \\
+biobased materials--finished products manufactured from biorenewable resources \\
+
+\underline{Challenges to using biorenewable resources}: \\
+low bulk density--the feedstocks tend to be bulky and of low density which complicates their transportation \\
+high moisture content--can contain high levels of moisture which then requires drying.  The added weight increases transportation costs while the moisture can negatively impact the yields from thermochemical processes. \\
+low heating value--has a lower energy content compared to pure hydrocarbons due to the higher oxygen content \\
+high oxygen content--biomass are polar molecules while hydrocarbons are nonpolar molecules.  This means that they do not blend well together hence biomass does not mesh well with the existing infrastructure. \\
+
+\underline{Resource base}: \\
+Includes wastes such as agricultural residues, yard waste, municipal solid waste, food processing waste, manure, blighted trees and dedicated crops such as terrestrial species (corn, soybeans) which are vascular and high in lignin as well as aquatic species which may not be vascular and tend to contain little to no lignin. \\
+
+Biorenewable resources have the following organic building blocks: \\
+\begin{enumerate}
+\item protein
+\item oils--can go through transesterification to produce bio-diesel
+\item sugar--easily fermented into ethanol
+\item starch--easily fermented into ethanol (not as easily as sugar).  This is a chain of glucose molecules held together by glycosidic bonds which are easily broken down with hydrolysis or the digestive enzymes of many creatures
+\item inulin
+\item cellulose--chain of glucose molecules held together by glycosidic bonds.  Unlike starch, these chains are straight which makes it more difficult for hydrolysis or enyzmes to break down the bonds.
+\item hemicellulose--contains various forms of carbohydrate molecules some of which are easy to ferment and some that are not 
+\item lignin--secondary structural material in plant walls that is embedded in a crystalline matrix with cellulose and hemicellulose.  There do exist enzymes that can ferment lignin but they are rare.  Typically lignin must be separated from cellulose and hemicellulose before either of the products can be processed
+\item chitin
+\end{enumerate}
+
+\textbf{\underline{Chapter 2: Fundamental Concepts in Engineering Thermodynamics}} \\
+
+\section{Literature Review}
+\subsection{Using GIS and intelligent transportation tools for biomass supply chain modeling and cost assessment} 
+\textbf{Author:} Slobodan Gutesa \\
+\textbf{Written:} 2013 \\
+
+Coming soon \\
+
+\subsection{Stover Harvest Benefits Farmer}
+\textbf{Author:} Donnelle Eller \\
+
+Bruce Nelson, farmer who collects bales of corn stover for use at Poet Biorefining plant in Emmetsburg says: "The research I've read, one ton is very sustainable."  I.e., they remove around 1 ton of stover per acre from the total which ranges from four or five tons.
+Poet plant in Emmetsburg is next to an existing 55 million gallon corn-grain ethanol plant.
+
+\subsection{Techno-economic analysis of biomass to transportation fuels and electricity via fast pyrolysis and hydroprocessing}
+\textbf{Authors:} Tristan R. Brown, Rajeeva Thilakaratne, Robert C. Brown, Guiping Hu \\
+\textbf{Accepted:} November 8 2012 \\
+\textbf{Journal:} Fuel \\
+
+\underline{Objective}: quantify economic feasibility of gas and diesel fuel production from corn stover via fast pyrolysis and hydroprocessing using updated production information following the opening of the KiOR Columbus, MS facility.
+
+Much of this paper is a comparison of updated cost information to the results of three 2010 Iowa State University papers which assessed the technical and economic feasibility of three different cellulosic biofuel pathways (cellulosic ethanol; gasification and Fischer-Tropsch synthesis; and fast pyrolysis and hydroprocessing).  These three papers are:
+\begin{enumerate}
+\item Kazi Fk, Fortman JA, Anex RP, Hsu DD, Aden A, Duttta, et al.  Techno-economic comparison of process technologies for biochemical ethanol production from corn stover.
+\item Swanson RM, Platon A, Satrio JA, Brown RC.  Techno-economic analysis of biomass-to-liquids production based on gasification
+\item Wright MM, Daugaard DE, Satrio JA, Brown RC.  Techno-economic analysis of biomass fast pyrolysis to transportation fuels
+\end{enumerate}
+
+There was an additional Iowa State University paper that compared the economics of pyrolysis, gasification, and biochemical by assuming a 2000 tonne/day plant with corn stover as its feedstock.  Pyrolysis was found to have the lowest minimum fuel selling price at \$2.11/gal.
+
+They state that techno-economic analyses suggest that the best use for bio-oil is to serve as a feedstock for the production of renewable hydrocarbon fuels despite the substantially higher capital and operating costs--this fact is sensitive to input costs and output values.
+
+Bio-oil can be upgraded using either fluid catalytic cracking or hydroprocessing--with the results of hydroprocessing being more suitable for fuel blending.  Hydroprocessing has two steps: hydrotreating and hydrocracking.
+
+\underline{Definition:} Hydrotreating--reacts bio-oil with hydrogen in the presence of a catalyst and heat, removing heteronuclear atoms such as chlorine, nitrogen, oxygen and sulfur and reducing bio-oil's viscosity and corrosiveness.
+
+\underline{Definition:} Hydrocracking--reacts hydrotreated bio-oil with hydrogen in the presence of a catalyst under more severe reaction conditions with the objective of achieving complete deoxygenation and depolymerizing the bio-oil into monomeric hydrocarbons that can be blended with fuels.
+
+Transportation fuel yields are sensitive to operating conditions and hydrogen consumption.  Fast pyrolysis yields are 55-70 wt\% of biomass--this comes from the paper "Catalytic Hydroprocessing of Biomass Fast Pyrolysis Bio-oil to Produce Hydrocarbon Products" by Elliot et al. (2009).  This paper also puts the volume of monomeric hydrocarbons yielded by hydroprocessing at 31.6-60.7\% of the bio-oil weight.
+
+\underline{Definition:} Catalytic fast pyrolysis (CFP)-- pyrolysis that occurs in the presence of a pure zeolite catalyst at moderate temperatures and high heating rates.  The output has a lower oxygen and higher aromatics content than that produced via FP as well as lower liquid and higher coke yields.  
+
+The following two papers may give me a sense of the transportability of bio-oil following CFP:
+
+\begin{enumerate}
+\item Mullen CA, Boateng AA, Mihalcik DJ, Goldbnerg NM.  Catalytic fast pyrolysis of white oak wood in a bubbling fluidized bed.
+\item Bridgwater AV.  Review of fast pyrolysis of biomass and product upgrading
+\end{enumerate}
+
+Note that KiOR commercialized CFP in Columbus, MS by constructing a 454 MTPD facility.
+
+They employ the following fast pyrolysis system in their analysis:
+\begin{enumerate}
+\item pre-processing--stover is dried to 7\% moisture content and chopped and ground to 3mm particles
+\item pyrolysis reaction--fluidized bed reactor which rapidly heats feestock to 480 degrees celsius.  They assume yields of 63 wt\% bio-oil, 17 wt\% char, and 20 wt\% NCG.  This follows from the Wright et al. paper.
+\item solids removal--cyclone is assumed to be 90\% efficient to separate most of the ash and char from the pyrolysis vapors which are cooled, condensed and sent to an electrostatic precipitator (ESP)
+\item bio-oil recovery--ESP separates aerosols from the NCG; a small amount of flue gas recycled as carrier gas for the pyrolysis reactor
+\item heat generation--char and NCG are combusted in a waste heat boiler at 450 degrees celsius to generate high pressure (50 MPa) steam which enters a turbine system to provide process heat and facility electricity; excess electricity is assumed to be sold to the grid for \$0.054/kWh
+\item hydrotreating--occurs in a fixed-bed jacketed reactor with 4 wt\% hydrogen, 7-10 MPa pressure, temperatures between 300 and 400 degress celsius in the presence of a cobalt-molybdenum catalyst.  Hydrogen is assumed to cost \$1.33/kg (same as in Wright et al.).  A compressor and pressure swing adsorption unit are used to recycle excess hydrogen.  This step removes impurities such as sulfur and nitrogen from the bio-oil while partially deoxygenating it.
+\item hydrocracking--occurs at higher pressures and temperatures to complete the deoxygenation and depolymerize the heavy molecules in bio-oil to produce lighter molecules which are within the diesel fuel and gasoline ranges (8 to 12 carbon atoms).
+\item refining--molecules are assumed to be split evenly between gasoline and diesel fuel.  This assumption follows from a paper by Holmgren called "Consider upgrading pyrolysis oils into renewable fuels."
+\end{enumerate}
+
+They reduce the fuel yield in the Wright et al. paper to 57.4 MGY to reflect hydroprocessing results in Elliott et al.
+
+Aspen Process Economic Analyzer software is used to estimate equipment costs with the total project investment for the facility estimated using the Peters and Timmerhaus factors (this is from a book for chemical engineers).  A key divergence from the Wright analysis is that the project is no longer funded solely by equity but now is funded equally from equity and debt with the interest rate on the debt assumed to be equal to the interest rate on the High Yield Constrained bond index.  Another key difference is that all of the biochar is combusted for process heat whereas in the Wright analysis only a portion was.
+
+Wright et al analysis uses a fuel yield from UOP for FP and hydroprocessing of 42 wt\% which translates into 58.2 MGY for a 2000 MTPD facility when a bio-oil yield of 63\% is assumed.  With the updated information from the Elliot analysis this is reduced to 57.4 MGY.
+
+The total project investment from the KiOR facility scaled up to accomodate a 2000 MTPD facility are much higher than in the Wright analysis (429 million vs 200 million).  The reason this is much higher is because it includes a boiler and turbogenerator system that consumes all NCG gas and char from pyrolysis as well as off-gases from hydroprocessing.  Tristan estimates this to be \$141.2 million using the Aspen Process Economic Analyzer--includes a \$90 million boiler unit that is large enough to burn all of the NCG and char produced via FP and a \$30 million turbine system.  The Wright analysis had used a \$34 million boiler.  
+
+The larger boiler could make the fuels eligible for the cellulosic rins under the RFS2.  This could also be achieved by sequestering some of the char.
+
+Another difference is the hydroprocessing system which is a one stage system in the Wright analysis and is estimated at \$26.8 million.  Tristan's analysis estimates it at \$89.7 million and includes costs for the hydrotreater, hydrocracker, and refining equipment.  There was also a growth in the Chemical Engineering Plant Cost Index of 13.6\% between December 2007 and April 2011.
+
+\underline{Results}: in the Wright analysis snygas is sold as a fuel gas and char incurs a disposal cost whereas in Tristan's analysis both are combusted for process heat and electricity and the excess electricity is sold to the grid.  Due to this difference, there is a difference in operating costs, \$83.5 million and \$89.5 million.  The Wright analysis results in a MFSP of \$2.11/gal while Tristan's analysis results in a MFSP of \$2.57/gal.
+
+The results are particularly sensitive to the bio-oil yield and fuel yield variables--both of these ranges can be found in the Elliott analysis.  
+
+Tristan says in his conclusion that this analysis shows that the FP and hydroprocessing pathway may not be as competitive as originally thought and that further research needs to be done to determine whether the large boiler and turbogenerator system is necessary from an LCA analysis perspective to achieve the GHG reduction threshold required by the RFS2 since their costs could prevent the pathway from acquiring the necessary financing.
+
+\subsection{Corn stover as a biofuel feedstock in Iowa's bio-economy: An Iowa farmer survey}
+\textbf{Authors:} John C. Tyndall, Emily J. Berg, Joe P. Colletti \\
+\textbf{Accepted:} Aug 18, 2010 \\
+\textbf{Journal:} Biomass and Energy \\
+
+\underline{Objective}:  they examine what Iowa crop farmers think about harvesting and selling corn stover and to what degree they may be interested in providing stover to a biorefinery.
+
+They remark that Iowa's existing ethanol infrastructure puts the state in a position where it could supply a significant portion of national cellulosic ethanol.
+
+Two other surveys have shown that Iowa's farmers have reservations about harvesting and selling stover:
+
+\begin{itemize}
+\item Korsching P, Lasley P, Gruber T.  Iowa Farm and Rural Life Poll.  2006. --51\% of Iowa's farmers strongly agreed they would sell crop residue as a bio-refinement feedstock.
+\item Arbuckle JG, Korsching P, Lasley P.  2007 Iowa Farm and Rural Life Poll. --5\% indicated they would sell stover at some point within the next five years.
+\end{itemize}
+
+They also discuss the environmental and agronomic consequences of removing stover and provide the literature references.
+
+\begin{itemize}
+\item residue removal can lead to considerable increases in soil erosion, surface runoff, sedimentation and nutrient loss--see Lindstrom ML (1986); Mann et al. (2002)
+\item this can cause a loss of carbon sequestration capacity--see Marshall and Sugg (2009)
+\item can also cause impaired water quality--see Al-Kaisi and Guzman (2007); Simpson et al. (2008)
+\item can cause diminished capacity to produce food, fiber, fuel--see Pimentel (2006); Lal (2008)
+\item residue removal can cause loss of soil organic matter--seeMann et al. (2002)
+\item dimished soil structure/stability--see Blanco-Canqui and Lal (2008); Blanco-Canqui and Lal (2009)
+\item reduced soil mosture--see Klocke et al. (2009)
+\item removal of crop nutrients--see Klocke et al. (2009); Wilhelm et al. (2007)
+\end{itemize}
+
+Wilhelm et al. (2007) paper provides upper limit for require residue cover of 70\%.  Perlack et al. (2002) provides an assessment of corn stover supplies similar to that of the Grahame et al. (2007) paper.  Gallagher et al. (2003) discusses the commodity program conservation requirements of 30\% stover in conservation tillage systems.  
+
+Participating farmers in this 2006 survey were typically experience (90\% farmed for over 20 years) and 64\% planned on continuing to farm for the next ten years.  55\% had a high school degree of higher and 20\% had a college degree.  They weren't typically very knowledgeable about corn stover harvesting--41\% claimed to be "not knowledgeable at all".
+
+Overall, 17\% of representative farmers expressed interest in harvesting stover.  These tended to beyounger farmers who will be farming for at least another 10 years.  Farmers in North Central, IA tended to express a greater interest--23\%.
+
+\subsection{Techno-economic analysis of biomass fast pyrolysis to transportation fuels}
+\textbf{Authors:} Mark M. Wright, Daren E. Daugaard, Justinus A. Satrio, Robert C. Brown \\
+\textbf{Accepted:} July 15, 2010 \\
+\textbf{Journal:} Fuel \\
+
+\underline{Objective}: examines fast pyrolysis of corn stover to bio-oil with subsequent upgrading of the bio-oil to naphtha and diesel range fuels.  They focus on technologies projected to be viable within 5-8 years.
+
+13 published pyrolysis technologies were reviewed and a matrix was prepared considering economics, technological maturity, environmental aspects, process performance, and technical and economic risks.
+
+Previous studies have estimated the cost of bio-oil to range between \$0.41 and \$2.46 per gallon with capital cost estimates ranging from \$37 million to \$143 million.  Provided references for 8 papers reporting the cost of producing bio-oil via fast pyrolysis:
+\begin{itemize}
+\item Islam M, Ani F.  Techno-economics of rice husk pyrolysis, conversion with catalytic treatment to produce liquid fuel
+\item Mullaney H, Farag I, LaClaire C, Barrett C.  Technical, environmental and economic feasibility of bio-oil in New Hampshire's North Country.
+\item Cottam M, Bridgewater A.  Techno-conomic modelling of biomass flash pyrolysis and upgrading systems
+\item Gregoire C, Bain R.  Technoeconomic analysis of the production of biocrude from wood
+\item Gregoire CE.  Technoeconomic analysis of the production of biocrude from wood
+\item Solantausta Y, Beckman D, Bridgwater A, Diebold J, Elliott D.  Assessment of liquefaction and pyrolysis systems
+\item Anon.  Feasibility study: one thousand tons per day feedstock wood to crude pyrolysis oils plant
+\item Ringer M, Putsche V, Scahill, J.  Large-scale pyrolysis oil production: a technology assessment and economic analysis.
+\end{itemize}
+
+Two companies are mentioned that produce bio-oil commercially: Dynamotive and NewEarth.  As of this writing there were no commercial plants that produce naphtha and diesel fuel from bio-oil hydroprocessing.  NOTE: KiOR now does this.  See Brown et al. (2013)
+
+The results of current paper are given in terms of the fuel product value that yields an NPV of zero with an IRR of 10\% and focuses on two separate scenarios for procuring hydrogen for bio-oil upgrading with the economic analysis assuming an nth plant design.  Models developed by the RAND Corporation are used to estimate the cost for a pioneer plant.
+
+\underline{Methods}:  the biorefineries are assumed to process 2000 dry tonnes per day of corn stover with a feedstock cost at the plant gate of \$83 per tonne (which is higher than previous studies).  Major processing steps include: biomass pretreatment, fast pyrolysis, solids removal, oil collection, char combustion, and oil upgrading.
+
+\begin{enumerate}
+\item pretreatment--biomass with 25\% moisture content is dried to 7\% moisture and ground to 3 mm diamater size
+\item fast pyrolysis--fluid bed reactor operated at 480\degree C.  This type of reactor is selected for its ability to scale, familiarity and the availabitility of its process data.
+\item solids removal--standard cyclones remove solids mostly consisting of char particles
+\item oil collection--pyrolysis vapors are condensed in indirect contact heat exchangers yielding bio-oil that can be safely stored at ambient conditions prior to upgrading
+\item char combustion--pyrolysis solid products are sent to a combustor to provide heat for the drying and pyrolysis processes
+\item oil upgrading--hydrotreating and hydrocracking.  These processing are commonly used in the petroleum industry to remove undesired compounds such as sulfur and to break down large hydrocarbon molecules into naphtha and diesel range products.  Bio-oil typically contains a lot of oxygen which can be converted to water and carbon dioxide during hydrotreating.
+\end{enumerate}
+
+Biomass composition as delivered at the plant gate is not considered in this study.  Ash content in biomass can cause fouling and plugging of high-temperature equipment.  Davidsson et al. (2002) may have more information on this--they consider the effects of fuel washing techniques on alkali release from biomass.
+
+The technical modeling is done using Aspen Plus software to develop mass and energy calculations.  Economic analysis is done through a combination of Aspen Icarus software equipment cost and sizing and spreadsheet investment analysis using Peters and Timmerhaus installation factors.  Corn stover pyrolysis analysis is adapted from USDA experimental data--see Mullen et al. (2010).  Char composition analysis is based on Iowa State University lab results--see Rover and Wright (2008).  
+
+A more detalied explanation of the process used is as follows:
+\begin{enumerate}
+\item Chopping and grinding--use a two-step process in which the mean particle sizes are reduced first to 10 mm and then to 3 mm.  3mm is the optimal size for fluid bed biomass-pyrolysis.  See Bridgewater et al. (2002).  For power requirements for the grinder see Mani et al. (2004)
+\item Feedstock drying--assume that biomass is dried to moisture content of less than 7\% which is recommended by Bridgewater and Czernik (2003) for reasonable performance.  They assume 2000 BTU per pound of energy requirement for drying.
+\item Pyrolysis--they assume that four 500 tonne per day reactors are employed in parallel following from assumptions in an NREL report--see Ringer et al. (2006).  Dynamotive uses 200 tonne per day units commercially at the time of this writing (largest in use) while larer units (over 2000 dtpd) are currently being developed.  Organic yields are reported to be 62\% by weight of dry corn stover.  17\% is char and ash.  The rest is NCG.
+\item Cleanup--particles sizes following pyrolysis tend to be smaller than following gasification.  This impacts the design and performance of cleaning equipment such as cylcones and filters.  In this model they assume that a set of parallel cyclones remove 90\% of char particles.  The char is sent to the combustion sectiong where it is employed to provide process heat.  Only a portion is combusted.  The rest is sold as a by-product.  Note: Dynamotive gasifies the char and mixes it with bio-oil for a product they call BioOil Plus.
+\item Bio-oil collection--need short residence times to avoid negative impact on yields.  They use an indirect heat exchanger to transfer heat from hot vapors at 480\degree C to a water stream.  Then the cool vapors exit the condensor unit and produce steam .  Once most of the boi-oil has condensed they use an Electro-Static Precipitator (ESP) unit to collect remaining droplets.  They assume that all remaining char (the cyclone had captured most of it) is collected in the ESP unit.  They also assume that the NCGs are combusted to provide heat for biomass drying and aid in fluidizing the pyrolysis reaction at a rate of 1.6 kg of gas per kg of dry biomass.
+\item Storage--NREL reports that bio-oil can remain stable over a period of months.  See Ringer et al. (2006).  Dynamotive suggests that bio-oil should be stored in an air-free environment in stainless steel material to prevent corrosion.
+\item Combustion--NCG and a fraction of pyrolysis char are combusted.  About a third of the produced char is combusted and the rest is land filled with a disposal cost of \$16 per tonne.
+\item Hydroprocessing--hydrotreating conditions are assumed to be hydrogen rich, 7-10 MPa, 300-400\degree C using a cobalt-molybdenum catalyst.  Hydrocracking has 10-14 MPa, 400-450\degree C using a nickel-molybdenum catalyst.
+\end{enumerate}
+
+They discuss a hydrogen production scenario and also consider a situation in which a remote source of hydrgoen is used.  Yields for the latter scenario have been reported as high as 42\% of the upgrading feed converted into equal fractions of naphtha and diesel range fuel.
+
+Costs that are considered:
+\begin{itemize}
+\item project capital expenditure calculations.--They use Aspen Icarus software to estimate free-on-board equipment costs and Peters and Timmerhaus investment factors.  Specific equipment and installation comes from direct quotation, published data, and Aspen Icarus software
+\item present value of projects--use modified NREL discounted cash flow rate of return analysis spreadsheet
+\item feedstock costs--assumed to be \$83 per dry tonne.  
+\item electricity--assumed to cost \$0.054 per kWh.  
+\item catalyst replacement costs--assumed to be \$1.77 million per year based on costs for crude oil processing.  See Meyers Handbook of petroleum refining processes.
+\item working capital--15\% of total capital investment
+\item annual maintenance materials--2\% of total installed equipment costs
+\item general overhead--factor of 60\% applied to total salieries
+\item total plant investment--determined by applying overhead and contingency factors to installed equipment costs
+\item insurance and taxes--1.5\% of total installed equipment costs
+\item assume a 10\% discounted cash flow rate of return over a 20 year plant life
+\item plant assumed to be 100\% equity financed
+\item federal tax calculated using the IRS Modified Accelearated Cost Recovery System with depreciation based on a Declining Balance (DB) method.
+\item state tax not considered due to the plant's location being unspecified
+\item hydrogen--assumed to cost \$1.50 per gallon of gasoline equivalent
+\end{itemize}
+
+\underline{results}: hydrogen production scenario has higher capital costs due ot additional equipment required for bio-oil upgrading compared to the hydrogen purchase scenario.  Annual operating costs are higher for they hydrogen purchase scenario--\$1.50 per gallon of gasoline equivalent.  In both scenarios, bio-oil yield for 2000 tonne per day corn stover pyrolysis is estimated at 104 million gallons--72\% by weight of the dry biomass input.  In the hydrogen production scenario, 38\% of the bio-oil is reformed to produce 1500 kg per hour of hydrogen.  Fuel yield for the hydrogen production scenario is 35.4 million gallons of fuel per year.  
+
+\subsection{Catalytic Hydroprocessing of Biomass Fast Pyrolysis Bio-oil to Produce Hydrocarbon Products}
+\textbf{Authors:} Douglas C. Elliott, Todd R. Jart, Gary G. Neuenschwander, Leslie J. Rotness, and Alan H. Zacher \\
+\textbf{Accepted:} August 5, 2009 \\
+\textbf{Journal:} Environmental Progress and Sustainable Energy \\
+
+\underline{Objective}: this article describes the experimental methods used to convert bio-oil into a petroleum refinery feedstock via catalytic hydroprocessing.  A range of catalyst formulations were tested over a range of operating parameters including temperature, pressure, and flow rate wth bio-oil derived from several different biomass feedstocks.
+
+PNNL performed hydroprocessing tests on bio-oil samples to optimize the conversion of bio-oils using mild hydrotreating as well as to optimize the conversion of the hydrotreated product by hydrocracking.  
+
+Water addition prior to hydrotreating was evaluated as a phase splitting mechanism to produce a feed oil with higher concentration of lignin and an anticipated higher yield of liquid products.  Optimum processing conditions were chosen and extended runs were performed to analyze the life of the catalysts and to ensure enough product for testing the hydrocracking phase.  Process conditions were optimized to produce a product with low oxygen content and a low acid number with both hydroprocessing phases performed in the same catalyst bed.
+
+\underline{Experimental procedures-Hydrotreating}:  palladium on carbon catalyst used in a bench-scale, fixed-bed reactor to hydrogenate the bio-oil and proudce a partially upgraded bio-oil suitable to processing at more severe hydrocracking conditions.  This catalyst was identified in earlier experiments and has been patented for use in bio-oil upgrading.  Optimum processing conditions are 340 degrees celsius and 0.28 LHSV and were run for 100 hours to produce sufficient product for the subsequent hydrocracking.
+
+\underline{Hydrotreating results}: effect of feedstock on yield structure, hydrogen consumption, and relative strength of the exothermic reaction not substantial since fast pyrolysis tends to produce a relatively similar bio-oil from all biomasses.  Process settings did have a substantial influence; oxygen content hit a minimm at 340 degrees celsius.  Lower degrees has a higher oxygen content while higher degrees had a substantially higher oxygen content as well as a much higher gas yield (lower oil yield).  The oil yield (g) per gram of dry feed was 0.62 for 340 degrees celsius.  Using this temperature, LHSV of 0.25 yielded the lowest oxygen content.
+
+\underline{Experimental procedures-Hydrocracking}: hydrotreated products from some of the previous tests are put under processing conditions of 400 degress celsius, 2000 psig, and 0.4 LHSV using a conventional hydrocracking feedstock.  
+
+\underline{Hydrocracking results}:  high quality hydrocarbon products were produced in all cases after appropriate processing conditions were identified.  The composition of the products varied little between the type of original feedstock.  
+
+Corn stover had a total process yield (pyrolysis included) of 0.37 g of oil per gram of dry feed and a hydrgoen consumption of 490 liters of hydrogen per liter of feed.
+
+The results of this study were used in Holmgren et al. (2008) and show that competitive economics can be achieved using this upgrading technique.
+
+\subsection{Distributed processing of biomass to bio-oil for subsequent production of Fischer-Tropsch liquids}
+\textbf{Authors:} Mark Wright, Robert Brown, and Akwasi Boateng \\
+\textbf{Accepted:} March 6, 2008 \\
+\textbf{Journal:} Biofpr \\
+
+\underline{Objective}: compares centralized processing to three different distributive processing options for the processing of biomass to bio-oil and production of Fischer-Tropsch liquids.  Three distributive options are 'on-farm' pyrolyzers of 5.4 ton per day capacity; small cooperative pyrolyzers of 55 tpd capacity; large cooperative pyrolyzrs of 550 tpd capacity.  A centalized gasification plant can produce FTLs for \$1.56 gge in optimally sized plant of 550 million gge per year.  Distributed provessing can achieve FTLs for \$1.43 in plant with production capacity in excess of 2500 million gge.
+
+From Badger and Fransham (2005), fast pyrolysis reactors can be built economically at small scales.  The pyrolysis scheme used in this paper begins with grinding the biomass to 1-3 mm fiber lenghts and dried to about 10\% moisture to achieve the desired yields of bio-oil (note...the pyrolysis followed by hydrotreatment paper had used 7\%...there could be a difference in required moisture content for subsequent processes).  The biomass is pyrolyzed and resulting vapors pass through a particulate matter separation device before being condensed.  When choosing the reactor design they considered many options (see Brown and Holmgren).  Fluid-bed and circulating fluid-bed reactors are the most common choice due to their ease of operation and scale-up (see Bridgwater AV and Peacocke GVC).  Gas clean-up is used to separate solid particles entrained in the gas stream.  The subsequent condensation can take place over a variety of heat exchangers to yield different bio-oil fractions (see Boateng et al. (2007)).  According to Badger and Fransham (2005) the bio-oil can be pumped into a tanker truck for transportation to an upgrading facility.
+
+The co-product bio-char can be used in one of two ways: as energy or process heat for the pyrolysis reaction or as soil enrichment and carbon sequestration.  See Lehmann (2007).
+
+They list four techno-economic analyses of fast pyrolysis plants with bio-oil production costs ranging between \$0.41 and \$1.21 per gallon.  They base this analysis on the report from the NREL report by Ringer et al. for a 550 dtpd plant producing 28 million gallons of bio-oil per year at a cost of \$0.62 per gallon.
+
+\underline{Methods}: they combine data from existing techno-economic analyses to compare the cost of producing Fischer-Tropsch liquids via centralized and distributed biomass processing systems.
+
+Plant capital costs follow a power law representing economies of scale and is given by: \\
+
+$C_p = C_{p_0}(\frac{M}{M_0})^n$ \\
+
+where $C_{p_0}$ is the capital cost for a plant of annual fuel production capacity $M_0$ and n is the scale factor typically taken to be about 0.6.  If n were equal to 1 this would represent linear scaling and would favor numerous smaller plants rather than fewer larger plants.  In this analysis they assume n is 0.6 for the centralized processing and the large cooperative pyrolyzers and is 1 for the 5.4 tpd and 55 tpd pyrolyzers.
+
+To determine the annual feedstock cost for a give fuel ouput they first calculate the amount of biomass needed by using the following relationship: \\
+
+$F = \frac{M*E_G}{E_B*\eta_{BTF}}$ \\
+
+where F is the total biomass input in units of tons per year, $E_G$ and $E_B$ represent energy content of gasoline and biomass and $\eta_{BTF}$ represents the BTL fuel efficiency which will vary by process and can be found in Henrich et al. (2005).  M is given in units of gge per year and is converted to energy units by a factor of 31.8 MJ per gallon of gasoline.  Biomass energy value is assumed to be 19.5 MJ per kg.  The BTL fuel efficiency is assumed to be 40\% for biomass to FTLs with fast pyrolysis processing.  Farm gate cost of feedstock is assumed to be \$40 per ton.  They assume a \$50 per ton credit for bio-char which is based on the assumption that the charcoal is 85\% carbon and has a carbon sequestration agent equivalent to \$16 per ton of carbon dioxide.  Bio-char's use as a soil additive for its potential as a fertilizer and soil organic matter has not been factored into the credit.
+
+For centralized processing case the average delivery distance within a circular area surrounding the central plant is given by: \\
+
+$\overline{r_{circle}} = \frac{2}{3}\tau(\frac{F}{\pi Y f})^{0.5}$ \\
+
+where $\tau$ is the tortuousity factor assumed to be 1.5, F is the total biomass input in tons per year, f is the fraction of land surrounding the plant that is devoted to biomass crops, Y is the biomass yield in tons per acre.  f will be a site specific value and here they assume it is 60\%.  Once they have the average delivery distance they multiply it by a unit cost for biomass transportation of \$0.71 per ton per mile.  This value comes from direct correspondence with Birrell of the USDA (?) in 2007
+
+For the distributed biomass processing case, they assume a square grid around the centralized bio-oil processing plant with distributed pyrolysis plants located at the center of the squares making up the grid.  The average biomass transportation distance to a pyrolysis plant is equal to the average distance from a random point in the square to the center of the square: \\
+
+$\overline{r_{square}} = \frac{1}{6} \tau (\frac{F}{Y*f})^{0.5} ((2)^{0.5} ln(1+(2)^{0.5}))$ \\
+
+The average distance that the bio-oil must be shipped from distributed pyrolysis plants to the centralized bio-oil processing plant depends on the amount of biomass that must be converted to boi-oil and the size of the distributed pyrolysis plants.  They graph this and based on the graph determine a power law for calculating the bio-oil transportation distance: \\
+
+$\overline{r_{grid}} = 0.423 \tau (\frac{F}{F_{plant}})^{0.476} (\frac{F_{Plant}}{Y*f})^{0.5}$ \\
+
+They assume a bio-oil transportation cost to be \$0.14 per ton per mile which follows from Bridgwater et al. (2002).
+
+\underline{Results}:  See figure 4 in paper.  Distributed processing is more cost effective for a sufficeintly large fuel production capacity.  The minimum fuel cost for centralized processing is \$1.56 with a fuel production capacity of 550 million gge.  For the three distributive scenarios the optimal capacity is beyond 2500 gge and the minimum fuel costs all lie below that of centralized processing.  
+
+Operation and maintenance costs are lower for centralized processing due to favorable economies of scale.  Biomass costs are also lower due to higher thermodynamic efficiencies.  Transportation costs for distributive processing are lower than centralized processing.  Because of the difference in transportation costs the processing technique which employs the smallest pyrolyzers yields the lower production costs.  
+
+Capital costs for centralized facility estimated at \$1.63 billion while the central plant in distributive processing is estimated at \$1.60 billion because of the simpler feedstock handling system for bio-oil compared to biomass.
+
+Large cooperative pyrolyzers cost \$47.8 million each which comes to a \$2.63 billion investment.  Total capital cost of distributive processing employing large cooperative pyrolyzers comes to \$4.1 billion.  The small cooperative pyrolyzers and on-farm pyrolyzer systems have identical aggregate costs within a 5\% uncertainty.
+
+The sensitivity analysis checks for the impact of fuel conversion efficiency, transportation cost, biomass yield, fuel conversion efficiency, charcoal cost, transportation cost, and biomass yield.  See figure 6 in the paper.  
+
+
+
+
+\subsection{Current and Potential U.S. Corn Stover Supplies}
+\textbf{Authors:} R.l. Graham, R. Nelson, J. Sheehan, R.D. Perlack, and L.L. Wright \\
+\textbf{Accepted:} 2007 \\
+\textbf{Journal:} Agronomy Journal \\
+
+\underline{Objective}: this article estimates where and how much corn stover can be collected sustainably in the U.S. using existing commercial equipment and estimates costs of that collection while explicitly accounting for erosion constrains and implicitly considering crop productivity and soil nutrient constraints by including the cost of fertilizer. \\
+
+They estimate that for a 196 million mg of corn grain production in the U.S., 196 million mg of stover would be produced and, under current rotation and tillage practices, roughly 30\% of the stover could be collected for less than \$33/Mg. \\
+
+They find that three areas of the country produce sufficient stover to support large biorefineries with one million Mg per year feedstock demands.  These areas are central Illinois, norther Iowa/southern Minnesota and along the Platte River in Nebraska. \\
+
+They also find that if all farmers converted to no-till practices, over 100 million Mg of stover could be collected annually without causing erosion to exceed the tolerable soil loss \\
+
+\underline{Methods}: They use data from the USDA and calculate the supply of collectable stover in the U.S. by calculating stover produced per hectare of corn production according to the equation: \\
+
+$Stover(Mg/ha/yr) = yield*dry grain mass* \frac{HI}{1-HI}*1000(kg/Mg)*0.405(ha/acre)$ \\
+
+\underline{Definition}: Harvest index (HI)--the weight of a harvested product as a percentage of the total plant weight of a crop.
+
+ASSUMPTIONS: 
+\begin{enumerate}
+\item The harvest index (HI) of stover mass to grain mass ratio of 1:1 (from Gupta et al. (1979))
+\item a bushel of corn has dry grain mass of 21.5 kg or 56 lb at 15.5\% moisture (from Wilcke and Wyatt (2002))
+\end{enumerate}
+
+Constraints to stover collection includes equipment, soil moisture and water/wind erosion constraints.
+
+Equipment constraints: collection operations leave some stover in the field and is a funciton of the equipment used and the condition of the stover.  They assume that at least 25\% of the stover is left on the field because of collection limitations.  Cited literature includes:
+
+\begin{itemize}
+\item Montross et al. (2002)--round bale collection efficiencies in an experimental Kentucky field are 38\% for bale only; 55\% for rake and bale; 64\% for mow, rake, and bale.
+\item Schechinger and Hettenhaus (2004)--large-scale stover collection in Nebraska and Wisconsin had collection efficiencies of 40-50\% without raking and 70\% with raking.
+\end{itemize}
+
+Soil moisture constraints: under rainfed agriculture all stover must be left on the field to maintain soil moisture for the next crop.  They assume these regions coincide with where local wind erosian climatic factors exceed 50 in April--from R. Follette personal communication in 2005.  They use Allmaras' (1983) map to locate counties where this counstraint precludes stover collection.  NOTE: this does not impact IA, MN, MO, AR, LA, or any state east of the Mississippi river.
+
+Water and wind erosion constraints: the stover needed to remain in the field to assure that erosion does not exceed the tolerable soil loss value, T, is estimated using the approach of Nelson (2002), Nelson et al. (2004), and Sheehan et al. (2004). I NEED TO LOOK AT THESE PAPERS.  Three tillage practices are considered: conventional tillage, mulch till, and no-till; corn-corn and corn-soybean rotations are considered.  Water erosion constraints are considered for all states east of the Rocky Mountains and wind erosion constraints are considered only in Western states--does not impact any of the states not impacted by soil moisture constraints above.
+
+Collectible stover is estimated by the following equation: \\
+
+\begin{centering}
+$CQ_{c,r,t} = Stover_c - Max constraint_{c,r,t}$
+\end{centering}
+
+where CQ is the collectible stover per ha in county c under rotation r and tillage t (Mg/ha/yr) and the max constraint is the amount of stover left in the field that meets all erosion, moisture, and equipment constraints.
+
+Cost of collecting stover is calculated based on the work of the following papers: \\
+
+\begin{itemize}
+\item Perlack and Turhollow (2003)--feedstock cost analysis of corn stover residues for futther processing
+\item Sokhansanj and Turhollow (2002)--baseline cost for corn stover collection
+\item Sokhansanj et al. (2002)--engineering aspects of collecting corn stover for bioenergy
+\end{itemize}
+
+Costs reflect replacement of nutrients removed with the stover estimated at \$7.17 per Mg (\$6.50 per ton) from Gallagher et al. (2003) and all resources associated with collecting stover and delivering it to side of the field in the form of large round bales wrapped in mesh.  They use three different collection scenarios based on the quantity of stover being collected.
+
+County stover supply is provided under each of four scenarios: (1) current tillage practices and constraining erosion to less than T; (2) universal no-till and constraining erosion to less than T; (3) universal mulch till and constraining erosion to less than T; and (4) current tillage practices and constraining water erosion to less than 0.5T (only for states without wind erosion).  In first scenario supply follows the equation: \\
+
+\begin{centering}
+$S_{s,c,r,t}=CQ_{c,r,t} x Land_c x Tillage_{t,c} x Rotation_{s,r}$
+\end{centering}
+
+where S is the collecible stover in county c under totation r and tillage t, CQ is the collectible quantity of stover under rotation r and tillage t in county c, land is the hectares of harvested corn in county c, tillage is the percentage of corn under tillage scenario t in county c and rotation is the percentage of corn in rotation scenario r in state s.
+
+Value of land based on harvested corn hecatres in a county between 1995 and 2000 from NASS.  The value of tillage was based on county-level data from the National Crop Residue Management Survey on cron tillage practices between 1995 and 2000.  
+
+Other scenario values are calculated as follows.  For (2) and (3) the corresponding values for tillage are set to 100\% and for (4) CQ is recalculated under the more strict constraint and then S was recalculated.
+
+\underline{Results}:the amount of stover produced is influenced by corn grain production which follows an upward trend but is also highly variable from year to year.  It is also influenced by the HI value used which is variable.  Linden et al. (2000) reports average corn grain HI of 0.561 (SD=0.079) over 14 years in east central Minnesota.  Montross et al. (2002) found stover HI of 0.47 to 0.52 on the experimental farm in Kentucky.  Both studies report that as grain yields go up, stover HI goes down.  The acceptable erosion rate, T, although commonly assumed may not be sustainable--see Mann et al. (2002).  
+
+Total annual collectible stover in the USA is estimated at 58.3 million Mg which is nearly 30\% of all stover produced.  93\% of collectible stover comes from land where at least 2 Mg of stover could be collected per hectare and collection costs were less than \$33.07 per Mg (\$30 per ton).  62\% of total supply came from IA, MN, or IL.  The estimated total annual collectible stover is significantly less than the results of two previous papers:
+
+\begin{itemize}
+\item Gallagher et al. (2003)--Biomass from crop residues: Cost and supply estimates
+\item Walsh et al. (2000)--Biomass feedstock availability in the United States: 1999 State Level Analysis
+\end{itemize}
+
+\subsection{Establishing the optimal sizes of different kinds of biorefineries}
+\textbf{Authors:} Mark Wright and Robert C. Brown \\
+\textbf{Accepted:} 2007 \\
+\textbf{Journal:} Biofpr \\
+
+\underline{Objective:} they explore the factors that influence the optimal size of biorefineries and the unit cost of biofuels produced by them.  Technologies examined include dry grind corn to ethanol, lignocellulosic ethanol via enzymatic hydrolysis, gasification and upgrading to hydrogen, methanol, and Fischer Tropsch liquids, gasification of lignocellulosic biomass to mixed alcohols, and fast pyrolysis of biomass to bio-oil. \\
+
+\underline{Methodology:} Total costs for producing a quantity M of motor fuel from fossil fuels is modelled as the sum of the cost of plant operations, $C_p$, the cost of feedstock at the mine mouth, $C_f$, and the cost of feedstock delivery, $C_d$.  I.e., \\
+
+\begin{centering}
+$C_t = C_p + C_f+ C_d$ \\
+\end{centering}
+
+They use a power law to model how operating costs scale with plant capacity, $C_p = C_{p_0}(\frac{M}{M_0})^n$.  Then the unit cost for the motor fuel (\$ per gallon) is found by dividing through by plant capacity.  I.e., \\
+
+\begin{centering}
+$\frac{C_t}{M} = \frac{C_{p_0}}{M_0^n}M^{n-1} + \frac{C_{f_0}}{M_0} + \frac{C_{d_0}}{M_0}$ \\
+\end{centering}
+
+Then for $n<1$, the unit cost of motor fuel from fossil fuel feedstocks ecreases as the plant gets bigger, without limit. \\
+
+For biomass fuel, the costs are more complex as the biomass must be delivered from increasingly greater distances.  The authors suggest three other papers that have explored this issue.  These are: \\
+
+\begin{enumerate}
+\item Overend RP, The average haul distance and transportation work factors for biomass delivered to a central plant. (1982)
+\item Nguyen MH and Prince RGH, Simple rule for bioenergy conversion plant size optimisation: bioethanol from sugar cane and sweet sorghum (1996)
+\item Jenkins BM, A comment on the optimal sizing of a biomass utilization facility nder constnat and variable cost scaling
+\end{enumerate}
+
+They model the cost of biomass delivery as proportional to the trasnport distance and the quantity of biomass transported.  I.e.,
+
+\begin{centering}
+$C_d = C_{d_0}\frac{D}{D_0}\frac{M}{M_0}=C_{d_0}(\frac{M}{M_0})^{0.5}\frac{M}{M_0}=C_{d_0}(\frac{M}{M_0})^{1.5}=C_{d_0}(\frac{M}{M_0})^m$
+\end{centering}
+
+They substitute 1.5 for m to allow for variation in the exponent.  Nguyen and Prince argue that m may be as large as 2 if available land for biomass becomes increasingly sparse with distance from a plant.  \\
+
+Total cost for producting a quantity of biomass-derived motor fuel is given by:
+
+\begin{centering}
+$C_t = C_p + C_f+ C_d = C_{p_0}(\frac{M}{M_0})^n + C_{d_0}(\frac{M}{M_0})^m + C_{f_0}\frac{M}{M_0}$
+\end{centering}
+
+with the unit cost for motor fuel produced from biomass found again by dividing by plant capacity M:
+
+\begin{centering}
+$\frac{C_t}{M} = \frac{C_{p_0}}{M_0^n}M^{n-1} + \frac{C_{d_0}}{M_0^m}M^{m-1} + \frac{C_{f_0}}{M_0}$
+\end{centering}
+
+Since $n<1$ and $m>1$, the first term decreases with plant capacity while the second term increases with plant capacity.  Thus there is an optimal plant size to achieve minimum unit cost of motor fuel dervied from biomass.  This is found by differentiating and setting the equation equal to zero.  The result is:
+
+\begin{centering}
+$\frac{M_{opt}}{M_0} = (\frac{1-n}{m-1}\frac{C_{p_0}}{C_{d_0}})^{\frac{1}{m-n}}$
+\end{centering}
+
+If the operating costs are greater than the transportation costs then the optimum plant size is greater.  Rearranging this equation shows that that the ratio of cost of delivery of biomass to the cost of plant operations,R, under the conditions of optimization depends only on the power law exponents m and n.  I.e.,
+
+\begin{centering}
+$R_{opt}=(\frac{C_d}{C_p})_{opt} = \frac{1-n}{m-1}$
+\end{centering}
+
+The costs of plant operations, $C_{p_0}$ come from literature. \\
+
+\begin{itemize}
+\item dry grind ethanol--McAloon et al (2000)
+\item biochemical conversion of biomass to ethanol--Hamelinck et al (2005)
+\item hydrogen and methanol production--Hamelinck and Faaij (2002)
+\item Fischer Tropsch liquids--Tijmensen et al (2002)
+\item mixed alcohols production--Phillips et al (2007)
+\item fast pyrolysis bio-oil production--Ringer et al (2006)
+\end{itemize}
+
+Farm gate cost of feedstock is assumed to be \$75.71 per ton for corn (the price is 2005) and \$40 per ton for lignocellulosic biomass. \\
+
+The cost of delivering feedstock from the farm gate to the plant gate is calculated using $C_{d_0} = C_{du} \overline{d} F$ where $C_{du}$ is the unit cost for feedstock delivery in dollars per ton per mile, $\overline{d}$ is the average delivery distance of feedstock and F is the tons of feedstock delivered annually to the plant.  Unit cost of feedstock delivery come from literature: \\
+
+\begin{itemize}
+\item for corn grain delivery is \$0.018 per bushel per mile--Edwards W and Smith D, Iowa Farm Custom Rate Survey
+\item for lignocellulosic biomass delivery is \$0.71 per ton per mile--Birrell S, personal communication
+\end{itemize}
+
+Using these costs and the total cost equations for a selected m and n they are able to calculate the unit cost of biofuel as a function of plant size M.
+
+They assume biomass is uniformly distributed around a processing plant.  The max radius is given by $r_{max} = (\frac{F}{\pi f Y})^{0.5}$ where f is the fraction of the acreage around a plant devoted to feedstock production and Y is the annual yield of feedstock assumed to be 140 bushels per acre for corn grain and 5 tons per acre for lignocellulosic biomass.
+
+The actual distance traveled by a truck accounts for a tortuosity factor, $\tau$ assumed to be 1.5.
+
+\underline{definition}: tortuosity factor--the ratio of actual distance travel to the straight-line distance from the plant.
+
+Average delivery distance is given by $D=\frac{2}{3} \tau (\frac{F}{\pi f Y})^{0.5}$
+
+\underline{Results}:they assume n=0.6 and m=1.5 and find that grain ethanol and fast pyrolysis to bio-oil have the smallest optimum plant annual capacities.  See paper for charts of capital costs, biomass input, operating costs, and the price of the output.
+
+They discuss how the assumptions on lignocellulosic biomass yield and the percentage of land around the plant that would be devoted to grow the biomass are optimistic and that a reduction in either variable could significantly reduce the optimal size of the plant.
+
+In general, technological advancements that lower the cost of production would lead to a reduction in the optimal size of the biorefinery.
+
+\section{Other papers to read}
+\begin{itemize}
+\item Wilhelm et al (2004) --sustainable collection of corn stover
+\item USDA-NRCS (2003) --sustainable collection of corn stover
+\item Wilhelm et al (2004), USDA-NRCS (2003) Linden et al (2000) --corn stover removal impact on productivity and soil carbon maintainenance
+\item Pootakham T, Kumart A.  Bio-oil transport by pipeline: atechno-economic assessment --speaks to the transportability of bio-oil
+\item Gupta et al. (1979) Predicting the effects of tillage and crop residue on soil erosion
+\item Gallagher et al. (2003) Supply and social cost estimates for biomass from crop residues in the United States
+\item Holmgren et al. (2008)--looks at economics of hydroprocessing
+\end{itemize}
+
+\section{Random Information from Dermot}
+\begin{itemize}
+\item cellulase enzymes go for \$0.50 per gallon
+\item David Laird studies biochar.  We could assume that the char has value of \$50 per tonne for now.  It will likely be higher.
+\end{itemize}
+
+\section{Other information}
+\begin{itemize}
+\item I have contact information emailed to me from Tristan for two former ISU researchers that specialize in biochar applications
+\end{itemize}
+
+
+\end{document}

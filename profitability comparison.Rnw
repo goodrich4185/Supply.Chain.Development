@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\documentclass{article}
+\usepackage{amsmath,amssymb,mathrsfs,fancyhdr,syntonly,lastpage,hyperref,enumitem,graphicx}
+
+\hypersetup{colorlinks=true,urlcolor=black}
+
+\topmargin      -1.5cm   % read Lamport p.163
+\oddsidemargin  -0.04cm  % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth      16.59cm
+\textheight     23.94cm
+\parskip         7.2pt   % sets spacing between paragraphs
+\parindent         0pt   % sets leading space for paragraphs
+\pagestyle{empty}        % Uncomment if don't want page numbers
+\pagestyle{fancyplain}
+
+\begin{document}
+\lhead{\today}
+\chead{Estimating the profitability of two cellulosic ethanol production scenarios: enzymatic hydrolysis fed by satellite storage locations or a centralized hydroprocessing facility fed by remote catalytic fast pyrolyzers}
+\rhead{Ryan Goodrich}
+
+
+
+
+\end{document}

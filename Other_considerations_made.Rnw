@@ -1,0 +1,234 @@
+\documentclass{article}
+
+\begin{document}
+
+Assumptions I had made for corn production:
+
+\begin{centering}
+$acres_f \sim lognormal(\mu, \sigma^2)$ \\
+$yield_f \sim beta(\alpha,\beta,l,u)$ \\
+$p_f \sim bernoulli(\theta)$ \\
+\end{centering}
+
+For acres harvested, data is gathered from the most recent census available from the USDA National Agricultural Statistics Survey (USDA-NASS, 2007) \cite{USDA-NASS}.  An initial examination of this data suggests the appropriateness of the lognormal distribution.  However, the census data does not list a given farmer's harvested area and instead places farmers into one of six categories according to their area harvested.  Due to this data format, typicaly paramater estimation techniques such as the method of moments are not feasible.  Instead, a comparison of percentiles between the model and the data is used.  To estimate the parameters, excel's solver is used to minimize the sum of squared differences between the percentiles for each category subject to the constraint that the distribution's mean matches the data mean.
+
+<<simulation parameter checking,tidy=FALSE>>=
+#clear the environment
+rm(list=ls())
+
+#reading in the farm size data
+o<-"/Users/goodrich/Desktop/Career/Iowa State University/Supply.Chain.Development/Iowa_operations.csv"
+operations.data<-read.table(file=o, header=TRUE,sep=",")
+operations.2007<-subset(operations.data,Year==2007)
+op<-function(data) {with(data,sum(Value))}
+
+require(plyr)
+(op.dist.2007<-ddply(operations.2007, .variables="Domain.Category", .fun=op))
+
+#--setting up matrix for comparison of data and model--#
+total_operations<-sum(op.dist.2007$V1)
+
+perc<-function(data) {with(data,V1/total_operations)}
+
+model_check<-matrix(data=NA,nrow=6,5)
+colnames(model_check)<-c("ID","Farm_Size","Data_Percentile","Model_Percentile","Squared_Diff")
+data_perc<-ddply(op.dist.2007,.variables="Domain.Category", .fun=perc)
+model_check[,2]<-as.character(data_perc$Domain.Category)
+model_check[,3]<-round(data_perc[,2],4)
+
+#renaming category variables
+model_check[1,2]<-"1000 or more acres"
+model_check[2,2]<-"1 to 24.9 acres"
+model_check[3,2]<-"100 to 249 acres"
+model_check[4,2]<-"25 to 99.9 acres"
+model_check[5,2]<-"250 to 499 acres"
+model_check[6,2]<-"500 to 999 acres"
+
+#setting ID variables
+model_check[1,1]<-6
+model_check[2,1]<-1
+model_check[3,1]<-3
+model_check[4,1]<-2
+model_check[5,1]<-4
+model_check[6,1]<-5
+
+#ordering according to ID
+model_check<-model_check[order(model_check[,1]),]
+
+#--setting the parameters of the lognormal function--#
+mu=155.8869
+sigma=3.428357
+
+#checking the fit of the parameters
+acres<-rlnorm(100000,meanlog=log(mu),sdlog=log(sigma)) 
+model_check[1,4]<-round(plnorm(25,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE),4)
+model_check[2,4]<-round(plnorm(100,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE)
+      -plnorm(25,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE),4)
+model_check[3,4]<-round(plnorm(250,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE)
+      -plnorm(100,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE),4)
+model_check[4,4]<-round(plnorm(500,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE)
+      -plnorm(250,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE),4)
+model_check[5,4]<-round(plnorm(1000,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE)
+      -plnorm(500,meanlog=log(mu),sdlog=log(sigma),lower.tail=TRUE),4)
+model_check[6,4]<-round(plnorm(1000,meanlog=log(mu),sdlog=log(sigma),lower.tail=FALSE),4)
+
+model_check[,5]<-round((as.numeric(model_check[,3]) - as.numeric(model_check[,4]))^2,4)
+
+model_check
+mean(acres) #actual mean is 333
+@
+
+The results above indicate that this technique adequately fits the distribution of farm size in 2007.
+
+To model the distribution of corn yields, the common assumption of a beta distribution is used with the support transformed to reflect a realistic range of yields.  The parameters are estimated using the method of moments technique applied to USDA survey data for the year 2007 with the lower and upper bounds of the distribution set to the lower and upper bounds of the data.  The mean and variance maintain the relationships given by: \\
+
+\begin{centering}
+$\frac{\overline{yield_f}-\hat{l}}{\hat{u}-\hat{l}} = \frac{1}{n}\sum_{i=1}^{n} x_i=\overline{X}$ \\
+$\frac{V_{yield_f}}{\hat{u}-\hat{l}} = \frac{1}{n-1}\sum_{i=1}^n (x_i-\overline{x})^2=V_X$ \\
+\end{centering}
+
+where $X \sim beta(\alpha,\beta)$ \\
+
+Using the data to estimate $\hat{\overline{X}}$ and $\hat{V_X}$, the well know moments of the beta distribution can be used to draw out the parameters $\alpha$ and $\beta$.
+
+<<Fitting the yield distribution>>=
+#reading in the yield data
+c<-"/Users/goodrich/Desktop/Career/Iowa State University/Supply.Chain.Development/Iowa_corn_data.csv"
+iowa.data<-read.table(file=c, header=TRUE,sep=",")
+corn.2007<-subset(iowa.data,Year==2007)
+corn.yields.2007<-subset(corn.2007,Data.Item=="CORN, GRAIN - YIELD, MEASURED IN BU / ACRE")
+corn.yields.2007$Value<-as.numeric(as.character(corn.yields.2007$Value))
+
+(l<-min(corn.yields.2007$Value))
+(u<-max(corn.yields.2007$Value))
+my<-mean(corn.yields.2007$Value)
+vy<-var(corn.yields.2007$Value)
+
+mx<-(my-l)/(u-l)
+vx<-vy/(u-l)^2
+
+#parameters for yield beta distribution
+(beta=mx*(1-mx)^2/vx -1 + mx)
+(alpha=(mx/(1-mx))*beta)
+@
+
+Using these assumed distributions and their parameters, we can generate a set of hypothetical farmers and their potentially available corn stover.  Following from a recent survey paper \cite{Tyndall} the initial value of $\theta$ is set to 0.23 as this was the percentage of farmers in north central Iowa that had expressed interest in harvesting stover.  Since a significant portion of feedstock collection costs are from transporting the stover, a radius around the centralized plant is hypothesized with an area equivalent to the state of Iowa.  The radius of a circle with this area is multiplied by a tortuosity factor to account for the fact that roads do not run directly between two distances.  While this factor can range be as high as 3, for well-developed agricultural areas it is much lower.  In this analysis the factor is assumed to be 1.5, following the assumption of Wright and Brown (2007). \cite{Wright and Brown}.  Distances from the biorefinery can then be generated following the assumption that operations are uniformly distributed within this circle.  Putting it all together, the following factors for each farmer are randomly generated: acres harvested, yield per acre, their produced stover, distance from the biorefinery, and their willingness to provide their stover.
+
+<<Simulated data>>=
+#assumed parameters
+HI<-0.5
+dgm<-21500
+theta<-0.23
+w_factor<-1.5
+
+#radius calculation
+Iowa_area=56271.55
+r=(Iowa_area/pi)^(1/2)
+
+#number of operations to generate
+n=sum(op.dist.2007$V1)
+
+stover=matrix(NA,nrow=n,ncol=6)
+for(i in 1:n){
+  stover[i,1]<-i #id
+  stover[i,2]<-rlnorm(1,meanlog=log(mu),sdlog=log(sigma)) #acres harvested
+  stover[i,3]<-rbeta(1,alpha,beta)*(u-l)+l #yield per acre
+  stover[i,4]<-rbinom(1,1,theta) #willingness to participate
+  stover[i,5]<-runif(1,0,r*w_factor) #distance from plant
+}
+
+for(i in 1:n){
+  stover[i,6]<-stover[i,2]*stover[i,3]*dgm*(HI/(1-HI))
+}
+
+colnames(stover)<-c("ID","Acres","Yield","Participate","Distance","Stover_Amt")
+collect_stover<-subset(stover,stover[,4]==1)
+
+collect_stover<-collect_stover[order(collect_stover[,5]),]
+head(collect_stover)
+@
+
+
+<<Calculating Iowa annual statewide average yield, echo=TRUE>>=
+remove(list=ls())
+require(plyr)
+
+#reading in the data
+c<-"/Users/goodrich/Desktop/Career/Iowa State University/Supply.Chain.Development/Iowa_corn_data_2.csv"
+iowa.data<-read.table(file=c, header=TRUE,sep=",") 
+
+#----calculating the annual state average yield----#
+
+#extracting the acres and production per county
+iowa.acres<-subset(iowa.data,Data.Item=="CORN, GRAIN - ACRES HARVESTED")
+iowa.production<-subset(iowa.data,Data.Item=="CORN, GRAIN - PRODUCTION, MEASURED IN BU")
+
+#removing unnecessary variables from extraction
+iowa.acres<-subset(iowa.acres,select=c(Year,County, Value))
+iowa.production<-subset(iowa.production,select=c(Year,County, Value))
+
+#converting values to numeric
+iowa.acres$Value<-as.numeric(as.character(iowa.acres$Value))
+iowa.production$Value<-as.numeric(as.character(iowa.production$Value))
+
+#defining the column names
+colnames(iowa.acres)<-c("Year","County","Acres")
+colnames(iowa.production)<-c("Year","County","Production")
+
+#calculating the annual statewide production
+annual_production<-ddply(iowa.production,"Year",function(x){sum(x$Production)})
+colnames(annual_production)<-c("Year","Production")
+
+#calculating the annual statewide acres harvested
+annual_acres<-ddply(iowa.acres,"Year",function(x){sum(x$Acres)})
+colnames(annual_acres)<-c("Year","Acres")
+
+#combining the two data sets
+iowa.yields<-join(annual_acres,annual_production,by="Year")
+
+#calculating the annual statewide average yield
+iowa.yields$Avg_Yield<-iowa.yields$Production/iowa.yields$Acres
+
+#view the data set
+head(iowa.yields)
+@
+NOT ALL OF THIS CORN STOVER CAN BE HARVESTED.  SEE GRAHAM ET AL FOR CONSTRAINTS.
+
+THEN, GENERALLY, TOTAL COSTS WILL HAVE 3 COMPONENTS: 
+COST OF COLLECTING THE STOVER--SEE DARR PAPERS...
+COST OF TRANSPORTATION--SEE WRIGHT AND BROWN; OVEREND
+COST OF PRODUCTION--SEE HAMELINCK FOR BIOCHEMICAL; RINGER ET AL FOR THERMOCHEMICAL
+
+OTHER THOUGHTS: HAS THERE BEEN A BAYESIAN ANALYSIS DONE FOR CORN YIELDS?  AND HOW DO I INCLUDE A FACTOR FOR YIELD GROWTH OVER TIME?
+
+LOOK INTO TORTUOSITY FACTORS.
+
+<<Markov Chain Monte Carlo>>=
+#remove(list=ls())
+require(rjags)
+load.module("bugs")
+area_dummy<-as.data.frame(c(rep(0,504),rep(1,13122),rep(2,13962),rep(3,10149),rep(4,5779),rep(5,2079)))
+colnames(area_dummy)<-"dummy"
+area_dummy$na<-rep(NA,nrow(area_dummy)) 
+
+model= "
+model{
+  for(i in 1:n){
+  #piecewise distribution
+  branch[i,0]~dnorm(mu,1/sigma2)
+  branch[i,1]<-dnorm(mu,1/sigma2)
+  branch[i,2]<-dnorm(mu,1/sigma2)
+  branch[i,3]<-dnorm(mu,1/sigma2)
+  branch[i,4]<-dnorm(mu,1/sigma2)
+  branch[i,5]<-dnorm(mu,1/sigma2)
+  
+  #determining bin    
+  if_result[i]<-0+step(d[i]-5)+step(d[i]-4)+step(d[i]-3)+step(d[i]-2)+step(d[i]-1)
+  a[i]<-branch[i,if_result[i]]  
+}
+
+  mu~dnorm(155,1)
+  sigma2~dgamma(3.42,1)
+}"
+
+\end{document}

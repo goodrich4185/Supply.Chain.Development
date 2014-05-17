@@ -1,0 +1,296 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{amsmath,amssymb,mathrsfs,fancyhdr,syntonly,lastpage,hyperref,enumitem,graphicx,booktabs,tabularx}
+
+\hypersetup{colorlinks=true,urlcolor=black}
+
+\topmargin      -1.5cm   % read Lamport p.163
+\oddsidemargin  -0.04cm  % read Lamport p.163
+\evensidemargin -0.04cm  % same as oddsidemargin but for left-hand pages
+\textwidth      16.59cm
+\textheight     23.94cm
+\parskip         7.2pt   % sets spacing between paragraphs
+\parindent         0pt   % sets leading space for paragraphs
+\pagestyle{empty}        % Uncomment if don't want page numbers
+\pagestyle{fancyplain}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document} \thispagestyle{empty}
+\lhead{\today}
+\chead{STAT544 Project}
+\rhead{Ryan Goodrich}
+
+\title{Centralized processing of enzymatic hydrolysis and fermentation vs. distributive processing of fast pyrolysis and hydroprocessing}
+\author{Ryan Goodrich}
+\date{}
+\maketitle
+
+\section{Introduction}
+In 2005, Congress passed the Renewable Fuel Standard (RFS) and mandated the domestic consumption of ethanol, particularly grain ethanol.  Due in large part to various tax and other financial incentives, the ethanol industry boomed over the next few years and ethanol blended gasoline became more commonplace.  However, with rising food prices came the food vs fuel debate and concerns that biofuels were starving the poor, \cite{Runge} and were incentivizing the destruction of rainforests through indirect land use change \cite{Searchinger}.  Amidst these concerns, Congress directed the Environmental Protection Agency (EPA) to revise the RFS as part of the Energy Independence and Security Act of 2007 (EISA) with a shift away from grain ethanol.
+
+While the RFS had made no specifications about the types of biofuels that were mandated, the RFS2 created categories for grain ethanol, advanced biofuels, cellulosic ethanol, and biodiesel, with each category having set requirements based on their green house gas (GHG) reductions compared to petroleum.  With concerns over land use impacts and the potentially substantial GHG reductions, cellulosic ethanol has received considerable attention and research funding over the past several years.
+
+Although the end product is essentially the same as grain ethanol, cellulosic ethanol uses waste products such as municipal and agricultural waste and therefore has limited land use impact and does not directly compete with crops used for human consumption.  However, cellulosic ethanol has struggled to commercialize due to a number of complications in its production including feedstock collection and processing.  
+
+The challenges in processing lie in the physical properties of the feedstocks.  Cellulosic ethanol is derived from lignocellulosic sources which have three main components: cellulose, hemicellulose, and lignin.  The cellulose and hemicellulose contain sugar molecules that can be fermented in a similar fashion to the starches found in grains.  Lignin, however, cannot be easily fermented and must be separated from the other organic components for fermentation to take place.  This complication has prevented cellulosic ethanol pathways from going commercial but with recent advances in cellulase enzymes which can break the glycosidic bonds and free the sugar molecules, two plants found in Nevada and Emmetsburg, Iowa are set to go commercial later this year.
+
+However, even with these advances, feedstock collection and transportation still pose challenges to the commercial success of these plants.  In a typical plant, as the output grows the plant is able to take advantage of economies of scale which lower the per unit cost of the end product.  With the corn stover used for each of these upcoming plants however, the cost of transporting the feedstock to the plant grows as production capacity increases.  As shown in Wright and Brown (2007) \cite{Wright and Brown}, this implies that there is an optimal plant size for these biochemical plants since plant costs and feedstock collection costs move in opposite directions as capacity increases.
+
+Transportation costs have been further complicated by the limited willingness of farmers to provide their corn stover to biorefineries.  Corn stover, in some quantity, is typically left on the field following harvest to maintain soil carbon and provide nutrients for the following season.  Studies have shown that at least some portion of the stover can be removed without damaging the soil although this quantity has been controversial.  Due to the uncertainty surrounding the sustainable quantity of removable stover, farmers have been hesitant to participate and feedstock collection costs for the DuPont and Poet plants have proven to be higher than anticipated.  Because of these complications, there is a growing interest in ways in which to lower feedstock costs.
+
+One alternative to the pathway described above is to forego the attempt at fermenting corn stover altogether.  Rather than producing cellulosic ethanol, corn stover can be thermochemically processed to produce hydrocarbons which can be directly mixed with gasoline and diesel without the blending restrictions that an oxygenate such as ethanol would have.  Although the RFS2 does not provide incentives for the production of hydrocarbons, this thermochemical pathway shows promise due to its potential for distributive processing.  
+
+The pathway of fast pyrolysis and subsequent hydroprocessing is one which can be broken down.  Fast pyrolysis decomposes the corn stover at high temperatures to produce a liquid commonly called bio-oil.  Although not suitable for use in the current transportation infrastructure directly, this liquid can be refined through hydroprocessing in a similar fashion to crude oil.  Badger and Fransham (2005) \cite{Badger and Fransham} have argued that fast pyrolysis reactors can be built economically at small scales, which would allow for their use in a distributive processing system.  Rather than hauling corn stover in to a centralized plant, mobile fast pyrolysis plants can be located nearer to the farm to take advantage of the lower transportation costs of the liquid bio-oil.  With transportation costs growing more slowly with increases in capacity, the production system could then take greater advantage of economies of scale to lower the per unit cost of the end product.
+
+This study compares the economic costs of the biochemical pathway used by DuPont and Poet, enzymatic hydrolysis and fermentation, to the costs of the thermochemical pathway of fast pyrolysis and subsequent hydroprocessing.  Three scenarios are compared: a centralized biochemical plant, a centralized thermochemical plant, and a system of farm-sized pyrolyzers with a centralized upgrading facility.
+
+\section{Methodology}
+
+For both the biochemical and thermochemical pathways, the total costs of production can be modelled simply as the sum of the cost of plant operations, $C_p$, the cost of collecting the feedstock and putting at the edge of the field for pickup (the farmgate cost), $C_f$, and the cost of feedstock delivery, $C_d$.  I.e., total cost is given by:
+
+\begin{equation} \tag{1}
+C_t = C_p + C_f + C_d
+\end{equation}
+
+Inherent in each of these costs is the quantity of corn stover available and their distances from the centralized plant or upgrading facility. In order to approximate the production of corn stover on a given acre, I use a modified version of the technique developed by Grahem et al. (2007) \cite{Graham et al} in which corn stover production is a function of corn grain yield.  The conversion in this technique is accomplished through use of the dry weight harvest index, a measurement of the grain weight to the total weight of the plant.  Additionally, since corn grain production is reported in units of bushels an assumption on the dry grain mass of a bushel of corn must be made to convert to units of mass.  Stover production per acre per year is given as:
+
+\begin{equation} \tag{2}
+s_a = y_a * dgm * \frac{1-HI}{HI}
+\end{equation}
+
+where $s_a$ represents the kilograms of stover produced on acre a, $y_a$ represents the bushels of grain produced on acre a, dgm represents the dry grain mass and HI represents the dry weight harvest index.  Note that since HI is the ratio of the weight of the grain to the total weight of the plant, 1-HI is the ratio of the weight of the stover to the total weight of the plant.  In this analysis the dry weight harvest index and dry grain mass are assumed to be the same for each acre although these numbers would certainly vary.
+
+Each of these values is taken from the literature.  The dry weight harvest index is assumed to be 0.5, as reported by Gupta et al (1979) \cite{Gupta} while the dry grain mass value follows from Wilcke and Wyatt (2002) \cite{Wilcke and Wyatt}.  Other values are also present in the literature.  For the dry weight harvest index, Linden et al. (2000) \cite{Linden et al} report an average stover HI of 0.439 for corn production in east central Minnesota over a 14 year period while Montross et al. (2002) \cite{Montross et al} found it to range from 0.47 to 0.52 on an experimental farm in Kentucky.  The impact of these and other assumptions are discussed in the sensitivity analysis.
+
+As mentioned previously, not all produced stover can be sustainably removed and used in the biorefinery.  The portion which can be sustainably removed a particular piece of land is a function of agronomic factors including the carbon content of the soil and soil quality, as well as farm management choices such as the tillage method and crop rotation employed.  Although accounting for this heterogeneity is currently being research by Purdue University, in this analysis I use the simplifying assumption of 30\% which is consistent with the results of Graham et al. (2007) \cite{Graham et al}.  A more detailed analysis is left for later revisions to this project.
+
+The current analysis makes use of the following equation to calculate the amount of stover available from a farmer f:
+
+\begin{equation}\tag{3}
+s_f= r*p_f* \sum_{a=1}^{a_f} (y_a * dgm * \frac{1-HI}{HI})  = \overline{s_a}_f*a_f*r*p_f
+\end{equation}
+
+where $s_f$ represents the stover availabe from farmer f, $\overline{s_a}_f$ represents the average stover production on the acres harvested by farmer f, $a_f$, $r_{c,t}$ represents the proportion of stover that can be sustainable removed in county c for a tillage system t, and $p_f$ is an indicator function where a value of 1 indicates that the farmer is willing to participate in the feedstock collection process and is 0 otherwise.  Since a given farmer's willingness to participate is a poorly understood phenomenon, $p_f$ is given a Bernoulli distribution with parameter $\theta$ to represent the randomness that the biorefinery appears to face.
+
+To match production in Iowa, the likely location of a cellulosic biorefinery, a circle around the biorefinery with an area equal to the state of Iowa is hypothesized.  Farmers are assumed to be uniformly distributed within the circle with the furthest possible distance from the biorefinery equal to the radius of the circle multiplied by a turtuosity factor which accounts for the fact that roads do not run in a straight line from the farm to the biorefinery.  Following from Wright and Brown \cite{Wright and Brown}, the tortuousity factor is assumed to take the value of 1.5 although as they have stated this value can be larger for less developed areas.  
+
+Each farmer is assumed to harvest the Iowa state average 333 acres with the average yield of 171 where these values are chosen to be the 2007 values following from the most recent survey available from the USDA.  Similarly, the proportion of farmers which follow no till and reduced till practices are obtained from the 2007 National Crop Residue Management Survey.  Ridge-till and mulch-till practices are summed into the category of reduced till practices to yield a proportion of 19.6\% reduced tillage to go with 20.7\% of farmers utilizing no-till practices.  The sustainable level of stover that can be removed is assumed to be 0.44 for reduced till practices and 0.81 for no-till practices.  These values are selected as they match the found values for Story County, Iowa which is where the DuPont biochemical plant is located.
+
+Following from a recent survey \cite{Tyndall}, the proportion of farmers willing to participate in the feedstock collection process is assumed to be 0.23.  This matches the proportion of willing respondents in north central Iowa.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{remove}\hlstd{(}\hlkwc{list} \hlstd{=} \hlkwd{ls}\hlstd{())}
+\hlkwd{require}\hlstd{(plyr)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: plyr}}\begin{alltt}
+\hlcom{# average yield calculation}
+
+\hlstd{c} \hlkwb{<-} \hlstr{"/Users/goodrich/Desktop/Career/Iowa State University/Supply.Chain.Development/Iowa_corn_data_2.csv"}
+\hlstd{iowa.data} \hlkwb{<-} \hlkwd{read.table}\hlstd{(}\hlkwc{file} \hlstd{= c,} \hlkwc{header} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{)}
+\hlstd{iowa.acres} \hlkwb{<-} \hlkwd{subset}\hlstd{(iowa.data, Data.Item} \hlopt{==} \hlstr{"CORN, GRAIN - ACRES HARVESTED"}\hlstd{)}
+\hlstd{iowa.production} \hlkwb{<-} \hlkwd{subset}\hlstd{(iowa.data, Data.Item} \hlopt{==} \hlstr{"CORN, GRAIN - PRODUCTION, MEASURED IN BU"}\hlstd{)}
+\hlstd{iowa.acres} \hlkwb{<-} \hlkwd{subset}\hlstd{(iowa.acres,} \hlkwc{select} \hlstd{=} \hlkwd{c}\hlstd{(Year, County, Value))}
+\hlstd{iowa.production} \hlkwb{<-} \hlkwd{subset}\hlstd{(iowa.production,} \hlkwc{select} \hlstd{=} \hlkwd{c}\hlstd{(Year, County, Value))}
+
+\hlstd{iowa.acres}\hlopt{$}\hlstd{Value} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{as.character}\hlstd{(iowa.acres}\hlopt{$}\hlstd{Value))}
+\hlstd{iowa.production}\hlopt{$}\hlstd{Value} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{as.character}\hlstd{(iowa.production}\hlopt{$}\hlstd{Value))}
+\hlkwd{colnames}\hlstd{(iowa.acres)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Year"}\hlstd{,} \hlstr{"County"}\hlstd{,} \hlstr{"Acres"}\hlstd{)}
+\hlkwd{colnames}\hlstd{(iowa.production)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Year"}\hlstd{,} \hlstr{"County"}\hlstd{,} \hlstr{"Production"}\hlstd{)}
+
+\hlstd{annual_production} \hlkwb{<-} \hlkwd{ddply}\hlstd{(iowa.production,} \hlstr{"Year"}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlkwd{sum}\hlstd{(x}\hlopt{$}\hlstd{Production)}
+\hlstd{\})}
+\hlkwd{colnames}\hlstd{(annual_production)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Year"}\hlstd{,} \hlstr{"Production"}\hlstd{)}
+\hlstd{annual_acres} \hlkwb{<-} \hlkwd{ddply}\hlstd{(iowa.acres,} \hlstr{"Year"}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlkwd{sum}\hlstd{(x}\hlopt{$}\hlstd{Acres)}
+\hlstd{\})}
+\hlkwd{colnames}\hlstd{(annual_acres)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Year"}\hlstd{,} \hlstr{"Acres"}\hlstd{)}
+
+\hlstd{iowa.yields} \hlkwb{<-} \hlkwd{join}\hlstd{(annual_acres, annual_production,} \hlkwc{by} \hlstd{=} \hlstr{"Year"}\hlstd{)}
+\hlstd{iowa.yields}\hlopt{$}\hlstd{Avg_Yield} \hlkwb{<-} \hlstd{iowa.yields}\hlopt{$}\hlstd{Production}\hlopt{/}\hlstd{iowa.yields}\hlopt{$}\hlstd{Acres}
+
+\hlcom{# calculating the number of farm operations that harvested corn in Iowa in}
+\hlcom{# 2007}
+\hlstd{o} \hlkwb{<-} \hlstr{"/Users/goodrich/Desktop/Career/Iowa State University/Supply.Chain.Development/Iowa_operations.csv"}
+\hlstd{operations.data} \hlkwb{<-} \hlkwd{read.table}\hlstd{(}\hlkwc{file} \hlstd{= o,} \hlkwc{header} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{)}
+\hlstd{operations.2007} \hlkwb{<-} \hlkwd{subset}\hlstd{(operations.data, Year} \hlopt{==} \hlnum{2007}\hlstd{)}
+\hlstd{op} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{data}\hlstd{) \{}
+    \hlkwd{with}\hlstd{(data,} \hlkwd{sum}\hlstd{(Value))}
+\hlstd{\}}
+
+\hlkwd{require}\hlstd{(plyr)}
+\hlstd{op.dist.2007} \hlkwb{<-} \hlkwd{ddply}\hlstd{(operations.2007,} \hlkwc{.variables} \hlstd{=} \hlstr{"Domain.Category"}\hlstd{,} \hlkwc{.fun} \hlstd{= op)}
+
+\hlcom{# number of operations to generate}
+\hlstd{n} \hlkwb{<-} \hlkwd{sum}\hlstd{(op.dist.2007}\hlopt{$}\hlstd{V1)}
+
+\hlcom{# radius calculation}
+\hlstd{Iowa_area} \hlkwb{=} \hlnum{56271.55}
+\hlstd{r} \hlkwb{=} \hlstd{(Iowa_area}\hlopt{/}\hlstd{pi)}\hlopt{^}\hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)}
+
+\hlcom{# assumed parameters}
+\hlstd{acres} \hlkwb{<-} \hlnum{333}
+\hlstd{HI} \hlkwb{<-} \hlnum{0.5}
+\hlstd{dgm} \hlkwb{<-} \hlnum{21500}
+\hlstd{theta} \hlkwb{<-} \hlnum{0.23}
+\hlstd{w_factor} \hlkwb{<-} \hlnum{1.5}
+\hlstd{yield} \hlkwb{<-} \hlnum{171}
+\hlstd{p_reduced} \hlkwb{<-} \hlnum{0.196}
+\hlstd{p_no} \hlkwb{<-} \hlnum{0.207}
+\hlstd{r_reduced} \hlkwb{<-} \hlnum{0.44}
+\hlstd{r_no} \hlkwb{<-} \hlnum{0.81}
+\hlstd{theta} \hlkwb{<-} \hlnum{0.23}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+In addition to the stover available from each willing farmer, the biorefinery production costs are also dependent on the location of these farmers.  
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{stover} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlnum{NA}\hlstd{,} \hlkwc{nrow} \hlstd{= n,} \hlkwc{ncol} \hlstd{=} \hlnum{8}\hlstd{)}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{n) \{}
+    \hlstd{p} \hlkwb{=} \hlkwd{runif}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{)}
+    \hlstd{stover[i,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{i}  \hlcom{#id}
+    \hlstd{stover[i,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(acres)}  \hlcom{#acres harvested}
+    \hlstd{stover[i,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(yield)}  \hlcom{#yield per acre}
+    \hlstd{stover[i,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{, theta)}  \hlcom{#willingness to participate}
+    \hlstd{stover[i,} \hlnum{5}\hlstd{]} \hlkwb{<-} \hlkwd{round}\hlstd{(}\hlkwd{runif}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{, r} \hlopt{*} \hlstd{w_factor),} \hlnum{5}\hlstd{)}  \hlcom{#distance from plant}
+    \hlkwa{if} \hlstd{(p} \hlopt{<} \hlstd{p_reduced) \{}
+        \hlstd{stover[i,} \hlnum{6}\hlstd{]} \hlkwb{<-} \hlstr{"reduced till"}
+    \hlstd{\}} \hlkwa{else if} \hlstd{(p} \hlopt{>} \hlstd{p_reduced} \hlopt{+} \hlstd{p_no) \{}
+        \hlstd{stover[i,} \hlnum{6}\hlstd{]} \hlkwb{<-} \hlstr{"conservative till"}
+    \hlstd{\}} \hlkwa{else} \hlstd{\{}
+        \hlstd{stover[i,} \hlnum{6}\hlstd{]} \hlkwb{<-} \hlstr{"no till"}
+    \hlstd{\}}
+\hlstd{\}}
+
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{n) \{}
+    \hlkwa{if} \hlstd{(stover[i,} \hlnum{6}\hlstd{]} \hlopt{==} \hlstr{"reduced till"}\hlstd{) \{}
+        \hlstd{stover[i,} \hlnum{7}\hlstd{]} \hlkwb{<-} \hlstd{r_reduced}
+    \hlstd{\}} \hlkwa{else if} \hlstd{(stover[i,} \hlnum{6}\hlstd{]} \hlopt{==} \hlstr{"no till"}\hlstd{) \{}
+        \hlstd{stover[i,} \hlnum{7}\hlstd{]} \hlkwb{<-} \hlstd{r_no}
+    \hlstd{\}} \hlkwa{else} \hlstd{\{}
+        \hlstd{stover[i,} \hlnum{7}\hlstd{]} \hlkwb{<-} \hlnum{0}
+    \hlstd{\}}
+\hlstd{\}}
+
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{n) \{}
+    \hlstd{stover[i,} \hlnum{8}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(stover[i,} \hlnum{2}\hlstd{])} \hlopt{*} \hlkwd{as.numeric}\hlstd{(stover[i,} \hlnum{3}\hlstd{])} \hlopt{*} \hlkwd{as.numeric}\hlstd{(stover[i,}
+        \hlnum{4}\hlstd{])} \hlopt{*} \hlkwd{as.numeric}\hlstd{(stover[i,} \hlnum{7}\hlstd{])}
+\hlstd{\}}
+
+\hlkwd{colnames}\hlstd{(stover)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"ID"}\hlstd{,} \hlstr{"Acres"}\hlstd{,} \hlstr{"Yield"}\hlstd{,} \hlstr{"Participate"}\hlstd{,} \hlstr{"Distance"}\hlstd{,} \hlstr{"Till_Practice"}\hlstd{,}
+    \hlstr{"Till_Coef"}\hlstd{,} \hlstr{"Stover"}\hlstd{)}
+\hlkwd{head}\hlstd{(stover)}
+\end{alltt}
+\begin{verbatim}
+##      ID  Acres Yield Participate Distance    Till_Practice       Till_Coef
+## [1,] "1" "333" "171" "0"         "59.92927"  "conservative till" "0"      
+## [2,] "2" "333" "171" "0"         "192.6468"  "conservative till" "0"      
+## [3,] "3" "333" "171" "0"         "123.7139"  "conservative till" "0"      
+## [4,] "4" "333" "171" "0"         "58.73118"  "conservative till" "0"      
+## [5,] "5" "333" "171" "0"         "124.18103" "conservative till" "0"      
+## [6,] "6" "333" "171" "0"         "115.66534" "conservative till" "0"      
+##      Stover
+## [1,] "0"   
+## [2,] "0"   
+## [3,] "0"   
+## [4,] "0"   
+## [5,] "0"   
+## [6,] "0"
+\end{verbatim}
+\begin{alltt}
+
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+I THEN WANT TO CALCULATE THE ANNUAL AMOUNT OF BIOMASS REQUIRED ACCORDING TO EQUATION 2 IN WRIGHT AND BROWN (2008)
+
+\begin{thebibliography}{25}
+
+\bibitem{Badger and Fransham} Badger, Phillip C., and Peter Fransham. "Use of mobile fast pyrolysis plants to densify biomass and reduce biomass handling costs—A preliminary assessment." Biomass and Bioenergy 30.4 (2006): 321-325.
+
+\bibitem{Graham et al} Graham, Robin Lambert, et al. "Current and potential US corn stover supplies." Agronomy Journal 99.1 (2007): 1-11.
+
+\bibitem{Gupta} Gupta, S. C., C. A. Onstad, and W. E. Larson. "Predicting the effects of tillage and crop residue management on soil erosion." Journal of Soil and Water Conservation 34 (1979).
+
+\bibitem{Hess et al} Hess, J. Richard, Christopher T. Wright, and Kevin L. Kenney. "Cellulosic biomass feedstocks and logistics for ethanol production." Biofuels, Bioproducts and biorefining 1.3 (2007): 181-190.
+
+\bibitem{Iowa Quick Facts} Iowa Agricultural Statistics. 2013.  Available at www.iowaagriculture.gov/quickfacts.asp (accessed 23 April 2014).
+
+\bibitem{Linden et al} Linden, Dennis R., C. Edward Clapp, and Robert H. Dowdy. "Long-term corn grain and stover yields as a function of tillage and residue removal in east central Minnesota." Soil and Tillage Research 56.3 (2000): 167-174.
+
+\bibitem{Montross et al} Montross, M.D., R. Prewitt, S.A. Shearer, T.S. Stombaugh, S.G. McNeil, and S. Sokhansanj.  2002.  Economics of collection and transportation of corn stover.  ASAE Paper 036081 presented at the Annual International Meeting of the American Society of Agricultural Engineers, Las Vegas, NV. 27-31 July 2003.  ASAE, St. Joseph, MI.
+
+\bibitem{Runge} Runge, C. Ford, and Benjamin Senauer. "How biofuels could starve the poor." Foreign affairs (2007): 41-53.
+
+\bibitem{Searchinger} Searchinger, Timothy, et al. "Use of US croplands for biofuels increases greenhouse gases through emissions from land-use change." Science 319.5867 (2008): 1238-1240.
+
+\bibitem{Tyndall} Tyndall, John C., Emily J. Berg, and Joe P. Colletti. "Corn stover as a biofuel feedstock in Iowa’s bio-economy: an Iowa farmer survey." Biomass and bioenergy 35.4 (2011): 1485-1495.
+
+\bibitem{USDA-NASS} USDA-NASS. 2007.  Agricultural statistics data base (quick stats).  Available at www.nass.usda.gov (accessed 23 April 2014).  USDA-NASS, Washington, D.C.
+
+\bibitem{Wilcke and Wyatt} Wilcke, William, and Gary Wyatt. "Grain Storage Tips." Twin Cities, MN, The University of Minnesota Extension Service, the University of Minnesota (2002).
+
+\bibitem{Wright and Brown} Wright, Mark, and Robert C. Brown. "Establishing the optimal sizes of different kinds of biorefineries." Biofuels, Bioproducts and Biorefining 1.3 (2007): 191-200.
+
+\end{thebibliography}
+
+\end{document}
