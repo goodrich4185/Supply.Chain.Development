@@ -2,20 +2,40 @@
 
 \begin{document}
 
-<<Calculating Iowa annual statewide average yield, echo=FALSE>>=
+<<Install RStan>>=
 remove(list=ls())
-# using library inline to compile a C++ code on the fly
-library(inline) 
-library(Rcpp)
-src <- ' 
-  std::vector<std::string> s; 
-  s.push_back("hello");
-  s.push_back("world");
-  return Rcpp::wrap(s);
-'
-hellofun <- cxxfunction(body = src, includes = '', plugin = 'Rcpp', verbose = FALSE)
-cat(hellofun(), '\n')
 
+install.packages("devtools")
+require(devtools)
+
+
+Sys.setenv(MAKEFLAGS = "-j4")
+dev_mode(on=T)
+
+install_rstan <- function() {
+  on.exit(Sys.unsetenv("R_MAKEVARS_USER"))
+  on.exit(Sys.unsetenv("R_MAKEVARS_SITE"), add = TRUE)
+
+  try(remove.packages("rstan"), silent = TRUE)
+  Sys.setenv(R_MAKEVARS_USER = "foobar")
+  Sys.setenv(R_MAKEVARS_SITE = "foobar")
+  options(repos = c(getOption("repos"), 
+          rstan = "http://wiki.rstan-repo.googlecode.com/git/"))
+  install.packages(c("inline", "Rcpp"))
+  install.packages("rstan", type = 'source')
+  library(rstan)
+  set_cppo("fast")
+  if (any(grepl("^darwin", R.version$os, ignore.case = TRUE))) {
+    system("echo 'CC=clang' >> ~/.R/Makevars")
+    system("echo 'CXX=clang++ -stdlib=libstdc++' >> ~/.R/Makevars")
+  }
+  return(invisible(NULL))
+}
+install_rstan()
+
+@
+
+<<alculating Iowa annual statewide average yield, echo=FALSE>>=
 #reading in the data
 c<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/Iowa_corn_data_2.csv"
 iowa.data<-read.table(file=c, header=TRUE,sep=",") 
