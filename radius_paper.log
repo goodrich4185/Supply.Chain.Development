@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  7 MAY 2014 12:20
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  23 JUN 2014 13:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -723,7 +723,7 @@ sr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr
 ocal/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loc
 al/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/
 texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on radius_paper.pdf (10 pages, 644148 bytes).
+Output written on radius_paper.pdf (10 pages, 644155 bytes).
 PDF statistics:
  181 PDF objects out of 1000 (max. 8388607)
  153 compressed objects within 2 object streams

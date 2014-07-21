@@ -1,10 +1,13 @@
-% !TeX program = pdfLaTeX
+Feedstock uncertainty for corn stover to fuel biorefinery
+========================================================
 
-\documentclass{article}
+To get an idea of the distribution of available stover around the biorefinery, estimations of the yield and area harvested are first developed using statewide data available from the National Agricultural Statistics Service.  An important distinction between the data for yields and for area harvested is that individual yield values are available at the county level while county level area harvested values are interval censored.
 
-\begin{document}
+For Iowa yields, data is selected from the years 2004 through 2013.  These years were chosen so that years were comparable.  Prior to this time period, yield increases due to technological advances were more significant.  A scaled beta distribution is fit to the data, with the support determined by the minimum and maximum values which actually occured.
 
-<<alculating Iowa annual statewide average yield, echo=FALSE>>=
+```{r Calculating Iowa annual statewide average yield,fig.width=7,fig.height=6}
+remove(list=ls())
+
 #reading in the data
 c<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/Iowa_corn_data_2.csv"
 iowa.data<-read.table(file=c, header=TRUE,sep=",") 
@@ -34,9 +37,11 @@ alpha<-beta*mu/(1-mu)
 
 hist(iowa.yield$trans,breaks=16,main="Histogram of Transformed Yield Values",freq=FALSE,xlab="Transformed yield")
 curve(dbeta(x,alpha,beta),add=TRUE,col="blue",lwd=3)
-@
+```
 
-<<Finding prior values for lognormal prior parameters,tidy=FALSE,echo=FALSE,error=FALSE,message=FALSE>>=
+An initial investigation of the statewide values for farmers harvested between 0 and 25 acres, 25 and 100 acres, 100 and 250 acres, 250 and 500 acres, 500 and 1000 acres, and more than 1000 acres indicates that the distribution is unimodal and skewed right.  This suggests the appropriateness of a $lognormal(\mu,\sigma^2)$ distribution whose parameters can be found through the use of a Gibb sampler.  To find appropriate values for the prior distributions on the lognormal parameters a percentile matching technique is first used.  In particular, excel's solver is used to find the values for $\mu$ and $\sigma^2$ which minimize the sum of the squared differences between the percentile of the data and the percentile of the distribution subject to the constraint that the mean of the distribution equals the statewide mean area harvested.
+
+```{r Finding prior values for lognormal prior parameters}
 #reading in the farm size data
 o<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/Iowa_operations.csv"
 operations.data<-read.table(file=o, header=TRUE,sep=",")
@@ -98,35 +103,16 @@ model_check[,5]<-round((as.numeric(model_check[,3]) - as.numeric(model_check[,4]
 
 model_check
 mean(acres) #actual mean is 333
-@
+```
 
-<<Sampler using multinomial model for data>>=
+Since this percentile matching technique only provides point estimates, a Gibbs sampler is used to estimate the uncertainty of $\mu$ and $\sigma^2$.
 
-require(rjags)
-load.module("bugs")
-model= "
-model{
-  for(i in 1:6){
-  y[i]~dmulti(p[i],n[i])
-  p[i]<-plnorm(u[i],mu,1/sigma2)-plnorm(l[i],mu,1/sigma2)
-  }
-
-mu~dnorm(log(155.8869),log(50))
-sigma2~dgamma(2,log(3.428357))
-}"
-u<-c(25,100,250,500,1000,10^6)
-l=c(0,25,100,250,500,1000)
-n=c(504,13122,13962,10149,5779,2079)
-data<-list(n=n,y=c(1,2,3,4,5,6),l=l,u=u)
-m=jags.model(textConnection(model),data,quiet=TRUE)
-@
-
-<<Sampler,echo=FALSE,error=FALSE,message=FALSE>>=
+```{r Gibbs sampler}
 require(rjags)
 load.module("bugs")
 area_dummy<-as.data.frame(c(rep(0,504),rep(1,13122),rep(2,13962),rep(3,10149),rep(4,5779),rep(5,2079)))
 colnames(area_dummy)<-"dummy"
-area_dummy$p<-rep(NA,nrow(area_dummy)) 
+area_dummy$na<-rep(NA,nrow(area_dummy)) 
 
 model= "
 model{
@@ -162,17 +148,16 @@ log_mean<-mean(unlist(results[,"mu"]))
 log_mean_var<-var(unlist(results[,"mu"]))
 mean_moments<-list(log_mean,log_mean_var,n=iter)
 
-#mean credible interval
-cred_int = function(p, prob=0.95) {p$log_mean+c(-1,1)*qt(1-(1-prob)/2,p$n-1)*sqrt(p$log_mean_var/p$n)}
-cred_int(mean_moments)
-
+#variance
 log_var<-mean(unlist(results[,"sigma2"]))
 log_sd<-sqrt(log_var)
+
+#move towards original scale--done incorrectly.  I need to move this within the sampler
 acres_mean<-exp(log_mean+log_var/2)
 acres_sd<-(exp(2*log_mean+2*log_var)-exp(2*log_mean+log_var))^0.5
-@
+```
 
-<<Data simulation,echo=FALSE,message=FALSE,error=FALSE>>=
+```{r Data simulation}
 #radius calculation
 Iowa_area=56271.55
 r=(Iowa_area/pi)^(1/2)
@@ -331,8 +316,4 @@ for(i in 1:nrow(stover_data0)){
 }
 stover_data2$Cap_Mil_high<-stover_data2$Capacity_high/1000000
 plot(stover_data2$Cap_Mil_high,stover_data2$V1,ylab="Distance (miles)",xlab="Capacity (million gge)",ylim=c(0,50),xlim=c(0,100),main="Low Participation Level, High Production Efficiency",col="blue")
-@
-
-
-
-\end{document}
+```

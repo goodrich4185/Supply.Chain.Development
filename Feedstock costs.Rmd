@@ -1,0 +1,197 @@
+Feedstock Delivery Costs
+========================================================
+
+This document explores the feedstock costs of a biorefinery which converts corn stover to transportation fuels.  I begin with a setup in which the corn stover is harvested, baled, stacked at the edge of the field, then transported to the biorefinery.  I.e., satellite storage locations are not yet considered.  These costs are broken down into the following categories:
+
+1. Harvesting
+2. Baling
+3. Transportation to field edge stack
+4. Storage
+5. Transportation to biorefinery
+
+## Harvesting and Baling Costs #
+### Multi-pass System #
+
+There are several types of machinery that can be used to harvest corn stover.
+
+Option 1: combine windrow
+- spreaders on the back of a combine are disengaged to allow material other than grain to drop directly behind the combine at the time of grain harvest
+- produces a windrow with approximately 0.75 ton/acre of material
+
+Option 2: bar or wheel rake
+- use rotating parallel bars/wheels with mounted teeth to sweep corn stover into a center windrow
+- producees a windrow between 1.25-2 tons/acre of material
+
+Option 3: windrowing stalk choppers
+- use a series of rotating knives to chop or shred corn stalks.  Commonly used in the corn belt to help break down stalk material, particularly in continuous corn production.
+- because the stalk choppers have less opportunity to engage the ground, the soil contamination and ash level of corn stover produced with a stalk chopper is generally less than with the bar or wheel rakes.
+
+NOTE: Option 3 is the best for a cellulosic ethanol plant due to the decreased soil contamination and ash level.  I am not sure of how ash and soil levels impact pyrolysis.  This opens the door for options 1 and 2.
+
+Darr has assumed windrow stalk choppers used at a production rate of 13 dry tons per hour.  The summary of production costs include:
+
+Tractor: $25/hr.  $1.923077/ton <br />
+Labor: $14/hr.  $1.076923/ton <br />
+Fuel: $32.20/hr.  $2.476923/ton.  This follows from assumptions of 8 gal/hr, $3.50/gal, and 15% lubrication cost. <br />
+Windrower: $27.50/hr. $2.115385/ton.  This follows from assumptions of 30 harvest days/yr, $30,000 initial cost, 4 year life. <br />
+Overhead: $1.52/ton.  Follows from 20% overhead cost assumption. <br />
+
+Example of stalk chopper: http://www.wisfarmer.com/leadstories/175612681.html
+
+```{r}
+#Inputs
+harvest_days<-30 #days to harvest between grain harvest and worsening weather
+harvest_hr_day<-10.5 #average hours per day in which to harvest
+rate<-13 #production of dry tons per hour
+price_gasoline <-3.50 #dollars per gallon for gasoline
+labor_hourly<-14 #hourly charge for labor --presumably 1 employee
+
+tractor_hourly<-25 #hourly charge of running the tractor --rental rate
+harvest_fuel_hourly<-8 #gallons consumed per hour
+lubrication<-0.15 #percent cost for lubricating the equipment
+
+windrower_init<-30000 #initial cost of purchasing the windrower
+windrower_life<-4 #assumed life in years of the windrower
+
+overhead<-0.2 #percent overhead associated with management costs
+
+#Outputs (per ton)
+cost_harvest_tractor<-tractor_hourly/rate
+cost_harvest_labor<-labor_hourly/rate
+cost_harvest_fuel<-harvest_fuel_hourly*price_gasoline*(1+lubrication)/rate
+cost_harvest_windrower<-(windrower_init/(windrower_life*harvest_days*harvest_hr_day))/rate
+cost_harvest_overhead<-(cost_harvest_tractor+cost_harvest_labor+cost_harvest_fuel+cost_harvest_windrower)*overhead
+(total_cost_harvest<-cost_harvest_tractor+cost_harvest_labor+cost_harvest_fuel+cost_harvest_windrower+cost_harvest_overhead)
+```
+
+Darr uses similar baling cost categories as for harvesting but with the addition of string used to tie the balers.  He assumes the baler operates at 20 dry tons per hour.  The summary of production costs include:
+
+Tractor: $45/hr.  $2.25/ton. <br />
+Labor: $18/hr. $0.90/ton. <br />
+Fuel: $48.30/hr. $2.42/ton.  Assumes 12 gal/hr, $3.50/gal, 15% lubrication cost. <br />
+Baler: $76.60/hr. $3.83/ton.  Assumes 30 harvest days/yr.  $120,000 initial cost, 6 yr life. <br />
+String: $1.38/ton. <br />
+Overhead: $2.15/ton.  Assumes 20% overhead associated with management costs.  <br />
+
+```{r}
+#Inputs
+tractor_bale_hourly<-45 #rental rate of tractor pulling the baler
+labor_baler_hourly<-18 #hourly rate of the baling employee
+rate_baler<-20 #dry tons baled per hour
+baler_fuel_hourly<-12 #gallons consumed per hour by baler running at 20 dry tons per hour
+
+baler_init<-120000 #initial cost of baler
+baler_life<-6 #assumed years of life for baler
+
+cost_bale_string<-1.38
+
+#Outputs (per ton)
+cost_bale_tractor<-tractor_bale_hourly/rate_baler
+cost_bale_labor<-labor_baler_hourly/rate_baler
+cost_bale_fuel<-(baler_fuel_hourly*price_gasoline*(1+lubrication))/rate_baler
+cost_bale_baler<-(baler_init/(baler_life*harvest_days*harvest_hr_day))/rate_baler
+cost_bale_overhead<-(cost_bale_tractor+cost_bale_labor+cost_bale_fuel+cost_bale_baler+cost_bale_string)*overhead
+(total_cost_bale<-cost_bale_tractor+cost_bale_labor+cost_bale_fuel+cost_bale_baler+cost_bale_string+cost_bale_overhead)
+```
+
+### Single pass system #
+
+Instead of going through the field twice to first create a windrow and then bale the material, stover can be harvested and baled simultaneously.  The cost summary provided by Darr is given as:
+
+Combine: $5.83/ton.  This follows from the assumption that a custom combine in Iowa costs $35/acre with capacity of 15 acres per hour and the single pass harvesting system will reduce the productivity of the combine by 20%.  This is a loss of $105 per hour which is distributed across the 12 acre capacity following the introduction of the harvesting system.  I.e., $8.75 per acre is charged to the biomass harvest.  Assuming a harvest rate of 1.5 ton/acre, this yields the $5.83/ton cost. <br />
+Fuel: $1.61/ton.  Assumes 0.4 gal/ton, $3.50/gal, and 15% lubrication cost. <br />
+Baler: $53.45/hr. $2.97/ton.  Assumes 30 harvest days/year, $120,000 initial cost, 6 year life. <br />
+String: $1.38/ton
+Overhead: $2.36/ton.  Assumes 20% overhead cost.
+
+```{r}
+#Inputs
+rate_custom_combine<-35 #per acre cost of custom combine
+capacity_custom_combine<-15 #max acres per hour of custom combine
+prod_reduction<-0.20 #percent productivity reduction of combine associated with addition of harvesting system for stover
+
+singlepass_init<-120000 #initial cost of single pass harvesting system
+singlepass_life<-6 #assumed years of life for single pass harvesting system
+rate_singlepass<-1.5 #tons/acre rate of single pass harvesting system
+rate_fuel_singlepass<-0.4 #gallons of fuel used per ton of biomass collected
+
+#Outputs (per ton)
+cost_combine_singlepass<-(rate_custom_combine*prod_reduction)/(rate_singlepass*(1-prod_reduction))
+cost_fuel_singlepass<-rate_fuel_singlepass*price_gasoline*(1+lubrication)
+cost_baler_singlepass<-singlepass_init/(singlepass_life*harvest_days*harvest_hr_day*rate_singlepass*(1-prod_reduction)*capacity_custom_combine)
+cost_overhead_singlepass<-(cost_combine_singlepass+cost_fuel_singlepass+cost_baler_singlepass+cost_bale_string)*overhead
+(total_cost_singlepass<-cost_combine_singlepass+cost_fuel_singlepass+cost_baler_singlepass+cost_bale_string+cost_overhead_singlepass)
+```
+
+## Bale Collection #
+
+Commercial collection systems can field stack 25 dry tons of biomass per hour.  Darr assumes six bale high field edge stacks.  The cost summary is given as:
+
+Tractor: $42/hr. $1.68/ton. --rental rate. <br />
+Labor: $18/hr.  $0.72/ton. <br />
+Fuel: $40.25/hr.  $1.61/ton.  From assumption of 10 gal/hr, $3.50/gal and 15% lubrication cost <br />
+Wagon: $42.13/hr.  $1.69/ton.  Assumes 30 harvest days/hear, $80,000 initial cost, 6 year life. <br />
+Overhead: $1.14/ton.  Assumes 20% overhead cost.  <br />
+
+```{r}
+#Inputs
+tractor_stack_hourly<-42 #hourly rental rate of tractor used to move bales to stack
+rate_stack<-25 #dry tons field stacked per hour
+labor_stack_hourly<-18 #hourly wage of stacking employee
+stack_fuel_hourly<-10 #gallons consumed per hour by stacking system
+
+stack_init<-80000 #initial cost of wagon
+stack_life<-6 #assumed life of wagon
+
+#Outputs (per ton)
+cost_tractor_stack<-tractor_stack_hourly/rate_stack
+cost_labor_stack<-labor_stack_hourly/rate_stack
+cost_fuel_stack<-stack_fuel_hourly*price_gasoline*(1+lubrication)/rate_stack
+cost_wagon_stack<-stack_init/(stack_life*harvest_days*harvest_hr_day)/rate_stack
+cost_overhead_stack<-(cost_tractor_stack+cost_labor_stack+cost_fuel_stack+cost_wagon_stack)*overhead
+(total_cost_stack<-cost_tractor_stack+cost_labor_stack+cost_fuel_stack+cost_wagon_stack+cost_overhead_stack)
+```
+
+## Transportation #
+
+Darr shows that with 3 by 4 by 8 ft bales, the optimal satellite storage transportation distance is less than 8 miles.  Under these conditions the optimally configured harvest transportation team consists of three semi-trucks per field loading team.  The total cost of operation is around $9.50 per dry ton delivered to a satellite storage facility.  The cost of delivering from the satellite storage facility to the biorefinery approaches $7.00 per dry ton.
+
+I SHOULD JUST LOOK UP THE COMMERCIAL RENTAL RATE FOR THIS PART.
+
+## Feedstock Availability #
+
+The amount of stover produced on a given acre can be estimated from the corn grain production on that acre.  Following from Graham et al. (2008) as well as from the talks with DuPont, the relationship can be defined as:
+
+Stover (Mg per acre per year) = yield (bu corn per acre per year) 
+                                * avg dry grain mass of a bushel of corn (kg corn per bu) 
+                                * dry weight harvest index / (1 - dry weight harvest index)
+                                * 1000 kg per Mg
+                                
+Next: find avg yield from NASS.  Assume uniformly distributed producers around the plant.  Look into the proportion that have continuous corn and assume a participation rate for these producers.  Assume a different (lower) participation rate for farmers which have a corn/soybean rotation.
+
+Stover production per acre
+```{r}
+#Assumptions
+yield<-165 #bu/acre
+dgm<-21.5 #kg/bu (dry grain mass) --from Wilcke and Wyatt (2002)
+HI<-0.5 #kg stover/kg plant --from Gupta et al. (1979)
+
+#Stover production per acre
+stover_acre<-yield*dgm*HI/(1-HI)
+```
+
+Acres per operation
+```{r}
+#Assumptions
+farm_size<-333 #avg acreage per farm
+```
+
+## Feedstock Requirements #
+
+Feedstock required as a function of production output follows from Wright and Brown's 2008 paper "Distributed processing of biomass to bio-oil for subesquent production of Fischer-Tropsch liquids".
+
+The relationship between feedstock required and production output can be parameterized as:
+
+$F*E_{stover}*\eta_{BTL}=M*E_g$
+
+where F is the required quantity of corn stover (kg), M is the desired output (gge), $E_{stover}$ is the energy content of stover, $E_g$ is the energy content of gasoline, and $\eta_{BTL}$ is the efficiency of the biomass to liquid process.

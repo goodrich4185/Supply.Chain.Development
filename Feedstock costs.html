@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>Feedstock Delivery Costs</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+</head>
+
+<body>
+<h1>Feedstock Delivery Costs</h1>
+
+<p>This document explores the feedstock costs of a biorefinery which converts corn stover to transportation fuels.  I begin with a setup in which the corn stover is harvested, baled, stacked at the edge of the field, then transported to the biorefinery.  I.e., satellite storage locations are not yet considered.  These costs are broken down into the following categories:</p>
+
+<ol>
+<li>Harvesting</li>
+<li>Baling</li>
+<li>Transportation to field edge stack</li>
+<li>Storage</li>
+<li>Transportation to biorefinery</li>
+</ol>
+
+<h2>Harvesting and Baling Costs</h2>
+
+<h3>Multi-pass System</h3>
+
+<p>There are several types of machinery that can be used to harvest corn stover.</p>
+
+<p>Option 1: combine windrow</p>
+
+<ul>
+<li>spreaders on the back of a combine are disengaged to allow material other than grain to drop directly behind the combine at the time of grain harvest</li>
+<li>produces a windrow with approximately 0.75 ton/acre of material</li>
+</ul>
+
+<p>Option 2: bar or wheel rake</p>
+
+<ul>
+<li>use rotating parallel bars/wheels with mounted teeth to sweep corn stover into a center windrow</li>
+<li>producees a windrow between 1.25-2 tons/acre of material</li>
+</ul>
+
+<p>Option 3: windrowing stalk choppers</p>
+
+<ul>
+<li>use a series of rotating knives to chop or shred corn stalks.  Commonly used in the corn belt to help break down stalk material, particularly in continuous corn production.</li>
+<li>because the stalk choppers have less opportunity to engage the ground, the soil contamination and ash level of corn stover produced with a stalk chopper is generally less than with the bar or wheel rakes.</li>
+</ul>
+
+<p>NOTE: Option 3 is the best for a cellulosic ethanol plant due to the decreased soil contamination and ash level.  I am not sure of how ash and soil levels impact pyrolysis.  This opens the door for options 1 and 2.</p>
+
+<p>Darr has assumed windrow stalk choppers used at a production rate of 13 dry tons per hour.  The summary of production costs include:</p>
+
+<p>Tractor: $25/hr.  $1.923077/ton <br />
+Labor: $14/hr.  $1.076923/ton <br />
+Fuel: $32.20/hr.  $2.476923/ton.  This follows from assumptions of 8 gal/hr, $3.50/gal, and 15% lubrication cost. <br />
+Windrower: $27.50/hr. $2.115385/ton.  This follows from assumptions of 30 harvest days/yr, $30,000 initial cost, 4 year life. <br />
+Overhead: $1.52/ton.  Follows from 20% overhead cost assumption. <br /></p>
+
+<p>Example of stalk chopper: <a href="http://www.wisfarmer.com/leadstories/175612681.html">http://www.wisfarmer.com/leadstories/175612681.html</a></p>
+
+<pre><code class="r"># Inputs
+harvest_days &lt;- 30  #days to harvest between grain harvest and worsening weather
+harvest_hr_day &lt;- 10.5  #average hours per day in which to harvest
+rate &lt;- 13  #production of dry tons per hour
+price_gasoline &lt;- 3.5  #dollars per gallon for gasoline
+labor_hourly &lt;- 14  #hourly charge for labor --presumably 1 employee
+
+tractor_hourly &lt;- 25  #hourly charge of running the tractor --rental rate
+harvest_fuel_hourly &lt;- 8  #gallons consumed per hour
+lubrication &lt;- 0.15  #percent cost for lubricating the equipment
+
+windrower_init &lt;- 30000  #initial cost of purchasing the windrower
+windrower_life &lt;- 4  #assumed life in years of the windrower
+
+overhead &lt;- 0.2  #percent overhead associated with management costs
+
+# Outputs (per ton)
+cost_harvest_tractor &lt;- tractor_hourly/rate
+cost_harvest_labor &lt;- labor_hourly/rate
+cost_harvest_fuel &lt;- harvest_fuel_hourly * price_gasoline * (1 + lubrication)/rate
+cost_harvest_windrower &lt;- (windrower_init/(windrower_life * harvest_days * harvest_hr_day))/rate
+cost_harvest_overhead &lt;- (cost_harvest_tractor + cost_harvest_labor + cost_harvest_fuel + 
+    cost_harvest_windrower) * overhead
+(total_cost_harvest &lt;- cost_harvest_tractor + cost_harvest_labor + cost_harvest_fuel + 
+    cost_harvest_windrower + cost_harvest_overhead)
+</code></pre>
+
+<pre><code>## [1] 8.77
+</code></pre>
+
+<p>Darr uses similar baling cost categories as for harvesting but with the addition of string used to tie the balers.  He assumes the baler operates at 20 dry tons per hour.  The summary of production costs include:</p>
+
+<p>Tractor: $45/hr.  $2.25/ton. <br />
+Labor: $18/hr. $0.90/ton. <br />
+Fuel: $48.30/hr. $2.42/ton.  Assumes 12 gal/hr, $3.50/gal, 15% lubrication cost. <br />
+Baler: $76.60/hr. $3.83/ton.  Assumes 30 harvest days/yr.  $120,000 initial cost, 6 yr life. <br />
+String: $1.38/ton. <br />
+Overhead: $2.15/ton.  Assumes 20% overhead associated with management costs.  <br /></p>
+
+<pre><code class="r"># Inputs
+tractor_bale_hourly &lt;- 45  #rental rate of tractor pulling the baler
+labor_baler_hourly &lt;- 18  #hourly rate of the baling employee
+rate_baler &lt;- 20  #dry tons baled per hour
+baler_fuel_hourly &lt;- 12  #gallons consumed per hour by baler running at 20 dry tons per hour
+
+baler_init &lt;- 120000  #initial cost of baler
+baler_life &lt;- 6  #assumed years of life for baler
+
+cost_bale_string &lt;- 1.38
+
+# Outputs (per ton)
+cost_bale_tractor &lt;- tractor_bale_hourly/rate_baler
+cost_bale_labor &lt;- labor_baler_hourly/rate_baler
+cost_bale_fuel &lt;- (baler_fuel_hourly * price_gasoline * (1 + lubrication))/rate_baler
+cost_bale_baler &lt;- (baler_init/(baler_life * harvest_days * harvest_hr_day))/rate_baler
+cost_bale_overhead &lt;- (cost_bale_tractor + cost_bale_labor + cost_bale_fuel + 
+    cost_bale_baler + cost_bale_string) * overhead
+(total_cost_bale &lt;- cost_bale_tractor + cost_bale_labor + cost_bale_fuel + cost_bale_baler + 
+    cost_bale_string + cost_bale_overhead)
+</code></pre>
+
+<pre><code>## [1] 12.14
+</code></pre>
+
+<h3>Single pass system</h3>
+
+<p>Instead of going through the field twice to first create a windrow and then bale the material, stover can be harvested and baled simultaneously.  The cost summary provided by Darr is given as:</p>
+
+<p>Combine: $5.83/ton.  This follows from the assumption that a custom combine in Iowa costs $35/acre with capacity of 15 acres per hour and the single pass harvesting system will reduce the productivity of the combine by 20%.  This is a loss of $105 per hour which is distributed across the 12 acre capacity following the introduction of the harvesting system.  I.e., $8.75 per acre is charged to the biomass harvest.  Assuming a harvest rate of 1.5 ton/acre, this yields the $5.83/ton cost. <br />
+Fuel: $1.61/ton.  Assumes 0.4 gal/ton, $3.50/gal, and 15% lubrication cost. <br />
+Baler: $53.45/hr. $2.97/ton.  Assumes 30 harvest days/year, $120,000 initial cost, 6 year life. <br />
+String: $1.38/ton
+Overhead: $2.36/ton.  Assumes 20% overhead cost.</p>
+
+<pre><code class="r"># Inputs
+rate_custom_combine &lt;- 35  #per acre cost of custom combine
+capacity_custom_combine &lt;- 15  #max acres per hour of custom combine
+prod_reduction &lt;- 0.2  #percent productivity reduction of combine associated with addition of harvesting system for stover
+
+singlepass_init &lt;- 120000  #initial cost of single pass harvesting system
+singlepass_life &lt;- 6  #assumed years of life for single pass harvesting system
+rate_singlepass &lt;- 1.5  #tons/acre rate of single pass harvesting system
+rate_fuel_singlepass &lt;- 0.4  #gallons of fuel used per ton of biomass collected
+
+# Outputs (per ton)
+cost_combine_singlepass &lt;- (rate_custom_combine * prod_reduction)/(rate_singlepass * 
+    (1 - prod_reduction))
+cost_fuel_singlepass &lt;- rate_fuel_singlepass * price_gasoline * (1 + lubrication)
+cost_baler_singlepass &lt;- singlepass_init/(singlepass_life * harvest_days * harvest_hr_day * 
+    rate_singlepass * (1 - prod_reduction) * capacity_custom_combine)
+cost_overhead_singlepass &lt;- (cost_combine_singlepass + cost_fuel_singlepass + 
+    cost_baler_singlepass + cost_bale_string) * overhead
+(total_cost_singlepass &lt;- cost_combine_singlepass + cost_fuel_singlepass + cost_baler_singlepass + 
+    cost_bale_string + cost_overhead_singlepass)
+</code></pre>
+
+<pre><code>## [1] 14.82
+</code></pre>
+
+<h2>Bale Collection</h2>
+
+<p>Commercial collection systems can field stack 25 dry tons of biomass per hour.  Darr assumes six bale high field edge stacks.  The cost summary is given as:</p>
+
+<p>Tractor: $42/hr. $1.68/ton. &ndash;rental rate. <br />
+Labor: $18/hr.  $0.72/ton. <br />
+Fuel: $40.25/hr.  $1.61/ton.  From assumption of 10 gal/hr, $3.50/gal and 15% lubrication cost <br />
+Wagon: $42.13/hr.  $1.69/ton.  Assumes 30 harvest days/hear, $80,000 initial cost, 6 year life. <br />
+Overhead: $1.14/ton.  Assumes 20% overhead cost.  <br /></p>
+
+<pre><code class="r"># Inputs
+tractor_stack_hourly &lt;- 42  #hourly rental rate of tractor used to move bales to stack
+rate_stack &lt;- 25  #dry tons field stacked per hour
+labor_stack_hourly &lt;- 18  #hourly wage of stacking employee
+stack_fuel_hourly &lt;- 10  #gallons consumed per hour by stacking system
+
+stack_init &lt;- 80000  #initial cost of wagon
+stack_life &lt;- 6  #assumed life of wagon
+
+# Outputs (per ton)
+cost_tractor_stack &lt;- tractor_stack_hourly/rate_stack
+cost_labor_stack &lt;- labor_stack_hourly/rate_stack
+cost_fuel_stack &lt;- stack_fuel_hourly * price_gasoline * (1 + lubrication)/rate_stack
+cost_wagon_stack &lt;- stack_init/(stack_life * harvest_days * harvest_hr_day)/rate_stack
+cost_overhead_stack &lt;- (cost_tractor_stack + cost_labor_stack + cost_fuel_stack + 
+    cost_wagon_stack) * overhead
+(total_cost_stack &lt;- cost_tractor_stack + cost_labor_stack + cost_fuel_stack + 
+    cost_wagon_stack + cost_overhead_stack)
+</code></pre>
+
+<pre><code>## [1] 6.844
+</code></pre>
+
+<h2>Transportation</h2>
+
+<p>Darr shows that with 3 by 4 by 8 ft bales, the optimal satellite storage transportation distance is less than 8 miles.  Under these conditions the optimally configured harvest transportation team consists of three semi-trucks per field loading team.  The total cost of operation is around $9.50 per dry ton delivered to a satellite storage facility.  The cost of delivering from the satellite storage facility to the biorefinery approaches $7.00 per dry ton.</p>
+
+<p>I SHOULD JUST LOOK UP THE COMMERCIAL RENTAL RATE FOR THIS PART.</p>
+
+<h2>Feedstock Availability</h2>
+
+<p>The amount of stover produced on a given acre can be estimated from the corn grain production on that acre.  Following from Graham et al. (2008) as well as from the talks with DuPont, the relationship can be defined as:</p>
+
+<p>Stover (Mg per acre per year) = yield (bu corn per acre per year) 
+                                * avg dry grain mass of a bushel of corn (kg corn per bu) 
+                                * dry weight harvest index / (1 - dry weight harvest index)
+                                * 1000 kg per Mg</p>
+
+<p>Next: find avg yield from NASS.  Assume uniformly distributed producers around the plant.  Look into the proportion that have continuous corn and assume a participation rate for these producers.  Assume a different (lower) participation rate for farmers which have a corn/soybean rotation.</p>
+
+<p>Stover production per acre</p>
+
+<pre><code class="r"># Assumptions
+yield &lt;- 165  #bu/acre
+dgm &lt;- 21.5  #kg/bu (dry grain mass) --from Wilcke and Wyatt (2002)
+HI &lt;- 0.5  #kg stover/kg plant --from Gupta et al. (1979)
+
+# Stover production per acre
+stover_acre &lt;- yield * dgm * HI/(1 - HI)
+</code></pre>
+
+<p>Acres per operation</p>
+
+<pre><code class="r"># Assumptions
+farm_size &lt;- 333  #avg acreage per farm
+</code></pre>
+
+<h2>Feedstock Requirements</h2>
+
+<p>Feedstock required as a function of production output follows from Wright and Brown&#39;s 2008 paper &ldquo;Distributed processing of biomass to bio-oil for subesquent production of Fischer-Tropsch liquids&rdquo;.</p>
+
+<p>The relationship between feedstock required and production output can be parameterized as:</p>
+
+<p>\( F*E_{stover}*\eta_{BTL}=M*E_g \)</p>
+
+</body>
+
+</html>
+
