@@ -1,0 +1,519 @@
+---
+title: "Supply Chain Coding Framework"
+author: "Ryan Goodrich"
+date: "August 22, 2014"
+output: html_document
+runtime: shiny
+---
+
+```{r Current Model,fig.width=7,fig.height=6}
+rm(list=ls())
+##Nomenclature##
+#n: number of operations
+#A: considered area
+#r: radius of area
+#a: acres harvested per operation
+#theta: Bernoulli distribution parameter
+
+#Assumptions
+n=15872 #tuned to the number of operations in North Central Iowa in 2012 according to NASS
+A=17963 #tuned to area of North Central Iowa as defined by Tyndall
+theta=0.23 #parameter for Bernoulli distribution
+
+#Implied variables
+r=sqrt(A)/2
+
+# Randomly generating farms
+farms<-matrix(data=NA,nrow=n,4)
+colnames(farms)<-c("ID","XCoord","YCoord","Distance")
+
+for(i in 1:n){
+  farms[i,"ID"]<-i
+  farms[i,"XCoord"]<-runif(1,-r,r)
+  farms[i,"YCoord"]<-runif(1,-r,r)
+}
+
+farms<-as.data.frame(farms)
+farms$Distance<-sqrt(farms$XCoord^2+farms$YCoord^2)
+
+#### Yield Distribution ####
+#reading in the data
+c<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/Iowa_corn_data_2.csv"
+iowa.data<-read.table(file=c, header=TRUE,sep=",") 
+
+#extracting yield data from 2004-2013
+iowa.yield<-subset(iowa.data,Data.Item=="CORN, GRAIN - YIELD, MEASURED IN BU / ACRE")
+iowa.yield<-subset(iowa.yield,Year>2004)
+iowa.yield<-subset(iowa.yield,select=c(Year,County, Value))
+
+#converting values to numeric
+iowa.yield$Value<-as.numeric(as.character(iowa.yield$Value))
+
+#calculating the support of yield variable
+l<-min(iowa.yield$Value)
+u<-max(iowa.yield$Value)
+
+#transform data to standard beta distribution
+iowa.yield$trans<-(iowa.yield$Value-l)/(u-l)
+
+#method of moments estimation
+mu<-mean(iowa.yield$trans)
+s2<-var(iowa.yield$trans)
+beta<-mu*(1-mu)^2/s2 - (1-mu)
+alpha<-beta*mu/(1-mu)
+
+hist(iowa.yield$trans,breaks=16,main="Histogram of Transformed Yield Values",freq=FALSE,xlab="Yield")
+curve(dbeta(x,alpha,beta),add=TRUE,col="blue",lwd=3)
+
+#### Yield Generation and Stover Production Calculations ####
+#Stover production per acre
+stover.acre=function(yield,dgm,HI){
+  yield*dgm*HI/(1-HI)
+}
+
+#Assumptions
+dgm<-21.5 #kg/bu from Wilcke and Wyatt (2002)
+HI<-0.5 #ratio of grain mass to total plant mass from Gupta (1979), DuPont discussion
+
+#Generating Yields
+farms$AvgYield<-0
+for(i in 1:nrow(farms)){
+  farms[i,"AvgYield"]<-l+(u-l)*rbeta(1,alpha,beta)}
+
+#Calculating average stover production
+farms$AvgStover<-0
+for(i in 1:nrow(farms)){
+  farms[i,"AvgStover"]<-stover.acre(farms[i,"AvgYield"],dgm,HI)
+}
+
+#### Partitioning out only considered, participating farms ####
+
+#Assumptions
+stover.requirement<-0 #kg per acre required for consideration
+
+# Selecting only farms within given radius around the centralized plant
+farms.considered<-subset(farms,Distance<r)
+
+# Partitioning out only farms which reach the stover production requirement
+farms.considered<-subset(farms.considered,farms.considered$AvgStover>stover.requirement)
+
+# Partitioning out the farms which have agreed to provide their stover
+farms.considered$Participate<-0
+for(i in 1:nrow(farms.considered)){
+  farms.considered[i,"Participate"]<-rbinom(1,1,theta)
+}
+part.farms<-subset(farms.considered,Participate==1)
+
+#### Farm locations ####
+require(ggplot2)
+
+##Partitioning out non-participating farms##
+nonpart.farms<-subset(farms.considered,Participate==0)
+
+##Partitioning out farms not considered
+nonconsidered.farms<-subset(farms,Distance>r|AvgStover<stover.requirement)
+
+##Creating array for biorefinery location##
+refine.locations<-matrix(data=NA,nrow=1,3)
+colnames(refine.locations)<-c("Site","XCoord","YCoord")
+refine.locations<-as.data.frame(refine.locations)
+refine.locations[1,"Site"]<-"Central Facility"
+refine.locations[1,"XCoord"]<-0
+refine.locations[1,"YCoord"]<-0
+
+##Drawing the circle##
+circleFun <- function(center = c(0,0),diameter = 1, npoints = 10000){
+    rr = diameter / 2
+    tt <- seq(0,2*pi,length.out = npoints)
+    xx <- center[1] + rr * cos(tt)
+    yy <- center[2] + rr * sin(tt)
+    return(data.frame(x = xx, y = yy))
+}
+
+circle <- circleFun(c(0,0),2*r,npoints = n)
+#geom_path will do open circles, geom_polygon will do filled circles
+ggplot(circle,aes(x,y)) + geom_path() + geom_point(data=nonpart.farms,x=nonpart.farms$XCoord,y=nonpart.farms$YCoord) + geom_point(data=part.farms,x=part.farms$XCoord,y=part.farms$YCoord,col="red")+ geom_point(data=nonconsidered.farms,x=nonconsidered.farms$XCoord,y=nonconsidered.farms$YCoord,col="gray")+ geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
+
+#### Acres Harvested Distribution ####
+o<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/NCentralOperations.csv"
+operations.data<-read.table(file=o, header=TRUE,sep=",")
+
+require(plyr)
+op<-function(data) {with(data,sum(Value))}
+op.dist<-ddply(operations.data, .variables="Domain.Category", .fun=op)
+
+op.dist$ID<-c(6,1,3,2,4,5)
+
+#ordering according to ID
+op.dist<-op.dist[order(op.dist[,3]),]
+
+#### Finding prior values for lognormal prior parameters ####
+#--setting up matrix for comparison of data and model--#
+total_operations<-sum(op.dist$V1)
+
+perc<-function(data) {with(data,V1/total_operations)}
+
+model_check<-matrix(data=NA,nrow=6,5)
+colnames(model_check)<-c("ID","Farm_Size","Data_Percentile","Model_Percentile","Squared_Diff")
+data_perc<-ddply(op.dist,.variables="Domain.Category", .fun=perc)
+model_check[,"Farm_Size"]<-as.character(data_perc$Domain.Category)
+model_check[,"Data_Percentile"]<-round(data_perc[,2],4)
+
+#renaming category variables
+model_check[1,"Farm_Size"]<-"1000 or more acres"
+model_check[2,"Farm_Size"]<-"1 to 24.9 acres"
+model_check[3,"Farm_Size"]<-"100 to 249 acres"
+model_check[4,"Farm_Size"]<-"25 to 99.9 acres"
+model_check[5,"Farm_Size"]<-"250 to 499 acres"
+model_check[6,"Farm_Size"]<-"500 to 999 acres"
+
+#setting ID variables
+model_check[1,"ID"]<-6
+model_check[2,"ID"]<-1
+model_check[3,"ID"]<-3
+model_check[4,"ID"]<-2
+model_check[5,"ID"]<-4
+model_check[6,"ID"]<-5
+
+#ordering according to ID
+model_check<-model_check[order(model_check[,"ID"]),]
+
+#--setting the parameters of the lognormal function--#
+#Excel solver output
+muA=178.207456
+sigmaA=3.144599859
+
+#checking the fit of the parameters
+acres<-rlnorm(100000,meanlog=log(muA),sdlog=log(sigmaA)) 
+model_check[1,"Model_Percentile"]<-round(plnorm(25,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE),4)
+model_check[2,"Model_Percentile"]<-round(plnorm(100,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(25,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[3,"Model_Percentile"]<-round(plnorm(250,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(100,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[4,"Model_Percentile"]<-round(plnorm(500,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(250,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[5,"Model_Percentile"]<-round(plnorm(1000,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(500,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[6,"Model_Percentile"]<-round(plnorm(1000,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=FALSE),4)
+
+model_check[,"Squared_Diff"]<-round((as.numeric(model_check[,"Data_Percentile"]) 
+    - as.numeric(model_check[,"Model_Percentile"]))^2,4)
+
+model_check
+mean(acres) #actual mean is 343.5207
+
+#### Stover Available ####
+#Assumptions
+kgperton<-907.185
+
+#Calculating collectible stover per corn operation
+part.farms$AcresHarvested<-0
+part.farms$Stover<-0
+
+for(i in 1:nrow(part.farms)){
+  part.farms[i,"AcresHarvested"]<-rlnorm(1,meanlog=log(muA),sdlog=log(sigmaA))
+}
+for(i in 1:nrow(part.farms)){
+  part.farms[i,"Stover"]<-part.farms[i,"AvgStover"]*part.farms[i,"AcresHarvested"]
+}
+
+#Ordering by distance from plant
+part.farms<-part.farms[with(part.farms, order(Distance)),]
+
+#Calculating cumulative stover as a function of distance
+part.farms$CumulativeStover<-part.farms[1,"Stover"]
+for(i in 2:nrow(part.farms)){
+  part.farms[i,"CumulativeStover"]<-part.farms[i,"Stover"]+part.farms[i-1,"CumulativeStover"]}
+
+#Calculating cumulative collectible stover as a function of distance
+collection.efficiency<-0.3
+part.farms$CollectibleStover<-part.farms$CumulativeStover*collection.efficiency
+  
+#### Stover as a function of distance ####
+plot(part.farms$Distance,part.farms$CollectibleStover/(kgperton*1000),xlab="Distance (miles)",ylab="Stover (thousand tons)",main="Collectible Stover Produced by Participating Farms")
+
+#### Collection Process ####
+#Assumptions (place holders)
+travelspeed.windrow<-25
+tort<-1.2
+workspeed.windrow.mph<-7
+workspeed.windrow<-workspeed.windrow.mph*5280 #ft per hour
+
+#sq ft in an acre
+acre.sqft<-43560
+acre.length<-sqrt(acre.sqft)
+acre.trips<-acre.length/20
+acre.distance<-acre.length*acre.trips
+
+#Harvestable farms only graphic
+ggplot(circle,aes(x,y)) + geom_path() + geom_point(data=part.farms,x=part.farms$XCoord,y=part.farms$YCoord,col="red") + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
+
+#Calculating hours of work for windrower on each farm
+part.farms$WindrowTime<-part.farms$AcresHarvested*acre.distance/workspeed.windrow
+
+#### Division into Teams ####
+teams<-10 #select this
+feedstock.requirement<-375000*kgperton
+
+#Trimming down participating farms to only those needed to satisfy feedstock requirement
+not.needed.farms<-subset(part.farms,CollectibleStover>feedstock.requirement)
+part.farms<-subset(part.farms,CollectibleStover<=feedstock.requirement)
+
+#Calculating furthest distance travelled
+r.star<-max(part.farms$Distance)
+
+#Calculating average windrow work time per team
+Windrow.cutoff<-sum(part.farms$WindrowTime)/teams
+
+#### Division of farms into teams ####
+
+# Creating a measure of the radius from the plant
+part.farms$Theta<-atan2(part.farms$YCoord,part.farms$XCoord)*180/pi
+for(i in 1:nrow(part.farms)){
+  if(part.farms[i,"Theta"]<0){part.farms[i,"Theta"]<-part.farms[i,"Theta"]+360}
+}
+
+# Calculating cumulative windrow time as a function of theta
+part.farms<-part.farms[with(part.farms, order(Theta, Distance)), ]
+part.farms$CumulativeWindrowTime<-part.farms[1,"WindrowTime"]
+for(i in 2:nrow(part.farms)){
+  part.farms[i,"CumulativeWindrowTime"]<-part.farms[i,"WindrowTime"]+part.farms[i-1,"CumulativeWindrowTime"]}
+
+# Assigning farms to teams
+part.farms$Team<-0
+for(j in 1:(teams-1)){
+  for(i in 1:nrow(part.farms)){
+    if(part.farms[i,"Team"]==0){if(part.farms[i,"CumulativeWindrowTime"]<Windrow.cutoff*j){part.farms[i,"Team"]<-j}
+    }
+  }
+}
+for(i in 1:nrow(part.farms)){
+  if(part.farms[i,"Team"]==0){part.farms[i,"Team"]<-teams}
+}
+
+# Calculating the cutoff points for each team
+cutoff<-list()
+for(i in 1:(teams-1)){cutoff[i]<-max(with(subset(part.farms,Team==i),Theta))}
+cutoff[[teams]]<-360
+
+#### Division of farms into teams ####
+farm.assignments<-replicate(teams,data.frame())
+for(i in 1:teams){farm.assignments[[i]]<-subset(part.farms,Team==i)}
+
+#Harvestable farms only graphic
+circle2 <- circleFun(c(0,0),2*r.star,npoints = n)
+
+pp=ggplot(circle2,aes(x,y))
+for(i in 1:(teams)){
+  pp=pp + geom_path() + geom_point(data=part.farms,x=part.farms$XCoord,y=part.farms$YCoord,col="red") + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)") + geom_segment(x=0,y=0,xend=r.star*cos(cutoff[[i]]*pi/180),yend=r.star*sin(cutoff[[i]]*pi/180))}
+print(pp)
+
+#### Determining whether a farm is ready or not ####
+
+#Creating column in each data frame for indicator function of whether a farm is ready or not
+for(i in 1:teams){farm.assignments[[i]]$Ready<-0}
+
+#Reordering farms within a team by distance from centralized plant
+for(i in 1:teams){
+  farm.assignments[[i]]<-farm.assignments[[i]][with(farm.assignments[[i]], order(Distance)),]
+}
+
+#Renumbering farms within a harvesting team
+for(i in 1:teams){
+  for(j in 1:nrow(farm.assignments[[i]])){
+   farm.assignments[[i]][j,1]<-j 
+  }
+}
+
+#Function for calculating percentage of farms that have harvested grain
+harvest.percent=function(day){
+  if(day>=65){1}else{1-exp(-0.00000598018*day^3.36817)}
+}
+
+#### Choosing the start date ####
+start<-20 #select this
+
+#### Setup before first work day ####
+day<-start
+
+# initializing list used to determine which farms are ready for stover harvest
+ready<-list()
+
+# randomly generating the number of farms which are ready at the beginning of day 1
+for(i in 1:teams){
+ready[[i]]<-round(runif(round((harvest.percent(day))*nrow(farm.assignments[[i]])),min=1,max=nrow(farm.assignments[[i]])))
+}
+
+# identifying randomly selected farms within the assignment lists
+for(i in 1:teams){
+  for(j in 1:nrow(farm.assignments[[i]])){
+  if(farm.assignments[[i]][j,"ID"] %in% ready[[i]]){farm.assignments[[i]][j,"Ready"]<-1}
+  }
+}
+
+# separating out the farms which are ready within each assignment list
+farm.assignments.ready<-replicate(teams,data.frame())
+for(i in 1:teams){
+  farm.assignments.ready[[i]]<-subset(farm.assignments[[i]],Ready==1)
+}
+
+pp=ggplot(circle2,aes(x,y))
+for(i in 1:(teams)){
+pp=pp + geom_path() + geom_point(data=subset(farm.assignments[[i]],Ready==0),x=subset(farm.assignments[[i]],Ready==0)[,"XCoord"],y=subset(farm.assignments[[i]],Ready==0)[,"YCoord"],col="red") + geom_point(data=subset(farm.assignments[[i]],Ready==1),x=subset(farm.assignments[[i]],Ready==1)[,"XCoord"],y=subset(farm.assignments[[i]],Ready==1)[,"YCoord"],col="green") + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)") + geom_segment(x=0,y=0,xend=r.star*cos(cutoff[[i]]*pi/180),yend=r.star*sin(cutoff[[i]]*pi/180))}
+print(pp)
+
+# Setting up data frame to track progress
+team.stats<-replicate(teams,data.frame())
+for(i in 1:teams){
+  team.stats[[i]]<-subset(farm.assignments[[i]],select=c("ID","XCoord","YCoord","Distance","AcresHarvested","CollectibleStover","WindrowTime","Theta","Ready"))
+  team.stats[[i]]<-rbind(team.stats[[i]],c(0,0,0,0,0,0,0,0,1),c(max(farm.assignments[[i]][,1])+1,0,0,0,0,0,0,0,1))
+  team.stats[[i]]<-team.stats[[i]][with(team.stats[[i]],order(ID)),]
+  team.stats[[i]]$RemainingTime<-team.stats[[i]]$WindrowTime
+  team.stats[[i]]$Order<-max(team.stats[[i]][,"ID"])-1
+  team.stats[[i]][max(team.stats[[i]][,"ID"])+1,"Order"]<-max(team.stats[[i]][,"ID"])
+  team.stats[[i]][1,"Order"]<-0
+  team.stats[[i]]$TravelTime<-0
+}
+
+# Ordering by order,readiness,distance
+for(i in 1:teams){
+team.stats[[i]]<-team.stats[[i]][with(team.stats[[i]],order(Order,-Ready,Distance)),]
+}
+
+# Initializing the time and position trackers and row counter
+time<-list()
+row<-list()
+XPosition<-list()
+YPosition<-list()
+for(i in 1:teams){
+  time[[i]]<-24
+  row[[i]]<-2
+  team.stats[[i]][row[[i]],"Order"]<-row[[i]]-1
+  XPosition[[i]]<-0
+  YPosition[[i]]<-0
+}
+
+#### First Work Day ####
+
+# Work day
+for(i in 1:teams){
+  while(time[[i]]!=0){
+    if(team.stats[[i]][row[[i]],"Distance"]*tort/travelspeed.windrow<time[[i]]){
+      team.stats[[i]][row[[i]],"TravelTime"]<-team.stats[[i]][row[[i]],"Distance"]*tort/travelspeed.windrow
+      time[[i]]<-time[[i]]-team.stats[[i]][row[[i]],"TravelTime"]
+      XPosition[[i]]<-team.stats[[i]][row[[i]],"XCoord"]
+      YPosition[[i]]<-team.stats[[i]][row[[i]],"YCoord"]
+    }
+    else{
+      team.stats[[i]][row[[i]],"TravelTime"]<-time[[i]]
+      XPosition<-(time[[i]]*travelspeed.windrow/tort)*cos(team.stats[[i]][row[[i]],"Theta"]*pi/180)+XPosition
+      YPosition<-(time[[i]]*travelspeed.windrow/tort)*sin(team.stats[[i]][row[[i]],"Theta"]*pi/180)+YPosition
+    }
+    
+    if(team.stats[[i]][row[[i]],"RemainingTime"]>=time[[i]]){
+      team.stats[[i]][row[[i]],"RemainingTime"]<-team.stats[[i]][row[[i]],"RemainingTime"]-time[[i]]
+      time[[i]]<-0
+    }
+    else{team.stats[[i]][row[[i]],"RemainingTime"]<-0
+         time[[i]]<-time[[i]]-team.stats[[i]][row[[i]],"RemainingTime"]
+         
+         for(j in (row[[i]]+1):nrow(team.stats[[i]])){
+      team.stats[[i]][j,"Distance"]<-sqrt((team.stats[[i]][j,"XCoord"]-XPosition[[i]])^2+(team.stats[[i]][j,"YCoord"]-YPosition[[i]])^2)
+      team.stats[[i]][j,"Theta"]<-atan((team.stats[[i]][j,"YCoord"]-YPosition[[i]])/(team.stats[[i]][j,"XCoord"]-XPosition[[i]]))
+         }
+         team.stats[[i]]<-team.stats[[i]][with(team.stats[[i]],order(Order,-Ready,Distance)),]
+         row[[i]]<-row[[i]]+1
+         team.stats[[i]][row[[i]],"Order"]<-row[[i]]-1
+    }
+  }
+}
+
+pp<-ggplot(circle2,aes(x,y)) + geom_path() + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8,face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
+j<-1
+for(i in 1:(teams)){
+pp<-pp + geom_point(data=subset(farm.assignments[[i]],Ready==0),x=subset(farm.assignments[[i]],Ready==0)[,"XCoord"],y=subset(farm.assignments[[i]],Ready==0)[,"YCoord"],col="red") + geom_point(data=subset(farm.assignments[[i]],Ready==1),x=subset(farm.assignments[[i]],Ready==1)[,"XCoord"],y=subset(farm.assignments[[i]],Ready==1)[,"YCoord"],col="green") + geom_segment(x=0,y=0,xend=r.star*cos(cutoff[[i]]*pi/180),yend=r.star*sin(cutoff[[i]]*pi/180)) 
+}
+
+for(i in 1:teams){
+j<-2
+while(team.stats[[i]][j,"TravelTime"]>0){
+pp<-pp + geom_segment(x=team.stats[[i]][j-1,"XCoord"],y=team.stats[[i]][j-1,"YCoord"],xend=team.stats[[i]][j,"XCoord"],yend=team.stats[[i]][j,"YCoord"],col="yellow")
+j<-j+1
+}
+}
+
+print(pp)
+```
+
+```{r Second Work Day}
+#### Second Work Day ####
+day<-day+1
+
+# Determining newly ready farms
+for(i in 1:teams){
+ready[[i]]<-sample(subset(team.stats[[i]],Ready==0)[,"ID"],round((harvest.percent(day)-harvest.percent(day-1))*nrow(team.stats[[i]])))
+}
+
+for(i in 1:teams){
+  for(j in 1:nrow(team.stats[[i]])){
+  if(team.stats[[i]][j,"ID"] %in% ready[[i]]){team.stats[[i]][j,"Ready"]<-1}
+  }
+}
+
+# Reordering
+for(i in 1:teams){
+team.stats[[i]]<-team.stats[[i]][with(team.stats[[i]],order(Order,-Ready,Distance)),]
+}
+
+# Work day
+for(i in 1:teams){
+  while(time[[i]]!=0){
+    if(team.stats[[i]][row[[i]],"Distance"]*tort/travelspeed.windrow<time[[i]]){
+      team.stats[[i]][row[[i]],"TravelTime"]<-team.stats[[i]][row[[i]],"Distance"]*tort/travelspeed.windrow
+      time[[i]]<-time[[i]]-team.stats[[i]][row[[i]],"TravelTime"]
+      XPosition[[i]]<-team.stats[[i]][row[[i]],"XCoord"]
+      YPosition[[i]]<-team.stats[[i]][row[[i]],"YCoord"]
+    }
+    else{
+      team.stats[[i]][row[[i]],"TravelTime"]<-time[[i]]
+      XPosition<-(time[[i]]*travelspeed.windrow/tort)*cos(team.stats[[i]][row[[i]],"Theta"]*pi/180)+XPosition
+      YPosition<-(time[[i]]*travelspeed.windrow/tort)*sin(team.stats[[i]][row[[i]],"Theta"]*pi/180)+YPosition
+    }
+    
+    if(team.stats[[i]][row[[i]],"RemainingTime"]>=time[[i]]){
+      team.stats[[i]][row[[i]],"RemainingTime"]<-team.stats[[i]][row[[i]],"RemainingTime"]-time[[i]]
+      time[[i]]<-0
+    }
+    else{team.stats[[i]][row[[i]],"RemainingTime"]<-0
+         time[[i]]<-time[[i]]-team.stats[[i]][row[[i]],"RemainingTime"]
+         
+         for(j in (row[[i]]+1):nrow(team.stats[[i]])){
+      team.stats[[i]][j,"Distance"]<-sqrt((team.stats[[i]][j,"XCoord"]-XPosition[[i]])^2+(team.stats[[i]][j,"YCoord"]-YPosition[[i]])^2)
+      team.stats[[i]][j,"Theta"]<-atan((team.stats[[i]][j,"YCoord"]-YPosition[[i]])/(team.stats[[i]][j,"XCoord"]-XPosition[[i]]))
+         }
+         team.stats[[i]]<-team.stats[[i]][with(team.stats[[i]],order(Order,-Ready,Distance)),]
+         row[[i]]<-row[[i]]+1
+         team.stats[[i]][row[[i]],"Order"]<-row[[i]]-1
+    }
+  }
+}
+
+pp<-ggplot(circle2,aes(x,y)) + geom_path() + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8,face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
+j<-1
+for(i in 1:(teams)){
+pp<-pp + geom_point(data=subset(farm.assignments[[i]],Ready==0),x=subset(farm.assignments[[i]],Ready==0)[,"XCoord"],y=subset(farm.assignments[[i]],Ready==0)[,"YCoord"],col="red") + geom_point(data=subset(farm.assignments[[i]],Ready==1),x=subset(farm.assignments[[i]],Ready==1)[,"XCoord"],y=subset(farm.assignments[[i]],Ready==1)[,"YCoord"],col="green") + geom_segment(x=0,y=0,xend=r.star*cos(cutoff[[i]]*pi/180),yend=r.star*sin(cutoff[[i]]*pi/180)) 
+}
+
+for(i in 1:teams){
+j<-2
+while(team.stats[[i]][j,"TravelTime"]>0){
+pp<-pp + geom_segment(x=team.stats[[i]][j-1,"XCoord"],y=team.stats[[i]][j-1,"YCoord"],xend=team.stats[[i]][j,"XCoord"],yend=team.stats[[i]][j,"YCoord"],col="yellow")
+j<-j+1
+}
+}
+
+print(pp)
+```
+

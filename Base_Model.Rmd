@@ -299,69 +299,20 @@ plot(part.farms$Distance,part.farms$CumulativeStover/(kgperton*1000),xlab="Dista
 
 ## Stover Harvesting, Baling, and Bale Collection
 
-The costs of harvesting the stover, baling and bale collection are common to both types of biorefinery.  Assume a 30 day window with 10.5 hrs/day of sunlight to work with to harvest and stack bales on the edge of the field.  This is based on Darr's work and amounts to 315 hours of work per year.  Allow moisture content to vary, Petrolia assumes a lognormal distribution with mean 16 and standard deviation 11 truncated at 80%.
-
 **Stover Collection**
 
-Case 1: the biorefinery sets up contracts to go collect the stover themselves and uses the following process.
+The stover collection process cannot begin until the corn grain harvests have taken place.  Since harvest completion will vary from farm to farm, each farm's availability is provided on a random date.  The percentage of farms which have completed their harvesting are given by the function estimated by Darr:
 
-Step 1: 20' windrower/shredder shreds stalks and discharges material into windrow.  This type of machine is selected because shredders have less opportunity to contact the ground and hence bales will have a lower level of soil contamination than with a raking technique.  The cost of this machine goes for around $30,000 and has a recommended speed between 3 and 7 miles per hour.  At 7 miles per hour without accounting for any turns this amounts to around 16.97 acres per hour.  I assume a slightly lower estimated productivity of 15 acres per hour for 315 hours and a four year expected ownership. It is assumed to be pulled by a 60 horsepower tractor purchased for list price of $47,000 with assumed 15 years of ownership (cite: build your own John Deere).
+harvest (%) = 1-exp(-0.00000598018*(days since August 15)^3.36817)
 
-William Edwards Machinery Cost Calculator estimates:
-
-Ownership costs:
-TRACTOR
-Capital recovery (interest--assuming 5.50% and depreciation): $4120/yr; $0.87/acre
-Taxes, insurance and housing: $298/yr; $0.06/acre
-WINDROWER/SHREDDER
-Capital recovery (interest--assuming 5.50% and depreciation): $6451/yr; $1.37/acre
-Taxes, insurance and housing: $216/yr; $0.05/acre
-
-Operating costs:
-TRACTOR
-Repair costs: $490/yr; $0.10/acre
-Fuel and lubrication costs (assuming $3.50/gal): $3347/yr; $0.71/acre
-Labor costs (assuming $14/hr): $4851/yr; $1.03/acre
-WINDROWER/SHREDDER
-Repair costs: $1954/yr; $0.41/acre
-
-Step 2: Large rectangular baler pulled by 269 horsepower tractor bales windrows held together by twine.  Dimensions are 3x4x8.  Tractor ownership life assumed to be 15 years with list price of $309,000 (cite: Build Your Own John Deere).  Large rectangular baler cost assumed to be $120,000 with expected ownership period of 6 years.  Assumed to be able to run 1.5 times faster than the shredder/windrower operation at speed of 22.5 acres per hour.
-
-William Edwards Machinery Cost Calculator estimates:
-
-Ownership costs:
-TRACTOR
-Capital recovery (interest--assuming 5.50% and depreciation): $2758/yr; $0.39/acre
-Taxes, insurance and housing: $190/yr; $0.03/acre
-BALER
-Capital recovery (interest--assuming 5.50% and depreciation): $22298/yr; $3.15/acre
-Taxes, insurance and housing: $808/yr; $0.11/acre
-
-Operating costs:
-TRACTOR
-Repair costs: $322/yr; $0.05/acre
-Fuel and lubrication costs (assuming $3.50/gal): $15007/yr; $2.12/acre
-Labor costs (assuming $14/hr): $4851/yr; $0.68/acre
-BALER
-Repair costs: $6290/yr; $0.89/acre
-
-Step 3: Bale picker moves bales to field edge.
-
-NEED TO CONSIDER TRANSPORT COSTS OF MOVING BETWEEN FIELDS.
-
-NOTE: in Darr it says that a minimum of 250 horsepower is recommended for corn stover baling in the midwest.
-
-COLLECTION DYNAMICS
+This function was calculated from data obtained from NASS's weekly reports of working days and percent of corn harvested for the state of Iowa from 1999-2010.  The dates considered were from the middle of August until the end of the reporting period which is when the corn harvest has reached 95% completion.
 
 ```{r Collection assumptions}
 #Assumptions (place holders)
-travelspeed.windrow<-30
-travelspeed.baler<-30
-travelspeed.wagon<-30
+travelspeed.windrow<-25
 tort<-1.2
-workspeed.windrow<-7
-workspeed.baler<-10
-workspeed.wagon<-10
+workspeed.windrow.mph<-7
+workspeed.windrow<-workspeed.windrow.mph*5280 #ft per hour
 
 #sq ft in an acre
 acre.sqft<-43560
@@ -372,8 +323,79 @@ acre.distance<-acre.length*acre.trips
 #Harvestable farms only graphic
 ggplot(circle,aes(x,y)) + geom_path() + geom_point(data=part.farms,x=part.farms$XCoord,y=part.farms$YCoord,col="red") + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
 
+#Calculating hours of work for windrower on each farm
+part.farms$WindrowTime<-part.farms$AcresHarvested*acre.distance/workspeed.windrow
+```
+
+
+Here is where I want code that requires two inputs: teams and start date.
+
+```{r Number of harvest teams}
+teams<-10 #select this
+cutoff<-360/teams
+```
+
+```{r Division of farms into teams}
+part.farms$theta<-atan2(part.farms$YCoord,part.farms$XCoord)*180/pi
+for(i in 1:nrow(part.farms)){
+  if(part.farms[i,12]<0){part.farms[i,12]<-part.farms[i,12]+360}
+}
+
+farm.assignments<-replicate(teams,data.frame())
+for(i in 1:teams){
+farm.assignments[[i]]<-subset(part.farms,(i-1)*cutoff<part.farms$theta & part.farms$theta<i*cutoff)
+}
+
+#Harvestable farms only graphic
+pp=ggplot(circle,aes(x,y)) 
+for(i in 1:(teams)){
+  pp=pp + geom_path() + geom_point(data=part.farms,x=part.farms$XCoord,y=part.farms$YCoord,col="red") + geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)") + geom_segment(x=0,y=0,xend=r*cos((i-1)*cutoff*pi/180),yend=r*sin((i-1)*cutoff*pi/180))}
+print(pp)
+```
+
+```{r Determining whether a farm is ready or not}
+#Creating column in each data frame for indicator function of whether a farm is ready or not
+for(i in 1:teams){
+  farm.assignments[[i]]$Ready<-0
+}
+  
+#Renumbering farms within a harvesting team
+for(i in 1:teams){
+  for(j in 1:nrow(farm.assignments[[i]])){
+   farm.assignments[[i]][j,1]<-j 
+  }
+}
+
+#Function for calculating percentage of farms that have harvested grain
+harvest.percent=function(day){
+  if(day>=65){1}else{1-exp(-0.00000598018*day^3.36817)}
+}
+```
+
+```{r Choosing a start date}
+start<-20 #select this
+harvest.percent(start)
+```
+
+```{r First Work Day}
+day<-start
+for(i in 1:teams){
+ready[[i]]<-round(runif(round((harvest.percent(day))*nrow(farm.assignments[[i]])),min=1,max=nrow(farm.assignments[[i]])))
+}
+
+for(i in 1:teams){
+  for(j in 1:nrow(farm.assignments[[i]])){
+  if(farm.assignments[[i]][j,1] %in% ready[[i]]){farm.assignments[[i]][j,13]<-1}
+  }
+}
+
+
+
+```
+
+
 #Starting dataframe for farms that still have not harvested grain
-notready.farms<-subset(part.farms,select=c("ID","XCoord","YCoord","Distance","AvgYield","AvgStover","AcresHarvested","Stover"))
+notready.farms<-subset(part.farms,select=c("ID","XCoord","YCoord","Distance","AvgYield","AvgStover","AcresHarvested","Stover","WindrowTime"))
 
 #Renumbering of farms that still haven't harvested grain
 for(i in 1:nrow(notready.farms)){
@@ -387,16 +409,78 @@ notready.farms$ready<-0
 total.farms<-nrow(notready.farms)
 
 #Starting dataframe for farms that have finished harvesting grain
-ready.farms<-subset(notready.farms,available.farms$ready==1)
+ready.farms<-subset(notready.farms,notready.farms$ready==1)
 
-#Function for calculating percentage of farms that have harvested grain
-harvest.percent=function(day){
-  1-exp(-0.00000598018*day^3.36817)
-}
+
 ```
 
 ```{r August 16-September 15}
 for(j in 1:31){
+day<-j
+ready<-round(runif(round((harvest.percent(day)-harvest.percent(day-1))*total.farms),min=1,max=nrow(notready.farms)))
+
+for(i in 1:nrow(notready.farms)){
+  if(notready.farms[i,1] %in% ready){notready.farms[i,10]<-1}
+}
+
+justready.farms<-subset(notready.farms,notready.farms$ready==1)
+
+ready.farms<-rbind(ready.farms,justready.farms)
+
+notready.farms<-subset(notready.farms,notready.farms$ready==0)
+for(i in 1:nrow(notready.farms)){
+  notready.farms[i,1]<-i
+}
+
+}
+ggplot(circle,aes(x,y)) + geom_path() + geom_point(data=notready.farms,x=notready.farms$XCoord,y=notready.farms$YCoord,col="red") + geom_point(data=ready.farms,x=ready.farms$XCoord,y=ready.farms$YCoord,col="green")+geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
+```
+
+```{r Daylight available}
+#Importing data from http://www.sunearthtools.com/solar/sunrise-sunset-calendar.php#form using Clarion, IA
+d<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/DayLength.csv"
+daylight.data<-read.table(file=d, header=TRUE,sep=",") 
+
+#converting values to numeric
+daylight.data$Hours<-as.numeric(as.character(daylight.data$Hours))
+```
+
+Step 1: 20' windrower/shredder shreds stalks and discharges material into side windrow.  This type of machine is selected because shredders have less opportunity to contact the ground and hence bales will have a lower level of soil contamination than with a raking technique.  With a side windrow there is also the ability to push windrows together and eliminate baling trips.  
+
+Equipment: 
+John Deere 5075E Cab Utility Tractor (57 pto hp): $40769 list price (cite: Build Your Own John Deere)
+Hiniker 5620 Windrower: $42524 list price (cite: http://generalimp.com/sites/default/files/product-pdf/hiniker_shredders_windrower_0.pdf)
+
+Specifications:
+Windrower manual states not to exceed 25 mph while transporting along the highway.  Windrower manual also states that recommended speeds are 3-7 mph.
+
+Step 2: Large rectangular baler pulled by 269 horsepower tractor bales windrows held together by twine.  Dimensions are 3x4x8.  Tractor ownership life assumed to be 15 years with list price of $309,000 (cite: Build Your Own John Deere).  Large rectangular baler cost assumed to be $120,000 with expected ownership period of 6 years.  Assumed to be able to run 1.5 times faster than the shredder/windrower operation at speed of 22.5 acres per hour.
+
+Step 3: Bale picker moves bales to field edge.
+
+
+
+
+```{r September 16-October 15}
+for(j in 32:61){
+day<-j
+ready<-round(runif(round((harvest.percent(day)-harvest.percent(day-1))*total.farms),min=1,max=nrow(notready.farms)))
+
+for(i in 1:nrow(notready.farms)){
+  if(notready.farms[i,1] %in% ready){notready.farms[i,9]<-1}
+}
+
+justready.farms<-subset(notready.farms,notready.farms$ready==1)
+
+ready.farms<-rbind(ready.farms,justready.farms)
+
+notready.farms<-subset(notready.farms,notready.farms$ready==0)
+for(i in 1:nrow(notready.farms)){
+  notready.farms[i,1]<-i
+}
+
+```{r October 16-October 31}
+for(j in 32:61){
 day<-j
 ready<-round(runif(round((harvest.percent(day)-harvest.percent(day-1))*total.farms),min=1,max=nrow(notready.farms)))
 
@@ -416,6 +500,7 @@ for(i in 1:nrow(notready.farms)){
 }
 ggplot(circle,aes(x,y)) + geom_path() + geom_point(data=notready.farms,x=notready.farms$XCoord,y=notready.farms$YCoord,col="red") + geom_point(data=ready.farms,x=ready.farms$XCoord,y=ready.farms$YCoord,col="green")+geom_point(data=refine.locations,x=refine.locations$XCoord,y=refine.locations$YCoord,col="blue",size=8)+ ggtitle("Farm Locations") + theme(plot.title = element_text(lineheight=.8, face="bold"))+xlab("Miles (West to East)")+ylab("Miles (North to South)")
 ```
+
 
 ```{r September 16}
 day<-32
