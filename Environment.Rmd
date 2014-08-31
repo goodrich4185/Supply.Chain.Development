@@ -10,6 +10,7 @@ runtime: shiny
 
 ```{r Environment}
 require(devtools)
+install.packages('base64enc')
 install_github('ramnathv/rCharts@dev')
 install_github('ramnathv/rMaps')
 ```
