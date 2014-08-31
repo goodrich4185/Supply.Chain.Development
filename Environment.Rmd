@@ -1,0 +1,15 @@
+---
+title: "Environment"
+author: "Ryan Goodrich"
+date: "August 31, 2014"
+output: html_document
+runtime: shiny
+---
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.5/leaflet.css" />
+
+```{r Environment}
+require(devtools)
+install_github('ramnathv/rCharts@dev')
+install_github('ramnathv/rMaps')
+```

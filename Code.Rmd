@@ -76,8 +76,26 @@ c2.baler<-0.1014 #depreciation constant                                     Sour
 c3.baler<-0 #depreciation constant                                          Source: ASAE Yearbook
 rc1.baler<-.1 #repair cost factor                                           Source: ASAE Yearbook
 rc2.baler<-1.8 #repair cost factor                                          Source: ASAE Yearbook
-speed.baler<-25 #                                                           Source: placeholder
+speed.baler<-25 #highway travel speed                                       Source: placeholder
 prod.baler.tons<-20 #dry tons per hour                                      Source: Darr
+
+## Bale Collection Equipment ##
+labor.collect<-18 #hourly wage for bale collection employees
+
+# Tractor to pull bale collection wagon
+price.wagontractor<-42 #per hour rental rate                                 Source: Darr
+fuel.wagontractor<-10 #gallons consumed per hour                             Source: Darr
+
+# Collection wagon
+price.wagon<-80000 #initial cost                                            Source: Darr
+life.wagon<-6 #expected life                                                Source: Darr
+c1.wagon<-0 #depreciation constant                                          Source: placeholder
+c2.wagon<-0 #depreciation constant                                          Source: placeholder
+c3.wagon<-0 #depreciation constant                                          Source: placeholder
+rc1.wagon<-0 #repair cost factor                                            Source: placeholder
+rc2.wagon<-0 #repair cost factor                                            Source: placeholder
+speed.wagon<-25 #highway travel speed                                       Source: placeholder
+prod.wagon.tons<-25 #dry tons per hour                                      Source: Darr
 
 #Harvesting process
 feedstock.requirement<-375000*kgperton #                                    Source: placeholder
@@ -522,6 +540,9 @@ for(i in 1:teams){
   cost.baler[[i]][1,"Labor"]<-cost.baler[[i]][1,"TotalHours"]*labor.baler
   cost.baler[[i]][1,"BalerCapitalRecovery"]<-capital(price.baler,salvage(price.baler,c1.baler,c2.baler,c3.baler,cost.baler[[i]][1,"BalerHours"],life.baler),int.rate,life.baler)
   cost.baler[[i]][1,"BalerRepair"]<-repair(price.baler,rc1.baler,rc2.baler,cost.baler[[i]][1,"BalerHours"])
+  cost.baler[[i]][1,"String"]<-sum(team.stats[[1]][,"CollectibleStover"])*price.string/kgperton
+  cost.baler[[i]][1,"Overhead"]<-(cost.baler[[i]][1,"TractorRental"]+cost.baler[[i]][1,"BalerCapitalRecovery"]+cost.baler[[i]][1,"BalerRepair"]+cost.baler[[i]][1,"Fuel"]+cost.baler[[i]][1,"Lube"]+cost.baler[[i]][1,"Labor"]+cost.baler[[i]][1,"String"])*0.2
+  cost.baler[[i]][1,"TotalCosts"]<-cost.baler[[i]][1,"TractorRental"]+cost.baler[[i]][1,"BalerCapitalRecovery"]+cost.baler[[i]][1,"BalerRepair"]+cost.baler[[i]][1,"Fuel"]+cost.baler[[i]][1,"Lube"]+cost.baler[[i]][1,"Labor"]+cost.baler[[i]][1,"String"]+cost.baler[[i]][1,"Overhead"]
   }
 
 #print(plot.end)
@@ -531,10 +552,10 @@ for(i in 1:teams){
 ```{r Average Windrower Costs}
 #average costs per hour for utility tractor
 total.hours.windrow<-0
-windrow.hours.windrow<-0
+windrow.hours<-0
 for(i in 1:teams){
   total.hours.windrow<-total.hours.windrow+cost.windrow[[i]][1,"TotalHours"]
-  windrow.hours.windrow<-windrow.hours.windrow+cost.windrow[[i]][1,"WindrowHours"]
+  windrow.hours<-windrow.hours+cost.windrow[[i]][1,"WindrowHours"]
 }
 
 windrow.cost.total.tractor<-0
@@ -553,7 +574,7 @@ for(i in 1:teams){
 windrow.cost.hourly.tractor<-windrow.cost.total.tractor/total.hours.windrow
 windrow.cost.hourly.labor<-windrow.cost.total.labor/total.hours.windrow
 windrow.cost.hourly.fuel<-windrow.cost.total.fuel/total.hours.windrow
-windrow.cost.hourly.windrow<-windrow.cost.total.windrow/windrow.hours.windrow
+windrow.cost.hourly.windrow<-windrow.cost.total.windrow/windrow.hours
 windrow.cost.hourly.total<-windrow.cost.total/total.hours.windrow
 
 #Setting up summary table
@@ -564,7 +585,7 @@ summary.windrow<-as.data.frame(summary.windrow)
 summary.windrow["Tractor","$/hr"]<-windrow.cost.total.tractor/total.hours.windrow
 summary.windrow["Labor","$/hr"]<-windrow.cost.total.labor/total.hours.windrow
 summary.windrow["Fuel","$/hr"]<-windrow.cost.total.fuel/total.hours.windrow
-summary.windrow["Windrower","$/hr"]<-windrow.cost.total.windrow/windrow.hours.windrow
+summary.windrow["Windrower","$/hr"]<-windrow.cost.total.windrow/windrow.hours
 summary.windrow["Tractor","$/ton"]<-windrow.cost.total.tractor/(feedstock.requirement/kgperton)
 summary.windrow["Labor","$/ton"]<-windrow.cost.total.labor/(feedstock.requirement/kgperton)
 summary.windrow["Fuel","$/ton"]<-windrow.cost.total.fuel/(feedstock.requirement/kgperton)
@@ -574,60 +595,49 @@ summary.windrow["Total","$/ton"]<-sum(summary.windrow[1:5,"$/ton"])
 summary.windrow
 ```
 
-```{r Baling Statistics}
-workspeed.baler<-workspeed.windrow.mph*5280 #ft per hour
-
-travel.distance<-list()
+```{r Average Baler Costs}
+#average costs per hour for utility tractor
+total.hours.baler<-0
+baler.hours<-0
 for(i in 1:teams){
-  travel.distance[i]<-sum(team.stats[[i]][,"WindrowTravelTime"])*speed.windrower
-  team.stats[[i]]<-subset(team.stats[[i]],select=c("ID","XCoord","YCoord","AcresHarvested","CollectibleStover","WindrowTime","Order","WindrowTravelTime"))
-}
-acre.distance.baler<-acre.distance.windrow/2
-for(i in 1:teams){
-  team.stats[[i]]$BalingTime<-0
+  total.hours.baler<-total.hours.baler+cost.baler[[i]][1,"TotalHours"]
+  baler.hours<-baler.hours+cost.baler[[i]][1,"BalerHours"]
 }
 
+baler.cost.total.tractor<-0
+baler.cost.total.labor<-0
+baler.cost.total.fuel<-0
+baler.cost.total.baler<-0
+baler.cost.total<-0
 for(i in 1:teams){
-  for(j in 1:nrow(team.stats[[i]])){
-    team.stats[[i]][j,"BalingTime"]<-team.stats[[i]][j,"AcresHarvested"]*acre.distance.baler/workspeed.baler
-  }
+  baler.cost.total.tractor<-baler.cost.total.tractor+cost.baler[[i]][1,"TractorRental"]
+  baler.cost.total.labor<-baler.cost.total.labor+cost.baler[[i]][1,"Labor"]
+  baler.cost.total.fuel<-baler.cost.total.fuel+cost.baler[[i]][1,"Fuel"]+cost.baler[[i]][1,"Lube"]
+  baler.cost.total.baler<-baler.cost.total.baler+cost.baler[[i]][1,"BalerCapitalRecovery"]+cost.baler[[i]][1,"BalerRepair"]
+  baler.cost.total<-baler.cost.total+cost.baler[[i]][1,"TotalCosts"]
 }
+
+baler.cost.hourly.tractor<-baler.cost.total.tractor/total.hours.baler
+baler.cost.hourly.labor<-baler.cost.total.labor/total.hours.baler
+baler.cost.hourly.fuel<-baler.cost.total.fuel/total.hours.baler
+baler.cost.hourly.baler<-baler.cost.total.baler/baler.hours
+baler.cost.hourly.total<-baler.cost.total/total.hours.baler
+
+#Setting up summary table
+summary.baler<-matrix(data=0,ncol=2,nrow=6)
+colnames(summary.baler)<-c("$/hr","$/ton")
+rownames(summary.baler)<-c("Tractor","Labor","Fuel","Baler","Overhead","Total")
+summary.baler<-as.data.frame(summary.baler)
+summary.baler["Tractor","$/hr"]<-baler.cost.total.tractor/total.hours.baler
+summary.baler["Labor","$/hr"]<-baler.cost.total.labor/total.hours.baler
+summary.baler["Fuel","$/hr"]<-baler.cost.total.fuel/total.hours.baler
+summary.baler["Baler","$/hr"]<-baler.cost.total.baler/baler.hours
+summary.baler["Tractor","$/ton"]<-baler.cost.total.tractor/(feedstock.requirement/kgperton)
+summary.baler["Labor","$/ton"]<-baler.cost.total.labor/(feedstock.requirement/kgperton)
+summary.baler["Fuel","$/ton"]<-baler.cost.total.fuel/(feedstock.requirement/kgperton)
+summary.baler["Baler","$/ton"]<-baler.cost.total.baler/(feedstock.requirement/kgperton)
+summary.baler["Overhead","$/ton"]<-(summary.baler["Tractor","$/ton"]+summary.baler["Labor","$/ton"]+summary.baler["Fuel","$/ton"]+summary.baler["Baler","$/ton"])*0.2
+summary.baler["Total","$/ton"]<-sum(summary.baler[1:5,"$/ton"])
+summary.baler
 ```
 
-```{r Baling Costs}
-#time spent travelling and in the field for baling operation
-time.travel.baler<-0
-time.field.baler<-0
-time.use.baler<-0
-
-for(i in 1:teams){
-time.travel.baler<-time.travel.baler+travel.distance[[i]]/speed.baler
-time.field.baler<-time.field.baler+sum(team.stats[[i]][,"BalingTime"])
-time.use.baler<-time.use.baler+time.field.baler
-}
-
-#time of use for each component
-use.per.tractor<-time.use.baler/teams
-use.per.baler<-time.field.baler/teams
-
-#depreciation costs of each component
-cost.depreciation.per.tractor<-depreciation(list.price.tractor,c1.tractor,c2.tractor,c3.tractor,use.per.tractor,1)
-cost.depreciation.per.baler<-depreciation(list.price.baler,c1.baler,c2.baler,c3.baler,use.per.baler,1)
-
-#repair costs of each component
-cost.repair.per.tractor<-repair(list.price.tractor,rc1.tractor,rc2.tractor,use.per.tractor)
-cost.repair.per.baler<-repair(list.price.baler,rc1.baler,rc2.baler,use.per.baler)
-
-#fuel and lube costs of the tractor
-cost.fuel.per.tractor<-fuel(fuel.diesel,hp.tractor,price.diesel,use.per.tractor)
-cost.lube.per.tractor<-cost.fuel.per.tractor*.15
-
-#overhead costs for baling operation (assumed to be 20%)
-cost.overhead.per.baler<-(cost.depreciation.per.tractor+cost.depreciation.per.baler+cost.repair.per.baler+cost.fuel.per.tractor+cost.lube.per.tractor)*0.2
-
-#total costs per baler
-cost.total.per.baler<-cost.depreciation.per.tractor+cost.depreciation.per.baler+cost.repair.per.baler+cost.fuel.per.tractor+cost.lube.per.tractor+cost.overhead.per.baler
-
-#total costs for baling operation
-cost.total.baler<-cost.total.per.baler*teams
-```
