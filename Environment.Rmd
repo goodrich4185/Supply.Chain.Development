@@ -8,9 +8,251 @@ runtime: shiny
 
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.5/leaflet.css" />
 
-```{r Environment}
+```{r rMaps install}
 require(devtools)
 install.packages('base64enc')
 install_github('ramnathv/rCharts@dev')
 install_github('ramnathv/rMaps')
+require(rMaps)
+require(rjson)
+```
+
+```{r Crosslet example}
+crosslet(
+  x = "country", 
+  y = c("web_index", "universal_access", "impact_empowerment", "freedom_openness"),
+  data = web_index
+)
+
+```
+
+```{r ichoploreth example}
+ichoropleth(Crime ~ State, data = subset(violent_crime, Year == 2010))
+ichoropleth(Crime ~ State, data = violent_crime, animate = "Year")
+ichoropleth(Crime ~ State, data = violent_crime, animate = "Year", play = TRUE)
+
+```
+
+```{r Leaflet example}
+map <- Leaflet$new()
+map$setView(c(42.0205, -93.3712), zoom = 13)
+map$tileLayer(provider = 'Stamen.Watercolor')
+map$marker(
+  c(51.5, -0.09),
+  bindPopup = 'Hi. I am a popup'
+)
+map
+```
+
+
+```{r Geographic coordinate conversion}
+geo_conversion=function(degrees,minutes,seconds){
+  degrees+(minutes/60)+(seconds/3600)
+}
+```
+
+```{r Google Maps}
+require(ggmap)
+mapImageData3 <- get_map(location = c(lon = geo_conversion(-93,-37,-12), lat = geo_conversion(42,02,05)),
+    color = "color",
+    source = "google",
+    maptype = "roadmap",
+    zoom = 10)
+ 
+environ<-ggmap(mapImageData3,
+    extent = "device",
+    ylab = "Latitude",
+    xlab = "Longitude")
+
+part.farms<-matrix(data=0,ncol=2,nrow=10)
+colnames(part.farms)<-c("lon","lat")
+part.farms<-as.data.frame(part.farms)
+for(i in 1:10){
+  part.farms[i,"lon"]<-geo_conversion(-93,-37,-12+i)
+  part.farms[i,"lat"]<-geo_conversion(42,02,05)
+}
+environ<-environ+geom_point(data=part.farms,x=part.farms[,"lon"],y=part.farms[,"lat"],col="red")
+print(environ)
+```
+
+```{r Locations of corn areas planted}
+#install.packages(c("rgdal","raster","R.utils","maptools","spsurvey"),dep=TRUE)
+require(raster)
+
+#County raster files
+Boone_2012_file<-'Boone_2012.tif'
+BuenaVista_2012_file<-'BuenaVista_2012.tif'
+Butler_2012_file<-'Butler_2012.tif'
+Calhoun_2012_file<-'Calhoun_2012.tif'
+Carroll_2012_file<-'Carroll_2012.tif'
+CerroGordo_2012_file<-'CerroGordo_2012.tif'
+Clay_2012_file<-'Clay_2012.tif'
+Dallas_2012_file<-'Dallas_2012.tif'
+Dickinson_2012_file<-'Dickinson_2012.tif'
+Emmet_2012_file<-'Emmet_2012.tif'
+Floyd_2012_file<-'Floyd_2012.tif'
+Franklin_2012_file<-'Franklin_2012.tif'
+Greene_2012_file<-'Greene_2012.tif'
+Grundy_2012_file<-'Grundy_2012.tif'
+Guthrie_2012_file<-'Guthrie_2012.tif'
+Hamilton_2012_file<-'Hamilton_2012.tif'
+Hancock_2012_file<-'Hancock_2012.tif'
+Hardin_2012_file<-'Hardin_2012.tif'
+Humboldt_2012_file<-'Humboldt_2012.tif'
+Jasper_2012_file<-'Jasper_2012.tif'
+Kossuth_2012_file<-'Kossuth_2012.tif'
+Marshall_2012_file<-'Marshall_2012.tif'
+Mitchell_2012_file<-'Mitchell_2012.tif'
+PaloAlto_2012_file<-'PaloAlto_2012.tif'
+Pocahontas_2012_file<-'Pocahontas_2012.tif'
+Polk_2012_file<-'Polk_2012.tif'
+Sac_2012_file<-'Sac_2012.tif'
+Story_2012_file<-'Story_2012.tif'
+Webster_2012_file<-'Webster_2012.tif'
+Winnebago_2012_file<-'Winnebago_2012.tif'
+Worth_2012_file<-'Worth_2012.tif'
+Wright_2012_file<-'Wright_2012.tif'
+
+#County rasters
+Boone_2012=raster(Boone_2012_file)
+BuenaVista_2012=raster(BuenaVista_2012_file)
+Butler_2012=raster(Butler_2012_file)
+Calhoun_2012=raster(Calhoun_2012_file)
+Carroll_2012=raster(Carroll_2012_file)
+CerroGordo_2012=raster(CerroGordo_2012_file)
+Clay_2012=raster(Clay_2012_file)
+Dallas_2012=raster(Dallas_2012_file)
+Dickinson_2012=raster(Dickinson_2012_file)
+Emmet_2012=raster(Emmet_2012_file)
+Floyd_2012=raster(Floyd_2012_file)
+Franklin_2012=raster(Franklin_2012_file)
+Greene_2012=raster(Greene_2012_file)
+Grundy_2012=raster(Grundy_2012_file)
+Guthrie_2012=raster(Guthrie_2012_file)
+Hamilton_2012=raster(Hamilton_2012_file)
+Hancock_2012=raster(Hancock_2012_file)
+Hardin_2012=raster(Hardin_2012_file)
+Humboldt_2012=raster(Humboldt_2012_file)
+Jasper_2012=raster(Jasper_2012_file)
+Kossuth_2012=raster(Kossuth_2012_file)
+Marshall_2012=raster(Marshall_2012_file)
+Mitchell_2012=raster(Mitchell_2012_file)
+PaloAlto_2012=raster(PaloAlto_2012_file)
+Pocahontas_2012=raster(Pocahontas_2012_file)
+Polk_2012=raster(Polk_2012_file)
+Sac_2012=raster(Sac_2012_file)
+Story_2012=raster(Story_2012_file)
+Webster_2012=raster(Webster_2012_file)
+Winnebago_2012=raster(Winnebago_2012_file)
+Worth_2012=raster(Worth_2012_file)
+Wright_2012=raster(Wright_2012_file)
+
+#Setting NA values to 0
+Boone_2012[is.na(Boone_2012)]<-0
+BuenaVista_2012[is.na(BuenaVista_2012)]<-0
+Butler_2012[is.na(Butler_2012)]<-0
+Calhoun_2012[is.na(Calhoun_2012)]<-0
+Carroll_2012[is.na(Carroll_2012)]<-0
+CerroGordo_2012[is.na(CerroGordo_2012)]<-0
+Clay_2012[is.na(Clay_2012)]<-0
+Dallas_2012[is.na(Dallas_2012)]<-0
+Dickinson_2012[is.na(Dickinson_2012)]<-0
+Emmet_2012[is.na(Emmet_2012)]<-0
+Floyd_2012[is.na(Floyd_2012)]<-0
+Franklin_2012[is.na(Franklin_2012)]<-0
+Greene_2012[is.na(Greene_2012)]<-0
+Grundy_2012[is.na(Grundy_2012)]<-0
+Guthrie_2012[is.na(Guthrie_2012)]<-0
+Hamilton_2012[is.na(Hamilton_2012)]<-0
+Hancock_2012[is.na(Hancock_2012)]<-0
+Hardin_2012[is.na(Hardin_2012)]<-0
+Humboldt_2012[is.na(Humboldt_2012)]<-0
+Jasper_2012[is.na(Jasper_2012)]<-0
+Kossuth_2012[is.na(Kossuth_2012)]<-0
+Marshall_2012[is.na(Marshall_2012)]<-0
+Mitchell_2012[is.na(Mitchell_2012)]<-0
+PaloAlto_2012[is.na(PaloAlto_2012)]<-0
+Pocahontas_2012[is.na(Pocahontas_2012)]<-0
+Polk_2012[is.na(Polk_2012)]<-0
+Sac_2012[is.na(Sac_2012)]<-0
+Story_2012[is.na(Story_2012)]<-0
+Webster_2012[is.na(Webster_2012)]<-0
+Winnebago_2012[is.na(Winnebago_2012)]<-0
+Worth_2012[is.na(Worth_2012)]<-0
+Wright_2012[is.na(Wright_2012)]<-0
+
+#Defining the mode function
+sample.mode=function(x,...){
+  ux<-unique(x)
+  ux[which.max(tabulate(match(x,ux)))]
+}
+
+#Resizing the rasters to a lower resolution
+Boone_2012_resized<-aggregate(Boone_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+BuenaVista_2012_resized<-aggregate(BuenaVista_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Butler_2012_resized<-aggregate(Butler_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Calhoun_2012_resized<-aggregate(Calhoun_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Carroll_2012_resized<-aggregate(Carroll_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+CerroGordo_2012_resized<-aggregate(CerroGordo_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Clay_2012_resized<-aggregate(Clay_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Dallas_2012_resized<-aggregate(Dallas_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Dickinson_2012_resized<-aggregate(Dickinson_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Emmet_2012_resized<-aggregate(Emmet_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Floyd_2012_resized<-aggregate(Floyd_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Franklin_2012_resized<-aggregate(Franklin_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Greene_2012_resized<-aggregate(Greene_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Grundy_2012_resized<-aggregate(Grundy_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Guthrie_2012_resized<-aggregate(Guthrie_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hamilton_2012_resized<-aggregate(Hamilton_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hancock_2012_resized<-aggregate(Hancock_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hardin_2012_resized<-aggregate(Hardin_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Humboldt_2012_resized<-aggregate(Humboldt_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Jasper_2012_resized<-aggregate(Jasper_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Kossuth_2012_resized<-aggregate(Kossuth_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Marshall_2012_resized<-aggregate(Marshall_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Mitchell_2012_resized<-aggregate(Mitchell_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+PaloAlto_2012_resized<-aggregate(PaloAlto_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Pocahontas_2012_resized<-aggregate(Pocahontas_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Polk_2012_resized<-aggregate(Polk_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Sac_2012_resized<-aggregate(Sac_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Story_2012_resized<-aggregate(Story_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Webster_2012_resized<-aggregate(Webster_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Winnebago_2012_resized<-aggregate(Winnebago_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Worth_2012_resized<-aggregate(Worth_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Wright_2012_resized<-aggregate(Wright_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+
+
+#Extracting the raster latitude and longitude coordinates
+Clay_2012_coord<-as.matrix(coordinates(Clay_2012_resized))
+Dickinson_2012_coord<-as.matrix(coordinates(Dickinson_2012_resized))
+
+#Extracting unique longitude coordinates
+Clay_2012_long<-unique(Clay_2012_coord[,"x"])
+Dickinson_2012_long<-unique(Dickinson_2012_coord[,"x"])
+
+#Extracting unique latitude coordinates
+Clay_2012_lat<-unique(Clay_2012_coord[,"y"])
+Dickinson_2012_lat<-unique(Dickinson_2012_coord[,"y"])
+
+#Extracting underlying raster values
+Clay_2012_values<-as.matrix(Clay_2012_resized)
+Dickinson_2012_values<-as.matrix(Dickinson_2012_resized)
+
+#naming rows and columns by corresponding latitude and longitude coordinates
+colnames(Clay_2012_values)<-Clay_2012_long
+rownames(Clay_2012_values)<-Clay_2012_lat
+colnames(Dickinson_2012_values)<-Dickinson_2012_long
+rownames(Dickinson_2012_values)<-Dickinson_2012_lat
+
+#redefining the raster values as a data.frame
+Clay_2012_values<-as.data.frame(Clay_2012_values)
+Dickinson_2012_values<-as.data.frame(Dickinson_2012_values)
+
+#loading required packages for recoding of the data frames
+require(plyr)
+require(car)
+
+#recoding data frames
+Clay_2012_values<-as.data.frame(lapply(Clay_2012_values,FUN=function(data) recode(data,"1='Corn';2='Cotton';3='Rice';4='Sorghum';5='Soybeans';6='Sunflower';111='Open Water';121='Developed/Open Space';122='Developed/Low Intensity';143='Mixed Forest';176='Pasture';195='Herbaceous Wetlands'")))
+Dickinson_2012_values<-as.data.frame(lapply(Dickinson_2012_values,FUN=function(data) recode(data,"1='Corn';2='Cotton';3='Rice';4='Sorghum';5='Soybeans';6='Sunflower';111='Open Water';121='Developed/Open Space';122='Developed/Low Intensity';143='Mixed Forest';176='Pasture';195='Herbaceous Wetlands'")))
 ```
