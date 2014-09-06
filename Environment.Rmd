@@ -80,6 +80,41 @@ print(environ)
 require(raster)
 
 #County raster files
+#2011
+Boone_2011_file<-'Boone_2011.tif'
+BuenaVista_2011_file<-'BuenaVista_2011.tif'
+Butler_2011_file<-'Butler_2011.tif'
+Calhoun_2011_file<-'Calhoun_2011.tif'
+Carroll_2011_file<-'Carroll_2011.tif'
+CerroGordo_2011_file<-'CerroGordo_2011.tif'
+Clay_2011_file<-'Clay_2011.tif'
+Dallas_2011_file<-'Dallas_2011.tif'
+Dickinson_2011_file<-'Dickinson_2011.tif'
+Emmet_2011_file<-'Emmet_2011.tif'
+Floyd_2011_file<-'Floyd_2011.tif'
+Franklin_2011_file<-'Franklin_2011.tif'
+Greene_2011_file<-'Greene_2011.tif'
+Grundy_2011_file<-'Grundy_2011.tif'
+Guthrie_2011_file<-'Guthrie_2011.tif'
+Hamilton_2011_file<-'Hamilton_2011.tif'
+Hancock_2011_file<-'Hancock_2011.tif'
+Hardin_2011_file<-'Hardin_2011.tif'
+Humboldt_2011_file<-'Humboldt_2011.tif'
+Jasper_2011_file<-'Jasper_2011.tif'
+Kossuth_2011_file<-'Kossuth_2011.tif'
+Marshall_2011_file<-'Marshall_2011.tif'
+Mitchell_2011_file<-'Mitchell_2011.tif'
+PaloAlto_2011_file<-'PaloAlto_2011.tif'
+Pocahontas_2011_file<-'Pocahontas_2011.tif'
+Polk_2011_file<-'Polk_2011.tif'
+Sac_2011_file<-'Sac_2011.tif'
+Story_2011_file<-'Story_2011.tif'
+Webster_2011_file<-'Webster_2011.tif'
+Winnebago_2011_file<-'Winnebago_2011.tif'
+Worth_2011_file<-'Worth_2011.tif'
+Wright_2011_file<-'Wright_2011.tif'
+
+#2012
 Boone_2012_file<-'Boone_2012.tif'
 BuenaVista_2012_file<-'BuenaVista_2012.tif'
 Butler_2012_file<-'Butler_2012.tif'
@@ -113,7 +148,76 @@ Winnebago_2012_file<-'Winnebago_2012.tif'
 Worth_2012_file<-'Worth_2012.tif'
 Wright_2012_file<-'Wright_2012.tif'
 
+#2013
+Boone_2013_file<-'Boone_2013.tif'
+BuenaVista_2013_file<-'BuenaVista_2013.tif'
+Butler_2013_file<-'Butler_2013.tif'
+Calhoun_2013_file<-'Calhoun_2013.tif'
+Carroll_2013_file<-'Carroll_2013.tif'
+CerroGordo_2013_file<-'CerroGordo_2013.tif'
+Clay_2013_file<-'Clay_2013.tif'
+Dallas_2013_file<-'Dallas_2013.tif'
+Dickinson_2013_file<-'Dickinson_2013.tif'
+Emmet_2013_file<-'Emmet_2013.tif'
+Floyd_2013_file<-'Floyd_2013.tif'
+Franklin_2013_file<-'Franklin_2013.tif'
+Greene_2013_file<-'Greene_2013.tif'
+Grundy_2013_file<-'Grundy_2013.tif'
+Guthrie_2013_file<-'Guthrie_2013.tif'
+Hamilton_2013_file<-'Hamilton_2013.tif'
+Hancock_2013_file<-'Hancock_2013.tif'
+Hardin_2013_file<-'Hardin_2013.tif'
+Humboldt_2013_file<-'Humboldt_2013.tif'
+Jasper_2013_file<-'Jasper_2013.tif'
+Kossuth_2013_file<-'Kossuth_2013.tif'
+Marshall_2013_file<-'Marshall_2013.tif'
+Mitchell_2013_file<-'Mitchell_2013.tif'
+PaloAlto_2013_file<-'PaloAlto_2013.tif'
+Pocahontas_2013_file<-'Pocahontas_2013.tif'
+Polk_2013_file<-'Polk_2013.tif'
+Sac_2013_file<-'Sac_2013.tif'
+Story_2013_file<-'Story_2013.tif'
+Webster_2013_file<-'Webster_2013.tif'
+Winnebago_2013_file<-'Winnebago_2013.tif'
+Worth_2013_file<-'Worth_2013.tif'
+Wright_2013_file<-'Wright_2013.tif'
+
 #County rasters
+#2011
+Boone_2011=raster(Boone_2011_file)
+BuenaVista_2011=raster(BuenaVista_2011_file)
+Butler_2011=raster(Butler_2011_file)
+Calhoun_2011=raster(Calhoun_2011_file)
+Carroll_2011=raster(Carroll_2011_file)
+CerroGordo_2011=raster(CerroGordo_2011_file)
+Clay_2011=raster(Clay_2011_file)
+Dallas_2011=raster(Dallas_2011_file)
+Dickinson_2011=raster(Dickinson_2011_file)
+Emmet_2011=raster(Emmet_2011_file)
+Floyd_2011=raster(Floyd_2011_file)
+Franklin_2011=raster(Franklin_2011_file)
+Greene_2011=raster(Greene_2011_file)
+Grundy_2011=raster(Grundy_2011_file)
+Guthrie_2011=raster(Guthrie_2011_file)
+Hamilton_2011=raster(Hamilton_2011_file)
+Hancock_2011=raster(Hancock_2011_file)
+Hardin_2011=raster(Hardin_2011_file)
+Humboldt_2011=raster(Humboldt_2011_file)
+Jasper_2011=raster(Jasper_2011_file)
+Kossuth_2011=raster(Kossuth_2011_file)
+Marshall_2011=raster(Marshall_2011_file)
+Mitchell_2011=raster(Mitchell_2011_file)
+PaloAlto_2011=raster(PaloAlto_2011_file)
+Pocahontas_2011=raster(Pocahontas_2011_file)
+Polk_2011=raster(Polk_2011_file)
+Sac_2011=raster(Sac_2011_file)
+Story_2011=raster(Story_2011_file)
+Webster_2011=raster(Webster_2011_file)
+Winnebago_2011=raster(Winnebago_2011_file)
+Worth_2011=raster(Worth_2011_file)
+Wright_2011=raster(Wright_2011_file)
+
+#2012
 Boone_2012=raster(Boone_2012_file)
 BuenaVista_2012=raster(BuenaVista_2012_file)
 Butler_2012=raster(Butler_2012_file)
@@ -147,7 +251,76 @@ Winnebago_2012=raster(Winnebago_2012_file)
 Worth_2012=raster(Worth_2012_file)
 Wright_2012=raster(Wright_2012_file)
 
+#2013
+Boone_2013=raster(Boone_2013_file)
+BuenaVista_2013=raster(BuenaVista_2013_file)
+Butler_2013=raster(Butler_2013_file)
+Calhoun_2013=raster(Calhoun_2013_file)
+Carroll_2013=raster(Carroll_2013_file)
+CerroGordo_2013=raster(CerroGordo_2013_file)
+Clay_2013=raster(Clay_2013_file)
+Dallas_2013=raster(Dallas_2013_file)
+Dickinson_2013=raster(Dickinson_2013_file)
+Emmet_2013=raster(Emmet_2013_file)
+Floyd_2013=raster(Floyd_2013_file)
+Franklin_2013=raster(Franklin_2013_file)
+Greene_2013=raster(Greene_2013_file)
+Grundy_2013=raster(Grundy_2013_file)
+Guthrie_2013=raster(Guthrie_2013_file)
+Hamilton_2013=raster(Hamilton_2013_file)
+Hancock_2013=raster(Hancock_2013_file)
+Hardin_2013=raster(Hardin_2013_file)
+Humboldt_2013=raster(Humboldt_2013_file)
+Jasper_2013=raster(Jasper_2013_file)
+Kossuth_2013=raster(Kossuth_2013_file)
+Marshall_2013=raster(Marshall_2013_file)
+Mitchell_2013=raster(Mitchell_2013_file)
+PaloAlto_2013=raster(PaloAlto_2013_file)
+Pocahontas_2013=raster(Pocahontas_2013_file)
+Polk_2013=raster(Polk_2013_file)
+Sac_2013=raster(Sac_2013_file)
+Story_2013=raster(Story_2013_file)
+Webster_2013=raster(Webster_2013_file)
+Winnebago_2013=raster(Winnebago_2013_file)
+Worth_2013=raster(Worth_2013_file)
+Wright_2013=raster(Wright_2013_file)
+
 #Setting NA values to 0
+#2011
+Boone_2011[is.na(Boone_2011)]<-0
+BuenaVista_2011[is.na(BuenaVista_2011)]<-0
+Butler_2011[is.na(Butler_2011)]<-0
+Calhoun_2011[is.na(Calhoun_2011)]<-0
+Carroll_2011[is.na(Carroll_2011)]<-0
+CerroGordo_2011[is.na(CerroGordo_2011)]<-0
+Clay_2011[is.na(Clay_2011)]<-0
+Dallas_2011[is.na(Dallas_2011)]<-0
+Dickinson_2011[is.na(Dickinson_2011)]<-0
+Emmet_2011[is.na(Emmet_2011)]<-0
+Floyd_2011[is.na(Floyd_2011)]<-0
+Franklin_2011[is.na(Franklin_2011)]<-0
+Greene_2011[is.na(Greene_2011)]<-0
+Grundy_2011[is.na(Grundy_2011)]<-0
+Guthrie_2011[is.na(Guthrie_2011)]<-0
+Hamilton_2011[is.na(Hamilton_2011)]<-0
+Hancock_2011[is.na(Hancock_2011)]<-0
+Hardin_2011[is.na(Hardin_2011)]<-0
+Humboldt_2011[is.na(Humboldt_2011)]<-0
+Jasper_2011[is.na(Jasper_2011)]<-0
+Kossuth_2011[is.na(Kossuth_2011)]<-0
+Marshall_2011[is.na(Marshall_2011)]<-0
+Mitchell_2011[is.na(Mitchell_2011)]<-0
+PaloAlto_2011[is.na(PaloAlto_2011)]<-0
+Pocahontas_2011[is.na(Pocahontas_2011)]<-0
+Polk_2011[is.na(Polk_2011)]<-0
+Sac_2011[is.na(Sac_2011)]<-0
+Story_2011[is.na(Story_2011)]<-0
+Webster_2011[is.na(Webster_2011)]<-0
+Winnebago_2011[is.na(Winnebago_2011)]<-0
+Worth_2011[is.na(Worth_2011)]<-0
+Wright_2011[is.na(Wright_2011)]<-0
+
+#2012
 Boone_2012[is.na(Boone_2012)]<-0
 BuenaVista_2012[is.na(BuenaVista_2012)]<-0
 Butler_2012[is.na(Butler_2012)]<-0
@@ -181,6 +354,40 @@ Winnebago_2012[is.na(Winnebago_2012)]<-0
 Worth_2012[is.na(Worth_2012)]<-0
 Wright_2012[is.na(Wright_2012)]<-0
 
+#2013
+Boone_2013[is.na(Boone_2013)]<-0
+BuenaVista_2013[is.na(BuenaVista_2013)]<-0
+Butler_2013[is.na(Butler_2013)]<-0
+Calhoun_2013[is.na(Calhoun_2013)]<-0
+Carroll_2013[is.na(Carroll_2013)]<-0
+CerroGordo_2013[is.na(CerroGordo_2013)]<-0
+Clay_2013[is.na(Clay_2013)]<-0
+Dallas_2013[is.na(Dallas_2013)]<-0
+Dickinson_2013[is.na(Dickinson_2013)]<-0
+Emmet_2013[is.na(Emmet_2013)]<-0
+Floyd_2013[is.na(Floyd_2013)]<-0
+Franklin_2013[is.na(Franklin_2013)]<-0
+Greene_2013[is.na(Greene_2013)]<-0
+Grundy_2013[is.na(Grundy_2013)]<-0
+Guthrie_2013[is.na(Guthrie_2013)]<-0
+Hamilton_2013[is.na(Hamilton_2013)]<-0
+Hancock_2013[is.na(Hancock_2013)]<-0
+Hardin_2013[is.na(Hardin_2013)]<-0
+Humboldt_2013[is.na(Humboldt_2013)]<-0
+Jasper_2013[is.na(Jasper_2013)]<-0
+Kossuth_2013[is.na(Kossuth_2013)]<-0
+Marshall_2013[is.na(Marshall_2013)]<-0
+Mitchell_2013[is.na(Mitchell_2013)]<-0
+PaloAlto_2013[is.na(PaloAlto_2013)]<-0
+Pocahontas_2013[is.na(Pocahontas_2013)]<-0
+Polk_2013[is.na(Polk_2013)]<-0
+Sac_2013[is.na(Sac_2013)]<-0
+Story_2013[is.na(Story_2013)]<-0
+Webster_2013[is.na(Webster_2013)]<-0
+Winnebago_2013[is.na(Winnebago_2013)]<-0
+Worth_2013[is.na(Worth_2013)]<-0
+Wright_2013[is.na(Wright_2013)]<-0
+
 #Defining the mode function
 sample.mode=function(x,...){
   ux<-unique(x)
@@ -188,6 +395,41 @@ sample.mode=function(x,...){
 }
 
 #Resizing the rasters to a lower resolution
+#2011
+Boone_2011_resized<-aggregate(Boone_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+BuenaVista_2011_resized<-aggregate(BuenaVista_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Butler_2011_resized<-aggregate(Butler_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Calhoun_2011_resized<-aggregate(Calhoun_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Carroll_2011_resized<-aggregate(Carroll_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+CerroGordo_2011_resized<-aggregate(CerroGordo_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Clay_2011_resized<-aggregate(Clay_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Dallas_2011_resized<-aggregate(Dallas_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Dickinson_2011_resized<-aggregate(Dickinson_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Emmet_2011_resized<-aggregate(Emmet_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Floyd_2011_resized<-aggregate(Floyd_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Franklin_2011_resized<-aggregate(Franklin_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Greene_2011_resized<-aggregate(Greene_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Grundy_2011_resized<-aggregate(Grundy_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Guthrie_2011_resized<-aggregate(Guthrie_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hamilton_2011_resized<-aggregate(Hamilton_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hancock_2011_resized<-aggregate(Hancock_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hardin_2011_resized<-aggregate(Hardin_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Humboldt_2011_resized<-aggregate(Humboldt_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Jasper_2011_resized<-aggregate(Jasper_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Kossuth_2011_resized<-aggregate(Kossuth_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Marshall_2011_resized<-aggregate(Marshall_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Mitchell_2011_resized<-aggregate(Mitchell_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+PaloAlto_2011_resized<-aggregate(PaloAlto_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Pocahontas_2011_resized<-aggregate(Pocahontas_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Polk_2011_resized<-aggregate(Polk_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Sac_2011_resized<-aggregate(Sac_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Story_2011_resized<-aggregate(Story_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Webster_2011_resized<-aggregate(Webster_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Winnebago_2011_resized<-aggregate(Winnebago_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Worth_2011_resized<-aggregate(Worth_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Wright_2011_resized<-aggregate(Wright_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+
+#2012
 Boone_2012_resized<-aggregate(Boone_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
 BuenaVista_2012_resized<-aggregate(BuenaVista_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
 Butler_2012_resized<-aggregate(Butler_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
@@ -221,38 +463,189 @@ Winnebago_2012_resized<-aggregate(Winnebago_2012,fact=2,fun=sample.mode,expand=F
 Worth_2012_resized<-aggregate(Worth_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
 Wright_2012_resized<-aggregate(Wright_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
 
+#2013
+Boone_2013_resized<-aggregate(Boone_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+BuenaVista_2013_resized<-aggregate(BuenaVista_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Butler_2013_resized<-aggregate(Butler_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Calhoun_2013_resized<-aggregate(Calhoun_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Carroll_2013_resized<-aggregate(Carroll_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+CerroGordo_2013_resized<-aggregate(CerroGordo_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Clay_2013_resized<-aggregate(Clay_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Dallas_2013_resized<-aggregate(Dallas_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Dickinson_2013_resized<-aggregate(Dickinson_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Emmet_2013_resized<-aggregate(Emmet_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Floyd_2013_resized<-aggregate(Floyd_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Franklin_2013_resized<-aggregate(Franklin_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Greene_2013_resized<-aggregate(Greene_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Grundy_2013_resized<-aggregate(Grundy_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Guthrie_2013_resized<-aggregate(Guthrie_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hamilton_2013_resized<-aggregate(Hamilton_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hancock_2013_resized<-aggregate(Hancock_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Hardin_2013_resized<-aggregate(Hardin_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Humboldt_2013_resized<-aggregate(Humboldt_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Jasper_2013_resized<-aggregate(Jasper_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Kossuth_2013_resized<-aggregate(Kossuth_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Marshall_2013_resized<-aggregate(Marshall_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Mitchell_2013_resized<-aggregate(Mitchell_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+PaloAlto_2013_resized<-aggregate(PaloAlto_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Pocahontas_2013_resized<-aggregate(Pocahontas_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Polk_2013_resized<-aggregate(Polk_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Sac_2013_resized<-aggregate(Sac_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Story_2013_resized<-aggregate(Story_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Webster_2013_resized<-aggregate(Webster_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Winnebago_2013_resized<-aggregate(Winnebago_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Worth_2013_resized<-aggregate(Worth_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+Wright_2013_resized<-aggregate(Wright_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
 
-#Extracting the raster latitude and longitude coordinates
-Clay_2012_coord<-as.matrix(coordinates(Clay_2012_resized))
-Dickinson_2012_coord<-as.matrix(coordinates(Dickinson_2012_resized))
+#Initiate combined rasters
+Boone_combined<-Boone_2013_resized
+BuenaVista_combined<-BuenaVista_2013_resized
+Butler_combined<-Butler_2013_resized
+Calhoun_combined<-Calhoun_2013_resized
+Carroll_combined<-Carroll_2013_resized
+CerroGordo_combined<-CerroGordo_2013_resized
+Clay_combined<-Clay_2013_resized
+Dallas_combined<-Dallas_2013_resized
+Dickinson_combined<-Dickinson_2013_resized
+Emmet_combined<-Emmet_2013_resized
+Floyd_combined<-Floyd_2013_resized
+Franklin_combined<-Franklin_2013_resized
+Greene_combined<-Greene_2013_resized
+Grundy_combined<-Grundy_2013_resized
+Guthrie_combined<-Guthrie_2013_resized
+Hamilton_combined<-Hamilton_2013_resized
+Hancock_combined<-Hancock_2013_resized
+Hardin_combined<-Hardin_2013_resized
+Humboldt_combined<-Humboldt_2013_resized
+Jasper_combined<-Jasper_2013_resized
+Kossuth_combined<-Kossuth_2013_resized
+Marshall_combined<-Marshall_2013_resized
+Mitchell_combined<-Mitchell_2013_resized
+PaloAlto_combined<-PaloAlto_2013_resized
+Pocahontas_combined<-Pocahontas_2013_resized
+Polk_combined<-Polk_2013_resized
+Sac_combined<-Sac_2013_resized
+Story_combined<-Story_2013_resized
+Webster_combined<-Webster_2013_resized
+Winnebago_combined<-Winnebago_2013_resized
+Worth_combined<-Worth_2013_resized
+Wright_combined<-Wright_2013_resized
 
-#Extracting unique longitude coordinates
-Clay_2012_long<-unique(Clay_2012_coord[,"x"])
-Dickinson_2012_long<-unique(Dickinson_2012_coord[,"x"])
+##Relabelling for inclusion of corn/soybean and continuous corn rotations##
+#Creating cluster for running in parallel
+library(doParallel)
+detectCores()
+cluster<-makeCluster(8)
+registerDoParallel(cluster)
+getDoParWorkers()
 
-#Extracting unique latitude coordinates
-Clay_2012_lat<-unique(Clay_2012_coord[,"y"])
-Dickinson_2012_lat<-unique(Dickinson_2012_coord[,"y"])
+#creating function for renumbering
+renumber=function(x,y,z){
+  if((x==1)&(y==1)&(z==1)){100}else{
+    if((x==5)&(y==5)&(z==5)){200}else{
+      if(((x==1)|(x==5))&((y==1)|(y==5))&((z==1)|(z==5))){150}else{
+        if((x==1)|(y==1)|(z==1)){50}else{0}}}}}
+setGeneric("renumber")
 
-#Extracting underlying raster values
-Clay_2012_values<-as.matrix(Clay_2012_resized)
-Dickinson_2012_values<-as.matrix(Dickinson_2012_resized)
+#Pixel by pixel comparison of 2011-2013 county rasters
+Boone<-foreach(i=1:ncell(Boone_combined),.combine=rbind) %dopar% renumber(Boone_2011_resized[i],Boone_2012_resized[i],Boone_2013_resized[i])
+BuenaVista<-foreach(i=1:ncell(BuenaVista_combined),.combine=rbind) %dopar% renumber(BuenaVista_2011_resized[i],BuenaVista_2012_resized[i],BuenaVista_2013_resized[i])
+Butler<-foreach(i=1:ncell(Butler_combined),.combine=rbind) %dopar% renumber(Butler_2011_resized[i],Butler_2012_resized[i],Butler_2013_resized[i])
+Calhoun<-foreach(i=1:ncell(Calhoun_combined),.combine=rbind) %dopar% renumber(Calhoun_2011_resized[i],Calhoun_2012_resized[i],Calhoun_2013_resized[i])
+Carroll<-foreach(i=1:ncell(Carroll_combined),.combine=rbind) %dopar% renumber(Carroll_2011_resized[i],Carroll_2012_resized[i],Carroll_2013_resized[i])
+CerroGordo<-foreach(i=1:ncell(CerroGordo_combined),.combine=rbind) %dopar% renumber(CerroGordo_2011_resized[i],CerroGordo_2012_resized[i],CerroGordo_2013_resized[i])
+Clay<-foreach(i=1:ncell(Clay_combined),.combine=rbind) %dopar% renumber(Clay_2011_resized[i],Clay_2012_resized[i],Clay_2013_resized[i])
+Dallas<-foreach(i=1:ncell(Dallas_combined),.combine=rbind) %dopar% renumber(Dallas_2011_resized[i],Dallas_2012_resized[i],Dallas_2013_resized[i])
+Dickinson<-foreach(i=1:ncell(Dickinson_combined),.combine=rbind) %dopar% renumber(Dickinson_2011_resized[i],Dickinson_2012_resized[i],Dickinson_2013_resized[i])
+Emmet<-foreach(i=1:ncell(Emmet_combined),.combine=rbind) %dopar% renumber(Emmet_2011_resized[i],Emmet_2012_resized[i],Emmet_2013_resized[i])
+Floyd<-foreach(i=1:ncell(Floyd_combined),.combine=rbind) %dopar% renumber(Floyd_2011_resized[i],Floyd_2012_resized[i],Floyd_2013_resized[i])
+Franklin<-foreach(i=1:ncell(Franklin_combined),.combine=rbind) %dopar% renumber(Franklin_2011_resized[i],Franklin_2012_resized[i],Franklin_2013_resized[i])
+Greene<-foreach(i=1:ncell(Greene_combined),.combine=rbind) %dopar% renumber(Greene_2011_resized[i],Greene_2012_resized[i],Greene_2013_resized[i])
+Grundy<-foreach(i=1:ncell(Grundy_combined),.combine=rbind) %dopar% renumber(Grundy_2011_resized[i],Grundy_2012_resized[i],Grundy_2013_resized[i])
+Guthrie<-foreach(i=1:ncell(Guthrie_combined),.combine=rbind) %dopar% renumber(Guthrie_2011_resized[i],Guthrie_2012_resized[i],Guthrie_2013_resized[i])
+Hamilton<-foreach(i=1:ncell(Hamilton_combined),.combine=rbind) %dopar% renumber(Hamilton_2011_resized[i],Hamilton_2012_resized[i],Hamilton_2013_resized[i])
+Hancock<-foreach(i=1:ncell(Hancock_combined),.combine=rbind) %dopar% renumber(Hancock_2011_resized[i],Hancock_2012_resized[i],Hancock_2013_resized[i])
+Hardin<-foreach(i=1:ncell(Hardin_combined),.combine=rbind) %dopar% renumber(Hardin_2011_resized[i],Hardin_2012_resized[i],Hardin_2013_resized[i])
+Humboldt<-foreach(i=1:ncell(Humboldt_combined),.combine=rbind) %dopar% renumber(Humboldt_2011_resized[i],Humboldt_2012_resized[i],Humboldt_2013_resized[i])
+Jasper<-foreach(i=1:ncell(Jasper_combined),.combine=rbind) %dopar% renumber(Jasper_2011_resized[i],Jasper_2012_resized[i],Jasper_2013_resized[i])
+Kossuth<-foreach(i=1:ncell(Kossuth_combined),.combine=rbind) %dopar% renumber(Kossuth_2011_resized[i],Kossuth_2012_resized[i],Kossuth_2013_resized[i])
+Marshall<-foreach(i=1:ncell(Marshall_combined),.combine=rbind) %dopar% renumber(Marshall_2011_resized[i],Marshall_2012_resized[i],Marshall_2013_resized[i])
+Mitchell<-foreach(i=1:ncell(Mitchell_combined),.combine=rbind) %dopar% renumber(Mitchell_2011_resized[i],Mitchell_2012_resized[i],Mitchell_2013_resized[i])
+PaloAlto<-foreach(i=1:ncell(PaloAlto_combined),.combine=rbind) %dopar% renumber(PaloAlto_2011_resized[i],PaloAlto_2012_resized[i],PaloAlto_2013_resized[i])
+Pocahontas<-foreach(i=1:ncell(Pocahontas_combined),.combine=rbind) %dopar% renumber(Pocahontas_2011_resized[i],Pocahontas_2012_resized[i],Pocahontas_2013_resized[i])
+Polk<-foreach(i=1:ncell(Polk_combined),.combine=rbind) %dopar% renumber(Polk_2011_resized[i],Polk_2012_resized[i],Polk_2013_resized[i])
+Sac<-foreach(i=1:ncell(Sac_combined),.combine=rbind) %dopar% renumber(Sac_2011_resized[i],Sac_2012_resized[i],Sac_2013_resized[i])
+Story<-foreach(i=1:ncell(Story_combined),.combine=rbind) %dopar% renumber(Story_2011_resized[i],Story_2012_resized[i],Story_2013_resized[i])
+Webster<-foreach(i=1:ncell(Webster_combined),.combine=rbind) %dopar% renumber(Webster_2011_resized[i],Webster_2012_resized[i],Webster_2013_resized[i])
+Winnebago<-foreach(i=1:ncell(Winnebago_combined),.combine=rbind) %dopar% renumber(Winnebago_2011_resized[i],Winnebago_2012_resized[i],Winnebago_2013_resized[i])
+Worth<-foreach(i=1:ncell(Worth_combined),.combine=rbind) %dopar% renumber(Worth_2011_resized[i],Worth_2012_resized[i],Worth_2013_resized[i])
+Wright<-foreach(i=1:ncell(Wright_combined),.combine=rbind) %dopar% renumber(Wright_2011_resized[i],Wright_2012_resized[i],Wright_2013_resized[i])
 
-#naming rows and columns by corresponding latitude and longitude coordinates
-colnames(Clay_2012_values)<-Clay_2012_long
-rownames(Clay_2012_values)<-Clay_2012_lat
-colnames(Dickinson_2012_values)<-Dickinson_2012_long
-rownames(Dickinson_2012_values)<-Dickinson_2012_lat
+#Assignment of new numbering scheme
+Boone_combined[1:ncell(Boone_combined)]<-Boone
+BuenaVista_combined[1:ncell(BuenaVista_combined)]<-BuenaVista
+Butler_combined[1:ncell(Butler_combined)]<-Butler
+Calhoun_combined[1:ncell(Calhoun_combined)]<-Calhoun
+Carroll_combined[1:ncell(Carroll_combined)]<-Carroll
+CerroGordo_combined[1:ncell(CerroGordo_combined)]<-CerroGordo
+Clay_combined[1:ncell(Clay_combined)]<-Clay
+Dallas_combined[1:ncell(Dallas_combined)]<-Dallas
+Dickinson_combined[1:ncell(Dickinson_combined)]<-Dickinson
+Emmet_combined[1:ncell(Emmet_combined)]<-Emmet
+Floyd_combined[1:ncell(Floyd_combined)]<-Floyd
+Franklin_combined[1:ncell(Franklin_combined)]<-Franklin
+Greene_combined[1:ncell(Greene_combined)]<-Greene
+Grundy_combined[1:ncell(Grundy_combined)]<-Grundy
+Guthrie_combined[1:ncell(Guthrie_combined)]<-Guthrie
+Hamilton_combined[1:ncell(Hamilton_combined)]<-Hamilton
+Hancock_combined[1:ncell(Hancock_combined)]<-Hancock
+Hardin_combined[1:ncell(Hardin_combined)]<-Hardin
+Humboldt_combined[1:ncell(Humboldt_combined)]<-Humboldt
+Jasper_combined[1:ncell(Jasper_combined)]<-Jasper
+Kossuth_combined[1:ncell(Kossuth_combined)]<-Kossuth
+Marshall_combined[1:ncell(Marshall_combined)]<-Marshall
+Mitchell_combined[1:ncell(Mitchell_combined)]<-Mitchell
+PaloAlto_combined[1:ncell(PaloAlto_combined)]<-PaloAlto
+Pocahontas_combined[1:ncell(Pocahontas_combined)]<-Pocahontas
+Polk_combined[1:ncell(Polk_combined)]<-Polk
+Sac_combined[1:ncell(Sac_combined)]<-Sac
+Story_combined[1:ncell(Story_combined)]<-Story
+Webster_combined[1:ncell(Webster_combined)]<-Webster
+Winnebago_combined[1:ncell(Winnebago_combined)]<-Winnebago
+Worth_combined[1:ncell(Worth_combined)]<-Worth
+Wright_combined[1:ncell(Wright_combined)]<-Wright
 
-#redefining the raster values as a data.frame
-Clay_2012_values<-as.data.frame(Clay_2012_values)
-Dickinson_2012_values<-as.data.frame(Dickinson_2012_values)
-
-#loading required packages for recoding of the data frames
-require(plyr)
-require(car)
-
-#recoding data frames
-Clay_2012_values<-as.data.frame(lapply(Clay_2012_values,FUN=function(data) recode(data,"1='Corn';2='Cotton';3='Rice';4='Sorghum';5='Soybeans';6='Sunflower';111='Open Water';121='Developed/Open Space';122='Developed/Low Intensity';143='Mixed Forest';176='Pasture';195='Herbaceous Wetlands'")))
-Dickinson_2012_values<-as.data.frame(lapply(Dickinson_2012_values,FUN=function(data) recode(data,"1='Corn';2='Cotton';3='Rice';4='Sorghum';5='Soybeans';6='Sunflower';111='Open Water';121='Developed/Open Space';122='Developed/Low Intensity';143='Mixed Forest';176='Pasture';195='Herbaceous Wetlands'")))
+#Writing the rasters to file
+writeRaster(Boone_combined,filename='Boone.grd',overwrite=TRUE)
+writeRaster(BuenaVista_combined,filename='BuenaVista.grd',overwrite=TRUE)
+writeRaster(Butler_combined,filename='Butler.grd',overwrite=TRUE)
+writeRaster(Calhoun_combined,filename='Calhoun.grd',overwrite=TRUE)
+writeRaster(Carroll_combined,filename='Carroll.grd',overwrite=TRUE)
+writeRaster(CerroGordo_combined,filename='CerroGordo.grd',overwrite=TRUE)
+writeRaster(Clay_combined,filename='Clay.grd',overwrite=TRUE)
+writeRaster(Dallas_combined,filename='Dallas.grd',overwrite=TRUE)
+writeRaster(Dickinson_combined,filename='Dickinson.grd',overwrite=TRUE)
+writeRaster(Emmet_combined,filename='Emmet.grd',overwrite=TRUE)
+writeRaster(Floyd_combined,filename='Floyd.grd',overwrite=TRUE)
+writeRaster(Franklin_combined,filename='Franklin.grd',overwrite=TRUE)
+writeRaster(Greene_combined,filename='Greene.grd',overwrite=TRUE)
+writeRaster(Grundy_combined,filename='Grundy.grd',overwrite=TRUE)
+writeRaster(Guthrie_combined,filename='Guthrie.grd',overwrite=TRUE)
+writeRaster(Hamilton_combined,filename='Hamilton.grd',overwrite=TRUE)
+writeRaster(Hancock_combined,filename='Hancock.grd',overwrite=TRUE)
+writeRaster(Hardin_combined,filename='Hardin.grd',overwrite=TRUE)
+writeRaster(Humboldt_combined,filename='Humboldt.grd',overwrite=TRUE)
+writeRaster(Jasper_combined,filename='Jasper.grd',overwrite=TRUE)
+writeRaster(Kossuth_combined,filename='Kossuth.grd',overwrite=TRUE)
+writeRaster(Marshall_combined,filename='Marshall.grd',overwrite=TRUE)
+writeRaster(Mitchell_combined,filename='Mitchell.grd',overwrite=TRUE)
+writeRaster(PaloAlto_combined,filename='PaloAlto.grd',overwrite=TRUE)
+writeRaster(Pocahontas_combined,filename='Pocahontas.grd',overwrite=TRUE)
+writeRaster(Polk_combined,filename='Polk.grd',overwrite=TRUE)
+writeRaster(Sac_combined,filename='Sac.grd',overwrite=TRUE)
+writeRaster(Story_combined,filename='Story.grd',overwrite=TRUE)
+writeRaster(Webster_combined,filename='Webster.grd',overwrite=TRUE)
+writeRaster(Winnebago_combined,filename='Winnebago.grd',overwrite=TRUE)
+writeRaster(Worth_combined,filename='Worth.grd',overwrite=TRUE)
+writeRaster(Wright_combined,filename='Wright.grd',overwrite=TRUE)
 ```
