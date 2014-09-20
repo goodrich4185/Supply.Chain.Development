@@ -1,0 +1,75 @@
+---
+title: "Items to hang on to"
+author: "Ryan Goodrich"
+date: "Tuesday, September 09, 2014"
+output: html_document
+---
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.5/leaflet.css" />
+
+```{r rMaps install}
+require(devtools)
+install.packages('base64enc')
+install_github('ramnathv/rCharts@dev')
+install_github('ramnathv/rMaps')
+require(rMaps)
+require(rjson)
+```
+
+```{r Crosslet example}
+crosslet(
+  x = "country", 
+  y = c("web_index", "universal_access", "impact_empowerment", "freedom_openness"),
+  data = web_index
+)
+
+```
+
+```{r ichoploreth example}
+ichoropleth(Crime ~ State, data = subset(violent_crime, Year == 2010))
+ichoropleth(Crime ~ State, data = violent_crime, animate = "Year")
+ichoropleth(Crime ~ State, data = violent_crime, animate = "Year", play = TRUE)
+
+```
+
+```{r Leaflet example}
+map <- Leaflet$new()
+map$setView(c(42.0205, -93.3712), zoom = 13)
+map$tileLayer(provider = 'Stamen.Watercolor')
+map$marker(
+  c(51.5, -0.09),
+  bindPopup = 'Hi. I am a popup'
+)
+map
+```
+
+
+```{r Geographic coordinate conversion}
+geo_conversion=function(degrees,minutes,seconds){
+  degrees+(minutes/60)+(seconds/3600)
+}
+```
+
+```{r Google Maps}
+require(ggmap)
+mapImageData3 <- get_map(location = c(lon = geo_conversion(-93,-37,-12), lat = geo_conversion(42,02,05)),
+    color = "color",
+    source = "google",
+    maptype = "roadmap",
+    zoom = 10)
+ 
+environ<-ggmap(mapImageData3,
+    extent = "device",
+    ylab = "Latitude",
+    xlab = "Longitude")
+
+part.farms<-matrix(data=0,ncol=2,nrow=10)
+colnames(part.farms)<-c("lon","lat")
+part.farms<-as.data.frame(part.farms)
+for(i in 1:10){
+  part.farms[i,"lon"]<-geo_conversion(-93,-37,-12+i)
+  part.farms[i,"lat"]<-geo_conversion(42,02,05)
+}
+environ<-environ+geom_point(data=part.farms,x=part.farms[,"lon"],y=part.farms[,"lat"],col="red")
+print(environ)
+```

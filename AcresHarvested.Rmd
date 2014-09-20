@@ -1,0 +1,78 @@
+---
+title: "Acres Harvested"
+author: "Ryan Goodrich"
+date: "Monday, August 25, 2014"
+output: html_document
+runtime: shiny
+---
+
+```{r Acres Harvested Distribution}
+file.acres<-"U:/Research/Supply.Chain.Development/NCentralOperations.csv"
+operations.data<-read.table(file=file.acres, header=TRUE,sep=",")
+
+require(plyr)
+op<-function(data) {with(data,sum(Value))}
+op.dist<-ddply(operations.data, .variables="Domain.Category", .fun=op)
+
+op.dist$ID<-c(6,1,3,2,4,5)
+
+#ordering according to ID
+op.dist<-op.dist[order(op.dist[,3]),]
+
+#### Finding prior values for lognormal prior parameters ####
+#--setting up matrix for comparison of data and model--#
+total_operations<-sum(op.dist$V1)
+
+perc<-function(data) {with(data,V1/total_operations)}
+
+model_check<-matrix(data=NA,nrow=6,5)
+colnames(model_check)<-c("ID","Farm_Size","Data_Percentile","Model_Percentile","Squared_Diff")
+data_perc<-ddply(op.dist,.variables="Domain.Category", .fun=perc)
+model_check[,"Farm_Size"]<-as.character(data_perc$Domain.Category)
+model_check[,"Data_Percentile"]<-round(data_perc[,2],4)
+
+#renaming category variables
+model_check[1,"Farm_Size"]<-"1000 or more acres"
+model_check[2,"Farm_Size"]<-"1 to 24.9 acres"
+model_check[3,"Farm_Size"]<-"100 to 249 acres"
+model_check[4,"Farm_Size"]<-"25 to 99.9 acres"
+model_check[5,"Farm_Size"]<-"250 to 499 acres"
+model_check[6,"Farm_Size"]<-"500 to 999 acres"
+
+#setting ID variables
+model_check[1,"ID"]<-6
+model_check[2,"ID"]<-1
+model_check[3,"ID"]<-3
+model_check[4,"ID"]<-2
+model_check[5,"ID"]<-4
+model_check[6,"ID"]<-5
+
+#ordering according to ID
+model_check<-model_check[order(model_check[,"ID"]),]
+
+#--setting the parameters of the lognormal function--#
+#Excel solver output
+muA=178.207456
+sigmaA=3.144599859
+
+#checking the fit of the parameters
+acres<-rlnorm(100000,meanlog=log(muA),sdlog=log(sigmaA)) 
+model_check[1,"Model_Percentile"]<-round(plnorm(25,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE),4)
+model_check[2,"Model_Percentile"]<-round(plnorm(100,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(25,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[3,"Model_Percentile"]<-round(plnorm(250,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(100,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[4,"Model_Percentile"]<-round(plnorm(500,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(250,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[5,"Model_Percentile"]<-round(plnorm(1000,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=TRUE)-plnorm(500,meanlog=log(muA),sdlog=log(sigmaA),lower.tail=TRUE),4)
+model_check[6,"Model_Percentile"]<-round(plnorm(1000,meanlog=log(muA),sdlog=log(sigmaA),
+    lower.tail=FALSE),4)
+
+model_check[,"Squared_Diff"]<-round((as.numeric(model_check[,"Data_Percentile"]) 
+    - as.numeric(model_check[,"Model_Percentile"]))^2,4)
+
+model_check
+mean(acres) #actual mean is 343.5207
+```

@@ -1,0 +1,38 @@
+---
+title: "Yield Distribution"
+author: "Ryan Goodrich"
+date: "Monday, August 25, 2014"
+output: html_document
+runtime: shiny
+---
+
+```{r Yield Distribution}
+
+#reading in the data
+file.yields<-"U:/Research/Supply.Chain.Development/Iowa_corn_data_2.csv"
+iowa.data<-read.table(file=file.yields, header=TRUE,sep=",") 
+
+#extracting yield data from 2004-2013
+iowa.yield<-subset(iowa.data,Data.Item=="CORN, GRAIN - YIELD, MEASURED IN BU / ACRE")
+iowa.yield<-subset(iowa.yield,Year>2004)
+iowa.yield<-subset(iowa.yield,select=c(Year,County, Value))
+
+#converting values to numeric
+iowa.yield$Value<-as.numeric(as.character(iowa.yield$Value))
+
+#calculating the support of yield variable
+l<-min(iowa.yield$Value)
+u<-max(iowa.yield$Value)
+
+#transform data to standard beta distribution
+iowa.yield$trans<-(iowa.yield$Value-l)/(u-l)
+
+#method of moments estimation
+mu<-mean(iowa.yield$trans)
+s2<-var(iowa.yield$trans)
+beta<-mu*(1-mu)^2/s2 - (1-mu)
+alpha<-beta*mu/(1-mu)
+
+hist(iowa.yield$trans,breaks=16,main="Histogram of Transformed Yield Values",freq=FALSE,xlab="Yield")
+curve(dbeta(x,alpha,beta),add=TRUE,col="blue",lwd=3)
+```
