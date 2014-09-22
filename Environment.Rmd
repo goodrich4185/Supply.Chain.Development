@@ -333,7 +333,7 @@ Worth_2011[Worth_2011==190|Worth_2011==195]<-6
 Worth_2011[Worth_2011==176|Worth_2011==58|Worth_2011==59|Worth_2011==152]<-7
 Worth_2011[Worth_2011==131|Worth_2011==61]<-8
 Worth_2011[Worth_2011==111]<-9
-Worth_2011[Worth_2011==121|Worth_2011==122]<-12
+Worth_2011[Worth_2011==121|Worth_2011==122]<-14
 
 
 Worth_2012[Worth_2012==12|Worth_2012==23|Worth_2012==24|Worth_2012==28|Worth_2012==36|Worth_2012==37|Worth_2012==38|Worth_2012==44|Worth_2012==47|Worth_2012==53]<-2
@@ -343,7 +343,7 @@ Worth_2012[Worth_2012==190|Worth_2012==195]<-6
 Worth_2012[Worth_2012==176]<-7
 Worth_2012[Worth_2012==131|Worth_2012==61]<-8
 Worth_2012[Worth_2012==111]<-9
-Worth_2012[Worth_2012==121|Worth_2012==122]<-12
+Worth_2012[Worth_2012==121|Worth_2012==122]<-14
 
 Worth_2013[Worth_2013==12|Worth_2013==23|Worth_2013==24|Worth_2013==26|Worth_2013==27|Worth_2013==28|Worth_2013==36|Worth_2013==37|Worth_2013==38|Worth_2013==44|Worth_2013==47|Worth_2013==53|Worth_2013==241|Worth_2013==21]<-2
 Worth_2013[Worth_2013==123|Worth_2013==124]<-3
@@ -352,7 +352,65 @@ Worth_2013[Worth_2013==190|Worth_2013==195]<-6
 Worth_2013[Worth_2013==176|Worth_2013==58|Worth_2013==59|Worth_2013==152]<-7
 Worth_2013[Worth_2013==131|Worth_2013==61]<-8
 Worth_2013[Worth_2013==111]<-9
-Worth_2013[Worth_2013==121|Worth_2013==122]<-12
+Worth_2013[Worth_2013==121|Worth_2013==122]<-14
+
+#extraction of lightly developed boundaries
+boundary=function(x){if((x[1]!=14)){1}else{0}}
+Worth_2013_boundary<-calc(Worth_2013,fun=boundary)
+
+#elimination of interior boundaries
+focal_block<-focal(Worth_2013_boundary,w=matrix(1,ncol=3,nrow=3))
+Worth_2013_boundary[focal_block==0]<-1
+
+#definition of elemental focal functions for 3x3 matrix
+focal_1<-focal(Worth_2013_boundary,w=matrix(c(1,0,0,0,0,0,0,0,0),nrow=3,ncol=3))
+focal_2<-focal(Worth_2013_boundary,w=matrix(c(0,1,0,0,0,0,0,0,0),nrow=3,ncol=3))
+focal_3<-focal(Worth_2013_boundary,w=matrix(c(0,0,1,0,0,0,0,0,0),nrow=3,ncol=3))
+focal_4<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,1,0,0,0,0,0),nrow=3,ncol=3))
+focal_5<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,1,0,0,0,0),nrow=3,ncol=3))
+focal_6<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,1,0,0,0),nrow=3,ncol=3))
+focal_7<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,1,0,0),nrow=3,ncol=3))
+focal_8<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,1,0),nrow=3,ncol=3))
+focal_9<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,1),nrow=3,ncol=3))
+
+#extraction of acceptable boundary segments
+Worth_2013_boundary[((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==0)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==0)&(focal_9==1))|((focal_1==0)&(focal_2==1)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==1)&(focal_9==0))|((focal_1==1)&(focal_2==1)&(focal_3==0)&(focal_4==1)&(focal_5==0)&(focal_6==1)&(focal_7==0)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==1)&(focal_3==0)&(focal_4==0)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==1)&(focal_9==0))|((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==0)&(focal_7==0)&(focal_8==1)&(focal_9==1))|((focal_1==0)&(focal_2==1)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==0)&(focal_2==0)&(focal_3==0)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==0)&(focal_8==0)&(focal_9==0))|((focal_1==1)&(focal_2==0)&(focal_3==0)&(focal_4==1)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==0)&(focal_9==0))|((focal_1==0)&(focal_2==0)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==1)&(focal_7==0)&(focal_8==0)&(focal_9==1))|((focal_1==0)&(focal_2==0)&(focal_3==0)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==0)&(focal_8==0)&(focal_9==0))]<-2
+
+#connecting the acceptable boundaries
+a<-1
+while(a>0){
+focal_left5<-focal(Worth_2013_boundary,w=matrix(c(1,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=9))
+focal_left4<-focal(Worth_2013_boundary,w=matrix(c(0,1,0,0,0,0,0,0,0,0,0),nrow=1,ncol=9))
+focal_left3<-focal(Worth_2013_boundary,w=matrix(c(0,0,1,0,0,0,0,0,0,0,0),nrow=1,ncol=9))
+focal_left2<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,1,0,0,0,0,0,0,0),nrow=1,ncol=9))
+focal_left1<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,1,0,0,0,0,0,0),nrow=1,ncol=9))
+focal_right5<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1),nrow=1,ncol=9))
+focal_right4<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,1,0),nrow=1,ncol=9))
+focal_right3<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,1,0,0),nrow=1,ncol=9))
+focal_right2<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,1,0,0,0),nrow=1,ncol=9))
+focal_right1<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,1,0,0,0,0),nrow=1,ncol=9))
+
+focal_up5<-focal(Worth_2013_boundary,w=matrix(c(1,0,0,0,0,0,0,0,0,0,0),nrow=9,ncol=1))
+focal_up4<-focal(Worth_2013_boundary,w=matrix(c(0,1,0,0,0,0,0,0,0,0,0),nrow=9,ncol=1))
+focal_up3<-focal(Worth_2013_boundary,w=matrix(c(0,0,1,0,0,0,0,0,0,0,0),nrow=9,ncol=1))
+focal_up2<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,1,0,0,0,0,0,0,0),nrow=9,ncol=1))
+focal_up1<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,1,0,0,0,0,0,0),nrow=9,ncol=1))
+focal_down5<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1),nrow=9,ncol=1))
+focal_down4<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,1,0),nrow=9,ncol=1))
+focal_down3<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,1,0,0),nrow=9,ncol=1))
+focal_down2<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,1,0,0,0),nrow=9,ncol=1))
+focal_down1<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,1,0,0,0,0),nrow=9,ncol=1))
+
+#horizontal
+a<-sum(Worth_2013_boundary[((Worth_2013_boundary==1)|(Worth_2013_boundary==0))&((focal_up1==0)|(focal_up1==1))&((focal_up2==0)|(focal_up2==1))&((focal_down1==0)|(focal_down1==1))&((focal_down2==0)|(focal_down2==1))&((focal_right1==2)|(focal_right2==2)|(focal_right3==2)|(focal_right4==2)|(focal_right5==2))&((focal_left1==2)|(focal_left2==2)|(focal_left3==2)|(focal_left4==2)|(focal_left5==2))],Worth_2013_boundary[((Worth_2013_boundary==1)|(Worth_2013_boundary==0))&((focal_left1==0)|(focal_left1==1))&((focal_left2==0)|(focal_left2==1))&((focal_right1==0)|(focal_right1==1))&((focal_right2==0)|(focal_right2==1))&((focal_down1==2)|(focal_down2==2)|(focal_down3==2)|(focal_down4==2)|(focal_down5==2))&((focal_up1==2)|(focal_up2==2)|(focal_up3==2)|(focal_up4==2)|(focal_up5==2))])
+
+Worth_2013_boundary[((Worth_2013_boundary==1)|(Worth_2013_boundary==0))&((focal_up1==0)|(focal_up1==1))&((focal_up2==0)|(focal_up2==1))&((focal_down1==0)|(focal_down1==1))&((focal_down2==0)|(focal_down2==1))&((focal_right1==2)|(focal_right2==2)|(focal_right3==2)|(focal_right4==2)|(focal_right5==2))&((focal_left1==2)|(focal_left2==2)|(focal_left3==2)|(focal_left4==2)|(focal_left5==2))]<-2
+
+#vertical
+Worth_2013_boundary[((Worth_2013_boundary==1)|(Worth_2013_boundary==0))&((focal_left1==0)|(focal_left1==1))&((focal_left2==0)|(focal_left2==1))&((focal_right1==0)|(focal_right1==1))&((focal_right2==0)|(focal_right2==1))&((focal_down1==2)|(focal_down2==2)|(focal_down3==2)|(focal_down4==2)|(focal_down5==2))&((focal_up1==2)|(focal_up2==2)|(focal_up3==2)|(focal_up4==2)|(focal_up5==2))]<-2
+}
+
+Worth_values<-as.matrix(Worth_2013_boundary)
 
 #stacking the rasters
 Worth_combined<-stack(Worth_2011,Worth_2012,Worth_2013)
@@ -365,7 +423,7 @@ renumber=function(x){
       if((x[1]==4)|(x[2]==4)|(x[3]==4)){4}else{
       if((x[1]==8)|(x[2]==8)|(x[3]==8)){8}else{
       if((x[1]==9)|(x[2]==9)|(x[3]==9)){9}else{
-      if((x[1]==12)|(x[2]==12)|(x[3]==12)){12}else{
+      if((x[1]==14)|(x[2]==14)|(x[3]==14)){14}else{
       ux<-tabulate(c(x[1],x[2],x[3]))
       if(((x[1]!=1)&(x[2]!=1)&(x[3]!=1))){which.max(tabulate(ux))}else{
         if((x[1]!=6)&(x[2]!=6)&(x[3]!=6)){11}else{
@@ -376,11 +434,15 @@ renumber=function(x){
 #calculating new values
 Worth_raster<-calc(Worth_combined,fun=renumber)
 
-#separating cropland from non-cropland
-boundary=function(x){if(x==12|x==3|x==9){0}else{1}}
-Worth_boundary<-calc(Worth_raster,fun=boundary)
-
 #determining boundaries
+Worth_values<-as.matrix(Worth_boundary)
+
+#eliminating blocks of boundary
+focal_block<-focal(Worth_boundary,w=matrix(1,nrow=5,ncol=5))
+Worth_boundary[(Worth_boundary==0)&focal_block==0]<-1
+
+Worth_boundary[Worth_boundary==0]<-1
+Worth_boundary[Worth_boundary==2]<-0
 
 #eliminating isolated points
 focal_iso<-focal(Worth_boundary,w=matrix(c(0,1,0,1,1,1,0,1,0),nrow=3,ncol=3))
@@ -402,9 +464,7 @@ a<-sum(Worth_boundary[(Worth_boundary==0)&focal_lone>217])
 Worth_boundary[(Worth_boundary==0)&focal_lone>217]<-1
 }
 
-#elimating blocks of boundary
-focal_block<-focal(Worth_boundary,w=matrix(1,nrow=5,ncol=5))
-Worth_boundary[(Worth_boundary==0)&focal_block<=3]<-1
+
 
 plot(Worth_boundary)
 
