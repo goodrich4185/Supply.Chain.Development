@@ -357,25 +357,1084 @@ Worth_2013[Worth_2013==121|Worth_2013==122]<-14
 #extraction of lightly developed boundaries
 boundary=function(x){if((x[1]!=14)){1}else{0}}
 Worth_2013_boundary<-calc(Worth_2013,fun=boundary)
+```
 
-#elimination of interior boundaries
-focal_block<-focal(Worth_2013_boundary,w=matrix(1,ncol=3,nrow=3))
-Worth_2013_boundary[focal_block==0]<-1
+```{r Focal definition}
+#definition of general focus functions
+fivebyfive<-focal(Worth_2013_boundary,w=matrix(1,nrow=5,ncol=5))
+threebythree<-focal(Worth_2013_boundary,w=matrix(1,nrow=3,ncol=3))
+w<-focal(Worth_2013_boundary,w=matrix(c(0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+e<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0),nrow=5,ncol=5))
+n<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+s<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+nw<-focal(Worth_2013_boundary,w=matrix(c(1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+ne<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0),nrow=5,ncol=5))
+sw<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+se<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1),nrow=5,ncol=5))
+nwn<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+wnw<-focal(Worth_2013_boundary,w=matrix(c(0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+nne<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+nee<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0),nrow=5,ncol=5))
+ese<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0),nrow=5,ncol=5))
+ses<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0),nrow=5,ncol=5))
+ssw<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+sww<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
 
-#definition of elemental focal functions for 3x3 matrix
-focal_1<-focal(Worth_2013_boundary,w=matrix(c(1,0,0,0,0,0,0,0,0),nrow=3,ncol=3))
-focal_2<-focal(Worth_2013_boundary,w=matrix(c(0,1,0,0,0,0,0,0,0),nrow=3,ncol=3))
-focal_3<-focal(Worth_2013_boundary,w=matrix(c(0,0,1,0,0,0,0,0,0),nrow=3,ncol=3))
-focal_4<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,1,0,0,0,0,0),nrow=3,ncol=3))
-focal_5<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,1,0,0,0,0),nrow=3,ncol=3))
-focal_6<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,1,0,0,0),nrow=3,ncol=3))
-focal_7<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,1,0,0),nrow=3,ncol=3))
-focal_8<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,1,0),nrow=3,ncol=3))
-focal_9<-focal(Worth_2013_boundary,w=matrix(c(0,0,0,0,0,0,0,0,1),nrow=3,ncol=3))
+road_focals=function(raster){
+  fivebyfive<-focal(raster,w=matrix(1,nrow=5,ncol=5))
+  threebythree<-focal(raster,w=matrix(1,nrow=3,ncol=3))
+  n<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  nne<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  ne<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0),nrow=5,ncol=5))
+  nee<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0),nrow=5,ncol=5))
+  e<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0),nrow=5,ncol=5))
+  ese<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0),nrow=5,ncol=5))
+  se<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1),nrow=5,ncol=5))
+  ses<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0),nrow=5,ncol=5))
+  s<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  ssw<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  sw<-focal(raster,w=matrix(c(0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  sww<-focal(raster,w=matrix(c(0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  w<-focal(raster,w=matrix(c(0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  wnw<-focal(raster,w=matrix(c(0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  nw<-focal(raster,w=matrix(c(1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  nwn<-focal(raster,w=matrix(c(0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=5))
+  return(c(fivebyfive,threebythree,n,nne,ne,nee,e,ese,se,ses,s,ssw,sw,sww,w,wnw,nw,nwn))
+}
+
+Worth_road_focals<-road_focals(Worth_2013_boundary)
+```
+
+```{r Extraction}
+#function to extract road type boundary
+boundaries=function(raster,focals){
+  raster[focals[[2]]>0&
+           (((focals[[4]]==0)&
+              ((focals[[8]]==0)|(focals[[9]]==0)|(focals[[10]]==0)|(focals[[11]]==0)|(focals[[12]]==0)|
+              (focals[[13]]==0)|(focals[[14]]==0)|(focals[[15]]==0)|(focals[[16]]==0)))|
+            ((focals[[5]]==0)&
+              ((focals[[9]]==0)|(focals[[10]]==0)|(focals[[11]]==0)|(focals[[12]]==0)|(focals[[13]]==0)|
+              (focals[[14]]==0)|(focals[[15]]==0)|(focals[[16]]==0)|(focals[[17]]==0)))|
+            ((focals[[6]]==0)&
+              ((focals[[10]]==0)|(focals[[11]]==0)|(focals[[12]]==0)|(focals[[13]]==0)|(focals[[14]]==0)|
+              (focals[[15]]==0)|(focals[[16]]==0)|(focals[[17]]==0)|(focals[[18]]==0)))|        
+            ((focals[[7]]==0)&
+              ((focals[[11]]==0)|(focals[[12]]==0)|(focals[[13]]==0)|(focals[[14]]==0)|(focals[[15]]==0)|
+              (focals[[16]]==0)|(focals[[17]]==0)|(focals[[18]]==0)|(focals[[3]]==0)))|        
+            ((focals[[8]]==0)&
+              ((focals[[12]]==0)|(focals[[13]]==0)|(focals[[14]]==0)|(focals[[15]]==0)|(focals[[16]]==0)|
+              (focals[[17]]==0)|(focals[[18]]==0)|(focals[[3]]==0)|(focals[[4]]==0)))|
+            ((focals[[9]]==0)&
+              ((focals[[13]]==0)|(focals[[14]]==0)|(focals[[15]]==0)|(focals[[16]]==0)|(focals[[17]]==0)|
+              (focals[[18]]==0)|(focals[[3]]==0)|(focals[[4]]==0)|(focals[[5]]==0)))| 
+            ((focals[[10]]==0)&
+              ((focals[[14]]==0)|(focals[[15]]==0)|(focals[[16]]==0)|(focals[[17]]==0)|(focals[[18]]==0)|
+              (focals[[3]]==0)|(focals[[4]]==0)|(focals[[5]]==0)|(focals[[6]]==0)))|
+            ((focals[[11]]==0)&
+              ((focals[[15]]==0)|(focals[[16]]==0)|(focals[[17]]==0)|(focals[[18]]==0)|(focals[[3]]==0)|
+              (focals[[4]]==0)|(focals[[5]]==0)|(focals[[6]]==0)|(focals[[7]]==0)))|
+            ((focals[[12]]==0)&
+              ((focals[[16]]==0)|(focals[[17]]==0)|(focals[[18]]==0)|(focals[[3]]==0)|(focals[[4]]==0)|
+              (focals[[5]]==0)|(focals[[6]]==0)|(focals[[7]]==0)|(focals[[8]]==0)))|
+            ((focals[[13]]==0)&
+              ((focals[[17]]==0)|(focals[[18]]==0)|(focals[[3]]==0)|(focals[[4]]==0)|(focals[[5]]==0)|
+              (focals[[6]]==0)|(focals[[7]]==0)|(focals[[8]]==0)|(focals[[9]]==0)))|
+            ((focals[[14]]==0)&
+              ((focals[[18]]==0)|(focals[[3]]==0)|(focals[[4]]==0)|(focals[[5]]==0)|(focals[[6]]==0)|
+              (focals[[7]]==0)|(focals[[8]]==0)|(focals[[9]]==0)|(focals[[10]]==0)))|
+            ((focals[[15]]==0)&
+              ((focals[[3]]==0)|(focals[[4]]==0)|(focals[[5]]==0)|(focals[[6]]==0)|(focals[[7]]==0)|
+              (focals[[8]]==0)|(focals[[9]]==0)|(focals[[10]]==0)|(focals[[11]]==0)))|
+            ((focals[[16]]==0)&
+              ((focals[[4]]==0)|(focals[[5]]==0)|(focals[[6]]==0)|(focals[[7]]==0)|(focals[[8]]==0)|
+              (focals[[9]]==0)|(focals[[10]]==0)|(focals[[11]]==0)|(focals[[12]]==0)))|
+            ((focals[[17]]==0)&
+              ((focals[[5]]==0)|(focals[[6]]==0)|(focals[[7]]==0)|(focals[[8]]==0)|(focals[[9]]==0)|
+              (focals[[10]]==0)|(focals[[11]]==0)|(focals[[12]]==0)|(focals[[13]]==0)))|
+            ((focals[[18]]==0)&
+              ((focals[[6]]==0)|(focals[[7]]==0)|(focals[[8]]==0)|(focals[[9]]==0)|(focals[[10]]==0)|
+              (focals[[11]]==0)|(focals[[12]]==0)|(focals[[13]]==0)|(focals[[14]]==0))))]<-3
+          raster[raster==0]<-1
+          raster[raster==3]<-0
+        return(raster)}
+
+boundaries=function(raster,focals){
+  raster[focals[[2]]>0&
+           (((focals[[4]]==0)&
+              ((focals[[8]]==0)|(focals[[12]]==0)|(focals[[16]]==0)))|
+            ((focals[[5]]==0)&
+              ((focals[[9]]==0)|(focals[[13]]==0)|(focals[[17]]==0)))|
+            ((focals[[6]]==0)&
+              ((focals[[10]]==0)|(focals[[14]]==0)|(focals[[18]]==0)))|        
+            ((focals[[7]]==0)&
+              ((focals[[11]]==0)|(focals[[15]]==0)|(focals[[3]]==0)))|        
+            ((focals[[8]]==0)&
+              ((focals[[12]]==0)|(focals[[16]]==0)|(focals[[4]]==0)))|
+            ((focals[[9]]==0)&
+              ((focals[[13]]==0)|(focals[[17]]==0)|(focals[[5]]==0)))| 
+            ((focals[[10]]==0)&
+              ((focals[[14]]==0)|(focals[[18]]==0)|(focals[[6]]==0)))|
+            ((focals[[11]]==0)&
+              ((focals[[15]]==0)|(focals[[3]]==0)|(focals[[7]]==0)))|
+            ((focals[[12]]==0)&
+              ((focals[[16]]==0)|(focals[[4]]==0)|(focals[[8]]==0)))|
+            ((focals[[13]]==0)&
+              ((focals[[17]]==0)|(focals[[5]]==0)|(focals[[9]]==0)))|
+            ((focals[[14]]==0)&
+              ((focals[[18]]==0)|(focals[[6]]==0)|(focals[[10]]==0)))|
+            ((focals[[15]]==0)&
+              ((focals[[3]]==0)|(focals[[7]]==0)|(focals[[11]]==0)))|
+            ((focals[[16]]==0)&
+              ((focals[[4]]==0)|(focals[[8]]==0)|(focals[[12]]==0)))|
+            ((focals[[17]]==0)&
+              ((focals[[5]]==0)|(focals[[9]]==0)|(focals[[13]]==0)))|
+            ((focals[[18]]==0)&
+              ((focals[[6]]==0)|(focals[[10]]==0)|(focals[[14]]==0))))]<-3
+          raster[raster==0]<-1
+          raster[raster==3]<-0
+        return(raster)}
+#road boundary extraction
+Worth_2013_boundary<-boundaries(Worth_2013_boundary,Worth_road_focals)
+
+#long focals for further refinement
+test=function(raster){
+test<-focal(raster,c(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1),nrow=37,ncol=37)
+return(test)}
+
+test_focal<-test(Worth_2013_boundary)
+
+
+#function to create focals for connection
+long_focals=function(raster){
+  up25<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=51,ncol=3))
+  right25<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=3,ncol=51,byrow=TRUE))
+  down25<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=51,ncol=3))
+  left25<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),byrow=TRUE,nrow=1,ncol=51))  
+  return(c(up25,right25,down25,left25))
+}
+
+short_focals=function(raster){
+  up10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=21,ncol=1))
+  right10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=21))
+  down10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=21,ncol=1))
+  left10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=21))
+  return(c(up10,right10,down10,left10))
+}
+
+around_focals=function(raster){
+  upcheck<-focal(raster,w=matrix(c(0,0,1,0,0,1,0,0,0,0,0,1,0,0,1),nrow=3,ncol=5))
+  rightcheck<-focal(raster,w=matrix(c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0),nrow=5,ncol=3))
+  downcheck<-focal(raster,w=matrix(c(1,0,0,1,0,0,0,0,0,1,0,0,1,0,0),nrow=3,ncol=5))
+  leftcheck<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1,1,0,1,1),nrow=5,ncol=3))
+  return(c(upcheck,rightcheck,downcheck,leftcheck))
+}
+
+#function to perform connection
+connection=function(raster,focal_long,focal_short,focal_around){
+  count<-sum(raster[(raster==1)&(((focal_long[[1]]<70)&focal_around[[1]]>=2)&(focal_short[[3]]==0)|
+                      ((focal_long[[2]]<70)&focal_around[[2]]>=2)&(focal_short[[4]]==0)|
+                      ((focal_long[[3]]<70)&focal_around[[3]]>=2)&(focal_short[[1]]==0)|
+                      ((focal_long[[4]]<70)&focal_around[[4]]>=2)&(focal_short[[2]]==0))])
+  
+  raster[(raster==1)&(((focal_long[[1]]<70)&focal_around[[1]]>=2)&(focal_short[[3]]==0)|
+                      ((focal_long[[2]]<70)&focal_around[[2]]>=2)&(focal_short[[4]]==0)|
+                      ((focal_long[[3]]<70)&focal_around[[3]]>=2)&(focal_short[[1]]==0)|
+                      ((focal_long[[4]]<70)&focal_around[[4]]>=2)&(focal_short[[2]]==0))]<-0
+
+  return(c(raster,count))}
+
+connection=function(raster,focal_long){
+  raster[(raster==1)&(((focal_long[[1]]<20)&focal_long[[3]]<20)|
+                      ((focal_long[[2]]<20)&focal_long[[4]]<20))]<-0
+  return(raster)
+}
+
+Intermediate<-list()
+Intermediate[[2]]<-1
+while(Intermediate[[2]]>0){
+Worth_long_focals<-long_focals(Worth_2013_boundary)
+Worth_short_focals<-short_focals(Worth_2013_boundary)
+Worth_around_focals<-around_focals(Worth_2013_boundary)
+Worth_2013_boundary<-connection(Worth_2013_boundary,Worth_long_focals,Worth_short_focals,Worth_around_focals)
+}
+plot(Worth_2013_boundary,maxpixels=1500000)
+
+```
+
+Worth_values<-as.matrix(Worth_2013_boundary)
+write.csv(Worth_values,"Worth_test.csv")
+```
+#single-two twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,0,1,1,1,1,1))]<-2
+
+#single-three twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,1,1,0,1,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,1,0,0,1,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,0,1,1,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,1,0,0,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,1,1,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,0,0,1,1,1,1))]<-2
+
+#single-four twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,0,1,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,0))]<-2
+
+#double-no twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1))]
+
+#double-one twist
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,1,1,0,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1))]<-2
+
+#double-two twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,1,1,0,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,0,1,1,0,0,0,0,1,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1))]<-2
+
+#double-four twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,1,0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,1,1,1,0,0,0,1,1,0,1,0,0,1,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,1,0,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,1,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,0,1,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,0,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,0,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,0,1,1,0,0,0,0,1,1,0,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,1,0,0,1,0,1,1,0,0,0,1,1,1,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,0,1,0,0,1,0,0,0,1,1,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1))]<-2
+
+#triple-no twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+
+#triple-one twist
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+
+#triple-two twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+
+#triple-three twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+
+
+#triple-four twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0))]<-2
+
+#crooked edge-one twist
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+
+#crooked edge-two twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+
+#crooked edge-three twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+
+#crooked edge-four twists
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0))]<-2
+
+#Corners-1 pixel thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+
+#Corners-2 pixels thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+
+#Corners-3 pixels thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1))]<-2
+
+#intersection-1 pixel thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+
+#intersection-2 pixel thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+
+#T intersections-1 thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+
+#T intersections-2 thick
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,1))]<-2
+Worth_2013_boundary[boundary_check(boundary_focals,c(1,1,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0))]<-2
+
+#Center pieces
+Worth_2013_boundary[fivebyfive>0&threebythree==0]<-2
+Worth_2013_boundary[Worth_2013_boundary==0&threebythree>0]<-2
+
+```
+
+```{r 3x3 Boundary Extraction}
 
 #extraction of acceptable boundary segments
-Worth_2013_boundary[((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==0)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==0)&(focal_9==1))|((focal_1==0)&(focal_2==1)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==1)&(focal_9==0))|((focal_1==1)&(focal_2==1)&(focal_3==0)&(focal_4==1)&(focal_5==0)&(focal_6==1)&(focal_7==0)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==1)&(focal_3==0)&(focal_4==0)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==1)&(focal_7==1)&(focal_8==1)&(focal_9==0))|((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==0)&(focal_7==0)&(focal_8==1)&(focal_9==1))|((focal_1==0)&(focal_2==1)&(focal_3==1)&(focal_4==1)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==0)&(focal_2==0)&(focal_3==0)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==1)&(focal_9==1))|((focal_1==1)&(focal_2==1)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==0)&(focal_8==0)&(focal_9==0))|((focal_1==1)&(focal_2==0)&(focal_3==0)&(focal_4==1)&(focal_5==0)&(focal_6==0)&(focal_7==1)&(focal_8==0)&(focal_9==0))|((focal_1==0)&(focal_2==0)&(focal_3==1)&(focal_4==0)&(focal_5==0)&(focal_6==1)&(focal_7==0)&(focal_8==0)&(focal_9==1))|((focal_1==0)&(focal_2==0)&(focal_3==0)&(focal_4==0)&(focal_5==0)&(focal_6==0)&(focal_7==0)&(focal_8==0)&(focal_9==0))]<-2
-
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,1,1,0,1,1,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,1,0,0,0,1,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,1,1,0,0,1,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,1,1,0,0,0,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,1,1,0,1,1,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,0,1,0,1,1,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,0,0,0,1,1,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,1,0,0,1,1,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,1,1,0,1,0,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,1,1,0,1,1,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,1,1,0,1,0,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,1,1,0,1,0,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,0,1,0,1,1,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,0,1,0,1,1,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,1,1,0,1,1,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,0,1,0,1,0,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,0,0,0,0,0,1,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,0,1,0,0,1,0,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,0,1,0,0,1,0,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,1,0,0,0,0,0,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,0,1,0,0,0,1,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,0,0,0,0,0,1,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,0,0,0,1,0,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,0,1,0,0,1,1,0,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,1,0,0,0,0,0,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,1,0,0,0,1,0,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,0,1,1,0,0,1,0,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,0,1,0,0,0,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,1,0,0,0,0,1,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(1,0,0,0,0,1,1,0,0))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,1,0,0,0,0,1,0,1))]<-2
+Worth_2013_boundary[f3_check(boundary_f3,c(0,0,1,1,0,0,0,0,1))]<-2
+```
 #connecting the acceptable boundaries
 a<-1
 while(a>0){
