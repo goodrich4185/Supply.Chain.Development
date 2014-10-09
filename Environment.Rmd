@@ -524,10 +524,10 @@ straight_focals=function(raster){
   right5<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,1,1,1,1),nrow=1,ncol=11))
   left5<-focal(raster,w=matrix(c(1,1,1,1,1,0,0,0,0,0,0),nrow=1,ncol=11))
   down5<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,1,1,1,1),nrow=11,ncol=1)) 
-  upcheck<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=51,ncol=3))
-  rightcheck<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=3,ncol=51),byrow=TRUE)
-  leftcheck<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=3,ncol=51,byrow=TRUE))
-  downcheck<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=51,ncol=3))
+  upcheck<-focal(raster,w=matrix(c(1,0,1,1,0,1,0,0,0,0,0,0,0,0,0),nrow=5,ncol=3,byrow=TRUE))
+  rightcheck<-focal(raster,w=matrix(c(0,0,0,1,1,0,0,0,0,0,0,0,0,1,1),nrow=3,ncol=5),byrow=TRUE)
+  leftcheck<-focal(raster,w=matrix(c(1,1,0,0,0,0,0,0,0,0,1,1,0,0,0),nrow=3,ncol=5,byrow=TRUE))
+  downcheck<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,1,0,1,1,0,1),nrow=5,ncol=3),byrow=TRUE)
   up10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=21,ncol=1))
   right10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=21))
   left10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=21))
@@ -538,7 +538,6 @@ straight_focals=function(raster){
 ```
 
 ```{r Straight boundary extraction connection extension and closure}
-
 straight_only=function(raster,focals,cutoff){
   raster[(raster==0)&(focals[[1]]>=cutoff)&(focals[[4]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[9]]>=1)&(focals[[12]]>=1)&(focals[[11]]>=1)&(focals[[10]]>=1)&(focals[[5]]>=((50-cutoff)/2))&(focals[[8]]>=((50-cutoff)/2))&(focals[[7]]>=((50-cutoff)/2))&(focals[[6]]>=((50-cutoff)/2))]<-1
   return(raster)
@@ -551,8 +550,8 @@ connect_straight=function(raster,focals,cutoff){
 }
 
 straight_extension=function(raster,focals,cutoff,cutoff2){
-  count<-length(raster[(raster==1)&(((focals[[5]]<=cutoff2)&(focals[[4]]<=cutoff)&(focals[[13]]>=48))|((focals[[8]]<=cutoff2)&(focals[[1]]<=cutoff)&(focals[[16]]>=48))|((focals[[7]]<=cutoff2)&(focals[[2]]<=cutoff)&(focals[[15]]>=48))|((focals[[6]]<=cutoff2)&(focals[[3]]<=cutoff)&(focals[[14]]>=48)))])
-  raster[(raster==1)&(((focals[[5]]<=cutoff2)&(focals[[4]]<=cutoff)&(focals[[13]]>=48))|((focals[[8]]<=cutoff2)&(focals[[1]]<=cutoff)&(focals[[16]]>=48))|((focals[[7]]<=cutoff2)&(focals[[2]]<=cutoff)&(focals[[15]]>=48))|((focals[[6]]<=cutoff2)&(focals[[3]]<=cutoff)&(focals[[14]]>=48)))]<-0
+  count<-length(raster[(raster==1)&(((focals[[5]]<=cutoff2)&(focals[[4]]<=cutoff)&(focals[[13]]==4))|((focals[[8]]<=cutoff2)&(focals[[1]]<=cutoff)&(focals[[16]]==4))|((focals[[7]]<=cutoff2)&(focals[[2]]<=cutoff)&(focals[[15]]==4))|((focals[[6]]<=cutoff2)&(focals[[3]]<=cutoff)&(focals[[14]]==4)))])
+  raster[(raster==1)&(((focals[[17]]<=cutoff2)&(focals[[4]]<=cutoff)&(focals[[13]]==4))|((focals[[20]]<=cutoff2)&(focals[[1]]<=cutoff)&(focals[[16]]==4))|((focals[[19]]<=cutoff2)&(focals[[2]]<=cutoff)&(focals[[15]]==4))|((focals[[18]]<=cutoff2)&(focals[[3]]<=cutoff)&(focals[[14]]==4)))]<-0
   return(c(raster,count))
 }
 
@@ -567,22 +566,22 @@ par(mar=c(1,1,1,1)+0.1)
 plot(Worth_straight,maxpixels=2000000)
 
 Worth_straight_connected<-connect_straight(Worth_straight,straight_focals(Worth_straight),5)[[1]]
+count<-1
+while(count>0){
+Worth_straight_connected<-connect_straight(Worth_straight_connected,straight_focals(Worth_straight_connected),5)[[1]]
+count<-connect_straight(Worth_straight_connected,straight_focals(Worth_straight_connected),5)[[2]]
+}
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_straight_connected,maxpixels=2000000)
 
+Worth_straight_extended<-straight_extension(Worth_straight_connected,straight_focals(Worth_straight_connected),49,0)[[1]]
 count<-1
 while(count>0){
-Worth_straight_connected<-connect_straight(Worth_straight_connected,straight_focals(Worth_straight_connected),20)[[1]]
-count<-connect_straight(Worth_straight_connected,straight_focals(Worth_straight_connected),20)[[2]]
+Worth_straight_extended<-straight_extension(Worth_straight_extended,straight_focals(Worth_straight_extended),49,0)[[1]]
+count<-straight_extension(Worth_straight_extended,straight_focals(Worth_straight_extended),49,0)[[2]]
 }
-
-Worth_straight_extended<-straight_extension(Worth_straight_connected,straight_focals(Worth_straight_connected),48,10)[[1]]
-
-count<-1
-while(count>0){
-Worth_straight_extended<-straight_extension(Worth_straight_extended,straight_focals(Worth_straight_extended),48,10)[[1]]
-count<-straight_extension(Worth_straight_extended,straight_focals(Worth_straight_extended),48,10)[[2]]
-}
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_straight_extended,maxpixels=2000000)
 
 Worth_straight_closed<-closure(Worth_straight_extended,straight_focals(Worth_straight_extended))[[1]]
 
