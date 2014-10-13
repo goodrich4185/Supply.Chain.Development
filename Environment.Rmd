@@ -382,83 +382,99 @@ Worth_raster<-calc(Worth_stack,fun=ID)
 ```
 
 ```{r plot of 2012 data}
-Worth_raster[Worth_raster==3]<-40
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_raster,maxpixels=2000000)
 ```
 
-```{r Continuous Corn only}
-cont.corn=function(x){
-  if(x[1]!=1){0}else{1}
-}
-
-Worth_ContCorn<-calc(Worth_raster,fun=cont.corn)
-```
-
-```{r Continous Corn}
-ContCorn=function(raster){
-  focal<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1),nrow=5,ncol=5))
-  raster[raster==0&focal>=13]<-1
-  raster[raster==1&focal<=8]<-0
+```{r Simplified 2012 data}
+aggregated=function(raster){
+  raster[(raster==3)|(raster==4)|(raster==6)|(raster==8)|(raster==9)]<-20
+  raster[(raster==1)]<-40
+  raster[(raster==10)|(raster==12)|(raster==14)|(raster==15)]<-60
+  raster[(raster==5)|(raster==11)|(raster==13)]<-80
+  raster[(raster==2)|(raster==16)]<-100
+  raster[(raster==7)|(raster==17)]<-120
   return(raster)
 }
 
-Worth_ContCorn<-ContCorn(Worth_ContCorn)
-
+Worth_aggregated<-aggregated(Worth_raster)
 par(mar=c(1,1,1,1)+0.1)
-plot(Worth_ContCorn,maxpixels=2000000)
+plot(Worth_aggregated,maxpixels=2000000)
 ```
 
-```{r Corn in Rotation only}
-rotate.corn=function(x){
-  if(x[1]!=10){0}else{1}
-}
-
-Worth_RotateCorn<-calc(Worth_raster,fun=rotate.corn)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_RotateCorn,maxpixels=2000000)
-```
-
-```{r Corn in rotation}
-RotateCorn=function(raster){
-  focal<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1),nrow=5,ncol=5))
-  raster[raster==0&focal>=21]<-1
-  raster[raster==1&focal<=5]<-0
+```{r Smoothing the data}
+smooth=function(raster){
+  nw<-focal(raster,w=matrix(c(1,0,0,0,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
+  n<-focal(raster,w=matrix(c(0,1,0,0,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
+  ne<-focal(raster,w=matrix(c(0,0,1,0,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
+  w<-focal(raster,w=matrix(c(0,0,0,1,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
+  e<-focal(raster,w=matrix(c(0,0,0,0,0,1,0,0,0),nrow=3,ncol=3,byrow=TRUE))
+  sw<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,0,0),nrow=3,ncol=3,byrow=TRUE))
+  s<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,1,0),nrow=3,ncol=3,byrow=TRUE))
+  se<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,1),nrow=3,ncol=3,byrow=TRUE))
+  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==20)]<-20
+  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==40)]<-40
+  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==60)]<-60
+  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==80)]<-80
+  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==100)]<-100
+    raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==120)]<-120
   return(raster)
 }
 
-Worth_RotateCorn<-RotateCorn(Worth_RotateCorn)
-
+Worth_smooth<-smooth(Worth_aggregated)
 par(mar=c(1,1,1,1)+0.1)
-plot(Worth_RotateCorn,maxpixels=2000000)
-
+plot(Worth_smooth,maxpixels=2000000)
 ```
 
-```{r Any Corn}
-any.corn=function(x){
-  if((x[1]!=10)&(x[1]!=1)&(x[1]!=12)&(x[1]!=14)&(x[1]!=15)){0}else{1}
-}
-
-Worth_AnyCorn<-calc(Worth_raster,fun=any.corn)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_AnyCorn,maxpixels=2000000)
-```
-
-```{r Any Corn refine}
-CornRefine=function(raster){
-  #focal<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1),nrow=5,ncol=5))
-  focal<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=7,ncol=7))
-  #raster[raster==0&focal>=25]<-1
-  raster[raster==1&focal<=10]<-0
+```{r Corn or soybeans}
+csb=function(raster){
+  raster[(raster==40)|(raster==60)|(raster==80)]<-1
+  raster[(raster==20)]<-0
+  raster[(raster==100)|(raster==120)]<-2
   return(raster)
 }
 
-Worth_AnyCorn<-CornRefine(Worth_AnyCorn)
+Worth_csb<-csb(Worth_smooth)
 
 par(mar=c(1,1,1,1)+0.1)
-plot(Worth_AnyCorn,maxpixels=2000000)
+plot(Worth_csb,maxpixels=2000000)
+```
+
+```{r Clump extraction}
+require(vegan)
+corn=function(raster){
+  raster[(raster==40)|(raster==60)]<-1
+  raster[(raster==20)|(raster==80)|(raster==100)|(raster==120)]<-0
+  return(raster)
+}
+
+tidy=function(raster){
+  ninebynine<-focal(raster,w=matrix(1,nrow=9,ncol=9))
+  count<-length(raster[(raster==1)&(ninebynine<=4)])
+  raster[(raster==1)&(ninebynine<=4)]<-0
+  return(c(raster,count))
+}
+
+Worth_corn<-corn(Worth_smooth)
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_corn,maxpixels=2000000)
+
+Worth_corn<-tidy(Worth_corn)[[1]]
+count<-1
+while(count>0){
+  count<-tidy(Worth_corn)[[2]]
+  Worth_corn<-tidy(Worth_corn)[[1]]
+}
+
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_corn,maxpixels=2000000)
+
+Worth_corn_clumps<-clump(Worth_corn,directions=8,gaps=FALSE)
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_corn_clumps,maxpixels=2000000)
+
+d<-dist(as.matrix(Worth_corn_clumps),method="euclidean")
+
 ```
 
 ```{r extracting operations}
@@ -466,24 +482,6 @@ Worth_clumps<-clump(Worth_AnyCorn,gaps=FALSE)
 
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_clumps,maxpixels=2000000)
-```
-
-```{r Ag land}
-agland=function(x){
-  if((x[1]==3)|(x[1]==40)|(x[1]==6)|(x[1]==8)|(x[1]==9)){0}else{1}
-}
-
-Worth_Agland<-calc(Worth_raster,fun=agland)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_Agland,maxpixels=2000000)
-```
-
-```{r Ag Clumps}
-Worth_AgClumps<-clump(Worth_Agland,gaps=FALSE)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_AgClumps,maxpixels=2000000)
 ```
 
 ####### DEVELOPMENT OF BOUNDARIES ########
@@ -538,20 +536,35 @@ straight_focals=function(raster){
 ```
 
 ```{r Straight boundary extraction connection extension and closure}
-straight_only=function(raster,focals,cutoff){
-  raster[(raster==0)&(focals[[1]]>=cutoff)&(focals[[4]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[9]]>=1)&(focals[[12]]>=1)&(focals[[11]]>=1)&(focals[[10]]>=1)&(focals[[5]]>=((50-cutoff)/2))&(focals[[8]]>=((50-cutoff)/2))&(focals[[7]]>=((50-cutoff)/2))&(focals[[6]]>=((50-cutoff)/2))]<-1
+#straight=function(raster,focals,cutoff){
+#  raster[(raster==0)&(focals[[1]]>=cutoff)&(focals[[4]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[9]]>=1)&(focals[[12]]>=1)&(focals[[11]]>=1)&(focals[[10]]>=1)&(focals[[5]]>=((50-cutoff)/2))&(focals[[8]]>=((50-cutoff)/2))&(focals[[7]]>=((50-cutoff)/2))&(focals[[6]]>=((50-cutoff)/2))]<-1
+#  return(raster)
+#}
+
+straight=function(raster,focals,cutoff){
+  raster[(raster==0)&(((focals[[9]]==0)|(focals[[12]]==0)|(focals[[11]]==0)|(focals[[10]]==0))|(((focals[[9]]<=2)&(focals[[12]]<=2))|((focals[[10]]<=2)&(focals[[11]]<=2)))|((focals[[1]]<=cutoff)|(focals[[2]]<=cutoff)|(focals[[3]]<=cutoff)|(focals[[4]]<=cutoff)))]<-3
+  raster[(raster==0)]<-1
+  raster[(raster==3)]<-0
   return(raster)
 }
 
-connect_straight=function(raster,focals,cutoff){
-  count<-length(raster[(raster==1)&(((focals[[17]]<=cutoff)&(focals[[20]]<=cutoff))|((focals[[19]]<=cutoff)&(focals[[18]]<=cutoff)))])
-  raster[(raster==1)&(((focals[[17]]<=cutoff)&(focals[[20]]<=cutoff))|((focals[[19]]<=cutoff)&(focals[[18]]<=cutoff)))]<-0
+connect=function(raster,focals,cutoff,cutoff2){
+  count<-length(raster[(raster==1)&((((focals[[17]]<=cutoff)&(focals[[20]]<=cutoff))|((focals[[19]]<=cutoff)&(focals[[18]]<=cutoff)))|(((focals[[5]]<=cutoff2)&(focals[[8]]<=cutoff2))|((focals[[6]]<=cutoff2)&(focals[[7]]<=cutoff2))))])
+  raster[(raster==1)&((((focals[[17]]<=cutoff)&(focals[[20]]<=cutoff))|((focals[[19]]<=cutoff)&(focals[[18]]<=cutoff)))|(((focals[[5]]<=cutoff2)&(focals[[8]]<=cutoff2))|((focals[[6]]<=cutoff2)&(focals[[7]]<=cutoff2))))]<-0
   return(c(raster,count))
 }
 
-straight_extension=function(raster,focals,cutoff,cutoff2){
-  count<-length(raster[(raster==1)&(((focals[[5]]<=cutoff2)&(focals[[4]]<=cutoff)&(focals[[13]]==4))|((focals[[8]]<=cutoff2)&(focals[[1]]<=cutoff)&(focals[[16]]==4))|((focals[[7]]<=cutoff2)&(focals[[2]]<=cutoff)&(focals[[15]]==4))|((focals[[6]]<=cutoff2)&(focals[[3]]<=cutoff)&(focals[[14]]==4)))])
-  raster[(raster==1)&(((focals[[17]]<=cutoff2)&(focals[[4]]<=cutoff)&(focals[[13]]==4))|((focals[[20]]<=cutoff2)&(focals[[1]]<=cutoff)&(focals[[16]]==4))|((focals[[19]]<=cutoff2)&(focals[[2]]<=cutoff)&(focals[[15]]==4))|((focals[[18]]<=cutoff2)&(focals[[3]]<=cutoff)&(focals[[14]]==4)))]<-0
+iso=function(raster,focals,cutoff){
+  fivebyfive<-focal(raster,w=matrix(c(0,0,1,0,0,0,0,1,0,0,1,1,0,1,1,0,0,1,0,0,0,0,1,0,0),nrow=5,ncol=5,byrow=TRUE))
+  count<-length(raster[(raster==0)&(fivebyfive>=7)&(focals[[1]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[4]]>=cutoff)])
+  raster[(raster==0)&(fivebyfive>=7)&(focals[[1]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[4]]>=cutoff)]<-1
+  return(c(raster,count))
+}
+
+extension=function(raster,focals){
+  ninebynine<-focal(raster,w=matrix(1,nrow=9,ncol=9))
+  count<-length(raster[(raster==1)&(ninebynine>44)&(((focals[[5]]<=1)&(focals[[13]]>2)&(focals[[8]]<25))|((focals[[8]]<=1)&(focals[[16]]>2)&(focals[[5]]<25))|((focals[[7]]<=1)&(focals[[15]]>2)&(focals[[6]]<25))|((focals[[6]]<=1)&(focals[[14]]>2)&(focals[[7]]<25)))])
+  raster[(raster==1)&(ninebynine>44)&(((focals[[5]]<=1)&(focals[[13]]>2)&(focals[[8]]<25))|((focals[[8]]<=1)&(focals[[16]]>2)&(focals[[5]]<25))|((focals[[7]]<=1)&(focals[[15]]>2)&(focals[[6]]<25))|((focals[[6]]<=1)&(focals[[14]]>2)&(focals[[7]]<25)))]<-0
   return(c(raster,count))
 }
 
@@ -561,38 +574,78 @@ closure=function(raster,focals){
   return(c(raster,count))
 }
 
-Worth_straight<-straight_only(Worth_outer,straight_focals(Worth_outer),35)[[1]]
+corners=function(raster,focals,cutoff){
+  count<-length(raster[(raster==1)&(((focals[[1]]<=cutoff)&(focals[[2]]<=cutoff))|((focals[[1]]<=cutoff)&(focals[[3]]<=cutoff))|((focals[[2]]<=cutoff)&(focals[[4]]<=cutoff))|((focals[[3]]<=cutoff)&(focals[[4]]<=cutoff)))])
+  raster[(raster==1)&(((focals[[1]]<=cutoff)&(focals[[2]]<=cutoff))|((focals[[1]]<=cutoff)&(focals[[3]]<=cutoff))|((focals[[2]]<=cutoff)&(focals[[4]]<=cutoff))|((focals[[3]]<=cutoff)&(focals[[4]]<=cutoff)))]<-0
+  return(c(raster,count))
+}
+
+#Performing the actions#
+
+#Straight only#
+Worth_straight<-straight(Worth_outer,straight_focals(Worth_outer),40)
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_straight,maxpixels=2000000)
 
-Worth_straight_connected<-connect_straight(Worth_straight,straight_focals(Worth_straight),5)[[1]]
+#Connecting segments in close proximity
+Worth_straight_connected<-connect(Worth_straight,straight_focals(Worth_straight),7,20)[[1]]
 count<-1
 while(count>0){
-Worth_straight_connected<-connect_straight(Worth_straight_connected,straight_focals(Worth_straight_connected),5)[[1]]
-count<-connect_straight(Worth_straight_connected,straight_focals(Worth_straight_connected),5)[[2]]
+(count<-connect(Worth_straight_connected,straight_focals(Worth_straight_connected),7,20)[[2]])
+Worth_straight_connected<-connect(Worth_straight_connected,straight_focals(Worth_straight_connected),7,20)[[1]]
 }
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_straight_connected,maxpixels=2000000)
 
-Worth_straight_extended<-straight_extension(Worth_straight_connected,straight_focals(Worth_straight_connected),49,0)[[1]]
+#Extracting outside boundaries only
+Worth_prep_outside<-outer(Worth_straight_connected)
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_prep_outside,maxpixels=2000000)
+
+#Eliminating isolated points not along road
+Worth_prep_iso<-iso(Worth_prep_outside,straight_focals(Worth_prep_outside),35)[[1]]
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_prep_iso,maxpixels=2000000)
 count<-1
 while(count>0){
-Worth_straight_extended<-straight_extension(Worth_straight_extended,straight_focals(Worth_straight_extended),49,0)[[1]]
-count<-straight_extension(Worth_straight_extended,straight_focals(Worth_straight_extended),49,0)[[2]]
+count<-iso(Worth_prep_iso,straight_focals(Worth_prep_outside),35)[[2]]
+Worth_prep_iso<-iso(Worth_prep_iso,straight_focals(Worth_prep_outside),35)[[1]]
+}
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_prep_iso,maxpixels=2000000)
+
+#Extending segments which are part of long roads
+Worth_straight_extended<-extension(Worth_prep_iso,straight_focals(Worth_prep_iso))[[1]]
+count<-1
+while(count>0){
+count<-extension(Worth_straight_extended,straight_focals(Worth_straight_extended))[[2]]
+Worth_straight_extended<-extension(Worth_straight_extended,straight_focals(Worth_straight_extended))[[1]]
 }
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_straight_extended,maxpixels=2000000)
 
 Worth_straight_closed<-closure(Worth_straight_extended,straight_focals(Worth_straight_extended))[[1]]
-
 count<-1
 while(count>0){
   Worth_straight_closed<-closure(Worth_straight_closed,straight_focals(Worth_straight_closed))[[1]]
   count<-closure(Worth_straight_closed,straight_focals(Worth_straight_closed))[[2]]
 }
-
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_straight_closed,maxpixels=2000000)
+
+Worth_straight_corners<-corners(Worth_straight_closed,straight_focals(Worth_straight_closed),25)[[1]]
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_straight_corners,maxpixels=2000000)
+
+Worth_straight<-straight_extension(Worth_straight_corners,straight_focals(Worth_straight_corners),48,0)[[1]]
+count<-1
+while(count>0){
+Worth_straight<-straight_extension(Worth_straight,straight_focals(Worth_straight),47,2)[[1]]
+count<-straight_extension(Worth_straight,straight_focals(Worth_straight),47,2)[[2]]
+}
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_straight,maxpixels=2000000)
+
 ```
 
 ##### Slanted boundaries #####
