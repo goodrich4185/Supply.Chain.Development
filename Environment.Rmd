@@ -220,163 +220,36 @@ Worth_2013=raster(Worth_2013_file)
 Wright_2013=raster(Wright_2013_file)
 ```
 
-```{r Setting NA values to 0}
-#Setting NA values to 0
-
-#2011
-Boone_2011[is.na(Boone_2011)]<-0
-BuenaVista_2011[is.na(BuenaVista_2011)]<-0
-Butler_2011[is.na(Butler_2011)]<-0
-Calhoun_2011[is.na(Calhoun_2011)]<-0
-Carroll_2011[is.na(Carroll_2011)]<-0
-CerroGordo_2011[is.na(CerroGordo_2011)]<-0
-Clay_2011[is.na(Clay_2011)]<-0
-Dallas_2011[is.na(Dallas_2011)]<-0
-Dickinson_2011[is.na(Dickinson_2011)]<-0
-Emmet_2011[is.na(Emmet_2011)]<-0
-Floyd_2011[is.na(Floyd_2011)]<-0
-Franklin_2011[is.na(Franklin_2011)]<-0
-Greene_2011[is.na(Greene_2011)]<-0
-Grundy_2011[is.na(Grundy_2011)]<-0
-Guthrie_2011[is.na(Guthrie_2011)]<-0
-Hamilton_2011[is.na(Hamilton_2011)]<-0
-Hancock_2011[is.na(Hancock_2011)]<-0
-Hardin_2011[is.na(Hardin_2011)]<-0
-Humboldt_2011[is.na(Humboldt_2011)]<-0
-Jasper_2011[is.na(Jasper_2011)]<-0
-Kossuth_2011[is.na(Kossuth_2011)]<-0
-Marshall_2011[is.na(Marshall_2011)]<-0
-Mitchell_2011[is.na(Mitchell_2011)]<-0
-PaloAlto_2011[is.na(PaloAlto_2011)]<-0
-Pocahontas_2011[is.na(Pocahontas_2011)]<-0
-Polk_2011[is.na(Polk_2011)]<-0
-Sac_2011[is.na(Sac_2011)]<-0
-Story_2011[is.na(Story_2011)]<-0
-Webster_2011[is.na(Webster_2011)]<-0
-Winnebago_2011[is.na(Winnebago_2011)]<-0
-Worth_2011[is.na(Worth_2011)]<-0
-Wright_2011[is.na(Wright_2011)]<-0
-
-#2012
-Boone_2012[is.na(Boone_2012)]<-0
-BuenaVista_2012[is.na(BuenaVista_2012)]<-0
-Butler_2012[is.na(Butler_2012)]<-0
-Calhoun_2012[is.na(Calhoun_2012)]<-0
-Carroll_2012[is.na(Carroll_2012)]<-0
-CerroGordo_2012[is.na(CerroGordo_2012)]<-0
-Clay_2012[is.na(Clay_2012)]<-0
-Dallas_2012[is.na(Dallas_2012)]<-0
-Dickinson_2012[is.na(Dickinson_2012)]<-0
-Emmet_2012[is.na(Emmet_2012)]<-0
-Floyd_2012[is.na(Floyd_2012)]<-0
-Franklin_2012[is.na(Franklin_2012)]<-0
-Greene_2012[is.na(Greene_2012)]<-0
-Grundy_2012[is.na(Grundy_2012)]<-0
-Guthrie_2012[is.na(Guthrie_2012)]<-0
-Hamilton_2012[is.na(Hamilton_2012)]<-0
-Hancock_2012[is.na(Hancock_2012)]<-0
-Hardin_2012[is.na(Hardin_2012)]<-0
-Humboldt_2012[is.na(Humboldt_2012)]<-0
-Jasper_2012[is.na(Jasper_2012)]<-0
-Kossuth_2012[is.na(Kossuth_2012)]<-0
-Marshall_2012[is.na(Marshall_2012)]<-0
-Mitchell_2012[is.na(Mitchell_2012)]<-0
-PaloAlto_2012[is.na(PaloAlto_2012)]<-0
-Pocahontas_2012[is.na(Pocahontas_2012)]<-0
-Polk_2012[is.na(Polk_2012)]<-0
-Sac_2012[is.na(Sac_2012)]<-0
-Story_2012[is.na(Story_2012)]<-0
-Webster_2012[is.na(Webster_2012)]<-0
-Winnebago_2012[is.na(Winnebago_2012)]<-0
-Worth_2012[is.na(Worth_2012)]<-0
-Wright_2012[is.na(Wright_2012)]<-0
-
-#2013
-Boone_2013[is.na(Boone_2013)]<-0
-BuenaVista_2013[is.na(BuenaVista_2013)]<-0
-Butler_2013[is.na(Butler_2013)]<-0
-Calhoun_2013[is.na(Calhoun_2013)]<-0
-Carroll_2013[is.na(Carroll_2013)]<-0
-CerroGordo_2013[is.na(CerroGordo_2013)]<-0
-Clay_2013[is.na(Clay_2013)]<-0
-Dallas_2013[is.na(Dallas_2013)]<-0
-Dickinson_2013[is.na(Dickinson_2013)]<-0
-Emmet_2013[is.na(Emmet_2013)]<-0
-Floyd_2013[is.na(Floyd_2013)]<-0
-Franklin_2013[is.na(Franklin_2013)]<-0
-Greene_2013[is.na(Greene_2013)]<-0
-Grundy_2013[is.na(Grundy_2013)]<-0
-Guthrie_2013[is.na(Guthrie_2013)]<-0
-Hamilton_2013[is.na(Hamilton_2013)]<-0
-Hancock_2013[is.na(Hancock_2013)]<-0
-Hardin_2013[is.na(Hardin_2013)]<-0
-Humboldt_2013[is.na(Humboldt_2013)]<-0
-Jasper_2013[is.na(Jasper_2013)]<-0
-Kossuth_2013[is.na(Kossuth_2013)]<-0
-Marshall_2013[is.na(Marshall_2013)]<-0
-Mitchell_2013[is.na(Mitchell_2013)]<-0
-PaloAlto_2013[is.na(PaloAlto_2013)]<-0
-Pocahontas_2013[is.na(Pocahontas_2013)]<-0
-Polk_2013[is.na(Polk_2013)]<-0
-Sac_2013[is.na(Sac_2013)]<-0
-Story_2013[is.na(Story_2013)]<-0
-Webster_2013[is.na(Webster_2013)]<-0
-Winnebago_2013[is.na(Winnebago_2013)]<-0
-Worth_2013[is.na(Worth_2013)]<-0
-Wright_2013[is.na(Wright_2013)]<-0
+```{r Function to recode rasters}
+recode=function(raster){
+  raster[is.na(raster)]<-0
+  raster[(raster==2)|(raster==3)|(raster==4)|(raster==6)|(raster==10)|(raster==11)|(raster==14)|(raster==21)|(raster==22)|(raster==23)|(raster==25)|(raster==27)|(raster==29)|(raster==30)|(raster==31)|(raster==32)|(raster==33)|(raster==34)|(raster==35)|(raster==38)|(raster==39)|(raster==41)|(raster==42)|(raster==43)|(raster==44)|(raster==45)|(raster==46)|(raster==47)|(raster==48)|(raster==49)|(raster==50)|(raster==51)|(raster==52)|(raster==53)|(raster==54)|(raster==55)|(raster==56)|(raster==57)|(raster==58)|(raster==59)|(raster==60)|(raster==61)|(raster==66)|(raster==67)|(raster==68)|(raster==69)|(raster==70)|(raster==71)|(raster==72)|(raster==74)|(raster==75)|(raster==76)|(raster==77)|(raster==204)|(raster==205)|(raster==206)|(raster==207)|(raster==208)|(raster==209)|(raster==210)|(raster==211)|(raster==212)|(raster==213)|(raster==214)|(raster==216)|(raster==217)|(raster==218)|(raster==219)|(raster==220)|(raster==221)|(raster==222)|(raster==223)|(raster==224)|(raster==227)|(raster==229)|(raster==230)|(raster==231)|(raster==232)|(raster==233)|(raster==234)|(raster==235)|(raster==242)|(raster==243)|(raster==244)|(raster==245)|(raster==246)|(raster==247)|(raster==248)|(raster==249)|(raster==250)]<-8
+  raster[(raster==24)|(raster==236)|(raster==238)]<-7
+  raster[raster==28]<-6
+  raster[(raster==5)|(raster==26)|(raster==239)|(raster==240)|(raster==254)]<-2
+  raster[(raster==1)|(raster==12)|(raster==13)|(raster==225)|(raster==226)|(raster==237)|(raster==241)]<-1
+  raster[raster==176]<-3
+  raster[raster==37]<-4
+  raster[raster==36]<-5
+  raster[(raster==63)|(raster==64)|(raster==65)|(raster==81)|(raster==82)|(raster==83)|(raster==87)|(raster==88)|(raster==92)|(raster==111)|(raster==112)|(raster==121)|(raster==122)|(raster==123)|(raster==124)|(raster==131)|(raster==141)|(raster==142)|(raster==143)|(raster==152)|(raster==190)|(raster==195)]<-9
+  return(raster)
+}
 ```
 
-```{r Simplifying codes}
-#Combining like groups
-Worth_2011[Worth_2011==12|Worth_2011==23|Worth_2011==24|Worth_2011==26|Worth_2011==27|Worth_2011==28|Worth_2011==36|Worth_2011==37|Worth_2011==38|Worth_2011==44|Worth_2011==47|Worth_2011==53|Worth_2011==241]<-2
-Worth_2011[Worth_2011==121|Worth_2011==122|Worth_2011==123|Worth_2011==124]<-3
-Worth_2011[Worth_2011==141|Worth_2011==142|Worth_2011==143]<-4
-Worth_2011[Worth_2011==190|Worth_2011==195]<-6
-Worth_2011[Worth_2011==176|Worth_2011==58|Worth_2011==59|Worth_2011==152]<-7
-Worth_2011[Worth_2011==131|Worth_2011==61]<-8
-Worth_2011[Worth_2011==111]<-9
-
-Worth_2012[Worth_2012==12|Worth_2012==23|Worth_2012==24|Worth_2012==28|Worth_2012==36|Worth_2012==37|Worth_2012==38|Worth_2012==44|Worth_2012==47|Worth_2012==53]<-2
-Worth_2012[Worth_2012==121|Worth_2012==122|Worth_2012==123|Worth_2012==124]<-3
-Worth_2012[Worth_2012==141|Worth_2012==142|Worth_2012==143]<-4
-Worth_2012[Worth_2012==190|Worth_2012==195]<-6
-Worth_2012[Worth_2012==176]<-7
-Worth_2012[Worth_2012==131|Worth_2012==61]<-8
-Worth_2012[Worth_2012==111]<-9
-
-Worth_2013[Worth_2013==12|Worth_2013==23|Worth_2013==24|Worth_2013==26|Worth_2013==27|Worth_2013==28|Worth_2013==36|Worth_2013==37|Worth_2013==38|Worth_2013==44|Worth_2013==47|Worth_2013==53|Worth_2013==241|Worth_2013==21]<-2
-Worth_2013[Worth_2013==121|Worth_2013==122|Worth_2013==123|Worth_2013==124]<-3
-Worth_2013[Worth_2013==141|Worth_2013==142|Worth_2013==143]<-4
-Worth_2013[Worth_2013==190|Worth_2013==195]<-6
-Worth_2013[Worth_2013==176|Worth_2013==58|Worth_2013==59|Worth_2013==152]<-7
-Worth_2013[Worth_2013==131|Worth_2013==61]<-8
-Worth_2013[Worth_2013==111]<-9
+```{r Recoding of original rasters}
+Worth_2011<-recode(Worth_2011)
+Worth_2012<-recode(Worth_2012)
+Worth_2013<-recode(Worth_2013)
 ```
 
 ```{r Combining 2011-2013 data}
 Worth_stack<-stack(Worth_2011,Worth_2012,Worth_2013)
 
 ID=function(x){if((x[1]==x[2])&(x[2]==x[3])){x[3]}else{
-      #boundary thickening (developed, forest, barren, water, wetlands)
-      if((x[1]==3)|(x[2]==3)|(x[3]==3)){3}else{
-      if((x[1]==4)|(x[2]==4)|(x[3]==4)){4}else{
-      if((x[1]==6)|(x[2]==6)|(x[3]==6)){6}else{
-      if((x[1]==8)|(x[2]==8)|(x[3]==8)){8}else{
+      #remove transitioning areas
       if((x[1]==9)|(x[2]==9)|(x[3]==9)){9}else{
       #corn in rotation
-      if((x[2]==1)&(x[1]!=6)&(x[3]!=6)&(x[1]!=7)&(x[3]!=7)&(x[1]!=2)&(x[3]!=2)){10}else{
-      #soybean in rotation
-      if((x[2]==5)&(x[1]!=6)&(x[3]!=6)&(x[1]!=7)&(x[3]!=7)&(x[1]!=2)&(x[3]!=2)){11}else{
-      #corn with pasture
-      if((x[2]==1)&(x[1]!=5)&(x[1]!=2)&(x[3]!=5)&(x[3]!=2)){12}else{
-      #soybean with pasture
-      if((x[2]==5)&(x[1]!=2)&(x[3]!=2)){13}else{
-      #corn/soybean with pasture
-      if((x[2]==1)&(x[1]!=2)&(x[3]!=2)){14}else{
-      #other corn
-      if((x[2]==1)){15}else{
-      #no corn produced 2011-2013 then general ag use
-      if((x[1]!=1)&(x[2]!=1)&(x[3]!=1)){17}else{16}}}}}}}}}}}}}}
+      if((x[2]==1)&((x[1]!=1)|(x[3]!=1))){10}else{11}}}}
 
 Worth_raster<-calc(Worth_stack,fun=ID)
 ```
