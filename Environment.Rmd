@@ -261,12 +261,10 @@ plot(Worth_raster,maxpixels=2000000)
 
 ```{r Simplified 2012 data}
 aggregated=function(raster){
-  raster[(raster==3)|(raster==4)|(raster==6)|(raster==8)|(raster==9)]<-20
-  raster[(raster==1)]<-40
-  raster[(raster==10)|(raster==12)|(raster==14)|(raster==15)]<-60
-  raster[(raster==5)|(raster==11)|(raster==13)]<-80
-  raster[(raster==2)|(raster==16)]<-100
-  raster[(raster==7)|(raster==17)]<-120
+  raster[raster==1]<-1
+  raster[(raster==2)|(raster==3)|(raster==4)|(raster==5)|(raster==6)|(raster==7)|(raster==8)|(raster==11)]<-3
+  raster[raster==10]<-2
+  raster[raster==9]<-4
   return(raster)
 }
 
@@ -274,6 +272,43 @@ Worth_aggregated<-aggregated(Worth_raster)
 par(mar=c(1,1,1,1)+0.1)
 plot(Worth_aggregated,maxpixels=2000000)
 ```
+
+I will now try to reduce to a binary map of corn and everything else and extract the clumps
+
+```{r Binary map}
+binary=function(raster){
+  raster[(raster==1)|(raster==2)]<-1
+  raster[(raster==3)|(raster==4)]<-0
+  return(raster)
+}
+
+Worth_binary<-binary(Worth_aggregated)
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_binary,maxpixels=2000000)
+
+```
+
+```{r Clump creation}
+Worth_clumps<-clump(Worth_binary,gaps=FALSE)
+par(mar=c(1,1,1,1)+0.1)
+plot(Worth_clumps,maxpixels=2000000)
+
+Worth_clumps
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r Smoothing the data}
 smooth=function(raster){
