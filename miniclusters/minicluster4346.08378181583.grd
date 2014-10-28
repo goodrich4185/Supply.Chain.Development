@@ -1,0 +1,26 @@
+[general] 
+creator=R package 'raster' 
+created= 2014-10-22 15:10:37 
+[georeference] 
+nrows= 3 
+ncols= 6 
+xmin= -93.1924313988996 
+ymin= 43.2666858908122 
+xmax= -93.190475696011 
+ymax= 43.2676637150466 
+projection= +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+[data] 
+datatype= FLT8S 
+byteorder= little 
+nbands= 1 
+bandorder= BIL 
+categorical= FALSE 
+minvalue= 1 
+maxvalue= 1 
+nodatavalue= -1.7e+308 
+[legend] 
+legendtype=  
+values=  
+color=  
+[description] 
+layername= layer 

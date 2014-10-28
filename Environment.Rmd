@@ -5,223 +5,39 @@ date: "August 31, 2014"
 output: html_document
 runtime: shiny
 ---
+```{r Loading required packages}
+required_packages<-c("raster","plyr","doParallel","rgdal")
+num_packages<-length(required_packages)
+for(i in 1:num_packages){
+  if((required_packages[[i]] %in% rownames(installed.packages()))=="FALSE"){install.packages(required_packages[[i]])}
+}
 
-```{r Importing NASS CDL files}
-#install.packages(c("rgdal","raster","R.utils","maptools","spsurvey"),dep=TRUE)
+require(raster)
+require(plyr)
+require(doParallel)
+require(rgdal)
 
-#County raster files
-#2011
-Boone_2011_file<-'Boone_2011.tif'
-BuenaVista_2011_file<-'BuenaVista_2011.tif'
-Butler_2011_file<-'Butler_2011.tif'
-Calhoun_2011_file<-'Calhoun_2011.tif'
-Carroll_2011_file<-'Carroll_2011.tif'
-CerroGordo_2011_file<-'CerroGordo_2011.tif'
-Clay_2011_file<-'Clay_2011.tif'
-Dallas_2011_file<-'Dallas_2011.tif'
-Dickinson_2011_file<-'Dickinson_2011.tif'
-Emmet_2011_file<-'Emmet_2011.tif'
-Floyd_2011_file<-'Floyd_2011.tif'
-Franklin_2011_file<-'Franklin_2011.tif'
-Greene_2011_file<-'Greene_2011.tif'
-Grundy_2011_file<-'Grundy_2011.tif'
-Guthrie_2011_file<-'Guthrie_2011.tif'
-Hamilton_2011_file<-'Hamilton_2011.tif'
-Hancock_2011_file<-'Hancock_2011.tif'
-Hardin_2011_file<-'Hardin_2011.tif'
-Humboldt_2011_file<-'Humboldt_2011.tif'
-Jasper_2011_file<-'Jasper_2011.tif'
-Kossuth_2011_file<-'Kossuth_2011.tif'
-Marshall_2011_file<-'Marshall_2011.tif'
-Mitchell_2011_file<-'Mitchell_2011.tif'
-PaloAlto_2011_file<-'PaloAlto_2011.tif'
-Pocahontas_2011_file<-'Pocahontas_2011.tif'
-Polk_2011_file<-'Polk_2011.tif'
-Sac_2011_file<-'Sac_2011.tif'
-Story_2011_file<-'Story_2011.tif'
-Webster_2011_file<-'Webster_2011.tif'
-Winnebago_2011_file<-'Winnebago_2011.tif'
-Worth_2011_file<-'Worth_2011.tif'
-Wright_2011_file<-'Wright_2011.tif'
-
-#2012
-Boone_2012_file<-'Boone_2012.tif'
-BuenaVista_2012_file<-'BuenaVista_2012.tif'
-Butler_2012_file<-'Butler_2012.tif'
-Calhoun_2012_file<-'Calhoun_2012.tif'
-Carroll_2012_file<-'Carroll_2012.tif'
-CerroGordo_2012_file<-'CerroGordo_2012.tif'
-Clay_2012_file<-'Clay_2012.tif'
-Dallas_2012_file<-'Dallas_2012.tif'
-Dickinson_2012_file<-'Dickinson_2012.tif'
-Emmet_2012_file<-'Emmet_2012.tif'
-Floyd_2012_file<-'Floyd_2012.tif'
-Franklin_2012_file<-'Franklin_2012.tif'
-Greene_2012_file<-'Greene_2012.tif'
-Grundy_2012_file<-'Grundy_2012.tif'
-Guthrie_2012_file<-'Guthrie_2012.tif'
-Hamilton_2012_file<-'Hamilton_2012.tif'
-Hancock_2012_file<-'Hancock_2012.tif'
-Hardin_2012_file<-'Hardin_2012.tif'
-Humboldt_2012_file<-'Humboldt_2012.tif'
-Jasper_2012_file<-'Jasper_2012.tif'
-Kossuth_2012_file<-'Kossuth_2012.tif'
-Marshall_2012_file<-'Marshall_2012.tif'
-Mitchell_2012_file<-'Mitchell_2012.tif'
-PaloAlto_2012_file<-'PaloAlto_2012.tif'
-Pocahontas_2012_file<-'Pocahontas_2012.tif'
-Polk_2012_file<-'Polk_2012.tif'
-Sac_2012_file<-'Sac_2012.tif'
-Story_2012_file<-'Story_2012.tif'
-Webster_2012_file<-'Webster_2012.tif'
-Winnebago_2012_file<-'Winnebago_2012.tif'
-Worth_2012_file<-'Worth_2012.tif'
-Wright_2012_file<-'Wright_2012.tif'
-
-#2013
-Boone_2013_file<-'Boone_2013.tif'
-BuenaVista_2013_file<-'BuenaVista_2013.tif'
-Butler_2013_file<-'Butler_2013.tif'
-Calhoun_2013_file<-'Calhoun_2013.tif'
-Carroll_2013_file<-'Carroll_2013.tif'
-CerroGordo_2013_file<-'CerroGordo_2013.tif'
-Clay_2013_file<-'Clay_2013.tif'
-Dallas_2013_file<-'Dallas_2013.tif'
-Dickinson_2013_file<-'Dickinson_2013.tif'
-Emmet_2013_file<-'Emmet_2013.tif'
-Floyd_2013_file<-'Floyd_2013.tif'
-Franklin_2013_file<-'Franklin_2013.tif'
-Greene_2013_file<-'Greene_2013.tif'
-Grundy_2013_file<-'Grundy_2013.tif'
-Guthrie_2013_file<-'Guthrie_2013.tif'
-Hamilton_2013_file<-'Hamilton_2013.tif'
-Hancock_2013_file<-'Hancock_2013.tif'
-Hardin_2013_file<-'Hardin_2013.tif'
-Humboldt_2013_file<-'Humboldt_2013.tif'
-Jasper_2013_file<-'Jasper_2013.tif'
-Kossuth_2013_file<-'Kossuth_2013.tif'
-Marshall_2013_file<-'Marshall_2013.tif'
-Mitchell_2013_file<-'Mitchell_2013.tif'
-PaloAlto_2013_file<-'PaloAlto_2013.tif'
-Pocahontas_2013_file<-'Pocahontas_2013.tif'
-Polk_2013_file<-'Polk_2013.tif'
-Sac_2013_file<-'Sac_2013.tif'
-Story_2013_file<-'Story_2013.tif'
-Webster_2013_file<-'Webster_2013.tif'
-Winnebago_2013_file<-'Winnebago_2013.tif'
-Worth_2013_file<-'Worth_2013.tif'
-Wright_2013_file<-'Wright_2013.tif'
+rm(required_packages)
+rm(num_packages)
+rm(i)
 ```
 
-```{r Creating rasters from files}
-require(raster)
-#County rasters
+```{r Importing NASS CDL files and raster creation}
+#County raster files
+Worth_2011_file<-'TIFF Images/Worth_2011.tif'
+Worth_2012_file<-'TIFF Images/Worth_2012.tif'
+Worth_2013_file<-'TIFF Images/Worth_2013.tif'
 
-#2011
-Boone_2011=raster(Boone_2011_file)
-BuenaVista_2011=raster(BuenaVista_2011_file)
-Butler_2011=raster(Butler_2011_file)
-Calhoun_2011=raster(Calhoun_2011_file)
-Carroll_2011=raster(Carroll_2011_file)
-CerroGordo_2011=raster(CerroGordo_2011_file)
-Clay_2011=raster(Clay_2011_file)
-Dallas_2011=raster(Dallas_2011_file)
-Dickinson_2011=raster(Dickinson_2011_file)
-Emmet_2011=raster(Emmet_2011_file)
-Floyd_2011=raster(Floyd_2011_file)
-Franklin_2011=raster(Franklin_2011_file)
-Greene_2011=raster(Greene_2011_file)
-Grundy_2011=raster(Grundy_2011_file)
-Guthrie_2011=raster(Guthrie_2011_file)
-Hamilton_2011=raster(Hamilton_2011_file)
-Hancock_2011=raster(Hancock_2011_file)
-Hardin_2011=raster(Hardin_2011_file)
-Humboldt_2011=raster(Humboldt_2011_file)
-Jasper_2011=raster(Jasper_2011_file)
-Kossuth_2011=raster(Kossuth_2011_file)
-Marshall_2011=raster(Marshall_2011_file)
-Mitchell_2011=raster(Mitchell_2011_file)
-PaloAlto_2011=raster(PaloAlto_2011_file)
-Pocahontas_2011=raster(Pocahontas_2011_file)
-Polk_2011=raster(Polk_2011_file)
-Sac_2011=raster(Sac_2011_file)
-Story_2011=raster(Story_2011_file)
-Webster_2011=raster(Webster_2011_file)
-Winnebago_2011=raster(Winnebago_2011_file)
-Worth_2011=raster(Worth_2011_file)
-Wright_2011=raster(Wright_2011_file)
-
-#2012
-Boone_2012=raster(Boone_2012_file)
-BuenaVista_2012=raster(BuenaVista_2012_file)
-Butler_2012=raster(Butler_2012_file)
-Calhoun_2012=raster(Calhoun_2012_file)
-Carroll_2012=raster(Carroll_2012_file)
-CerroGordo_2012=raster(CerroGordo_2012_file)
-Clay_2012=raster(Clay_2012_file)
-Dallas_2012=raster(Dallas_2012_file)
-Dickinson_2012=raster(Dickinson_2012_file)
-Emmet_2012=raster(Emmet_2012_file)
-Floyd_2012=raster(Floyd_2012_file)
-Franklin_2012=raster(Franklin_2012_file)
-Greene_2012=raster(Greene_2012_file)
-Grundy_2012=raster(Grundy_2012_file)
-Guthrie_2012=raster(Guthrie_2012_file)
-Hamilton_2012=raster(Hamilton_2012_file)
-Hancock_2012=raster(Hancock_2012_file)
-Hardin_2012=raster(Hardin_2012_file)
-Humboldt_2012=raster(Humboldt_2012_file)
-Jasper_2012=raster(Jasper_2012_file)
-Kossuth_2012=raster(Kossuth_2012_file)
-Marshall_2012=raster(Marshall_2012_file)
-Mitchell_2012=raster(Mitchell_2012_file)
-PaloAlto_2012=raster(PaloAlto_2012_file)
-Pocahontas_2012=raster(Pocahontas_2012_file)
-Polk_2012=raster(Polk_2012_file)
-Sac_2012=raster(Sac_2012_file)
-Story_2012=raster(Story_2012_file)
-Webster_2012=raster(Webster_2012_file)
-Winnebago_2012=raster(Winnebago_2012_file)
+Worth_2011<-raster(Worth_2011_file)
+rm(Worth_2011_file)
 Worth_2012=raster(Worth_2012_file)
-Wright_2012=raster(Wright_2012_file)
-
-#2013
-Boone_2013=raster(Boone_2013_file)
-BuenaVista_2013=raster(BuenaVista_2013_file)
-Butler_2013=raster(Butler_2013_file)
-Calhoun_2013=raster(Calhoun_2013_file)
-Carroll_2013=raster(Carroll_2013_file)
-CerroGordo_2013=raster(CerroGordo_2013_file)
-Clay_2013=raster(Clay_2013_file)
-Dallas_2013=raster(Dallas_2013_file)
-Dickinson_2013=raster(Dickinson_2013_file)
-Emmet_2013=raster(Emmet_2013_file)
-Floyd_2013=raster(Floyd_2013_file)
-Franklin_2013=raster(Franklin_2013_file)
-Greene_2013=raster(Greene_2013_file)
-Grundy_2013=raster(Grundy_2013_file)
-Guthrie_2013=raster(Guthrie_2013_file)
-Hamilton_2013=raster(Hamilton_2013_file)
-Hancock_2013=raster(Hancock_2013_file)
-Hardin_2013=raster(Hardin_2013_file)
-Humboldt_2013=raster(Humboldt_2013_file)
-Jasper_2013=raster(Jasper_2013_file)
-Kossuth_2013=raster(Kossuth_2013_file)
-Marshall_2013=raster(Marshall_2013_file)
-Mitchell_2013=raster(Mitchell_2013_file)
-PaloAlto_2013=raster(PaloAlto_2013_file)
-Pocahontas_2013=raster(Pocahontas_2013_file)
-Polk_2013=raster(Polk_2013_file)
-Sac_2013=raster(Sac_2013_file)
-Story_2013=raster(Story_2013_file)
-Webster_2013=raster(Webster_2013_file)
-Winnebago_2013=raster(Winnebago_2013_file)
+rm(Worth_2012_file)
 Worth_2013=raster(Worth_2013_file)
-Wright_2013=raster(Wright_2013_file)
+rm(Worth_2013_file)
 ```
 
 ```{r Function to recode rasters}
-recode=function(raster){
+f.recode=function(raster){
   raster[is.na(raster)]<-0
   raster[(raster==2)|(raster==3)|(raster==4)|(raster==6)|(raster==10)|(raster==11)|(raster==14)|(raster==21)|(raster==22)|(raster==23)|(raster==25)|(raster==27)|(raster==29)|(raster==30)|(raster==31)|(raster==32)|(raster==33)|(raster==34)|(raster==35)|(raster==38)|(raster==39)|(raster==41)|(raster==42)|(raster==43)|(raster==44)|(raster==45)|(raster==46)|(raster==47)|(raster==48)|(raster==49)|(raster==50)|(raster==51)|(raster==52)|(raster==53)|(raster==54)|(raster==55)|(raster==56)|(raster==57)|(raster==58)|(raster==59)|(raster==60)|(raster==61)|(raster==66)|(raster==67)|(raster==68)|(raster==69)|(raster==70)|(raster==71)|(raster==72)|(raster==74)|(raster==75)|(raster==76)|(raster==77)|(raster==204)|(raster==205)|(raster==206)|(raster==207)|(raster==208)|(raster==209)|(raster==210)|(raster==211)|(raster==212)|(raster==213)|(raster==214)|(raster==216)|(raster==217)|(raster==218)|(raster==219)|(raster==220)|(raster==221)|(raster==222)|(raster==223)|(raster==224)|(raster==227)|(raster==229)|(raster==230)|(raster==231)|(raster==232)|(raster==233)|(raster==234)|(raster==235)|(raster==242)|(raster==243)|(raster==244)|(raster==245)|(raster==246)|(raster==247)|(raster==248)|(raster==249)|(raster==250)]<-8
   raster[(raster==24)|(raster==236)|(raster==238)]<-7
@@ -236,728 +52,555 @@ recode=function(raster){
 }
 ```
 
-```{r Recoding of original rasters}
-Worth_2011<-recode(Worth_2011)
-Worth_2012<-recode(Worth_2012)
-Worth_2013<-recode(Worth_2013)
+```{r Recoding and stacking of original rasters}
+Worth_2011<-f.recode(Worth_2011)
+Worth_2012<-f.recode(Worth_2012)
+Worth_2013<-f.recode(Worth_2013)
+Worth_stack<-stack(Worth_2011,Worth_2012,Worth_2013)
+rm(Worth_2011)
+rm(Worth_2012)
+rm(Worth_2013)
 ```
 
 ```{r Combining 2011-2013 data}
-Worth_stack<-stack(Worth_2011,Worth_2012,Worth_2013)
+f.evercorn=function(stack){
+    #remove transitioning areas
+    if((stack[1]==9)|(stack[2]==9)|(stack[3]==9)){9}else{
+    #identify plots in which there was ever corn in 2011-2013
+    if((stack[1]==1)|(stack[2]==1)|(stack[3]==1)){1}else{0}}}
 
-ID=function(x){if((x[1]==x[2])&(x[2]==x[3])){x[3]}else{
-      #remove transitioning areas
-      if((x[1]==9)|(x[2]==9)|(x[3]==9)){9}else{
-      #corn in rotation
-      if((x[2]==1)&((x[1]!=1)|(x[3]!=1))){10}else{11}}}}
+f.onlycorn=function(raster){if(raster[1]==1){1}else{0}}
 
-Worth_raster<-calc(Worth_stack,fun=ID)
+Worth_evercorn<-calc(Worth_stack,fun=f.evercorn)
+Worth_onlycorn<-calc(Worth_evercorn,fun=f.onlycorn)
 ```
 
-```{r plot of 2012 data}
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_raster,maxpixels=2000000)
-```
+CPO Algorithm.
+Source: "Clustering with Obstacles in Spatial Databases"
+Authors: Mohamed A. El-Zawawy and Mohem E. El-Sharkawi
 
-```{r Simplified 2012 data}
-aggregated=function(raster){
-  raster[raster==1]<-1
-  raster[(raster==2)|(raster==3)|(raster==4)|(raster==5)|(raster==6)|(raster==7)|(raster==8)|(raster==11)]<-3
-  raster[raster==10]<-2
-  raster[raster==9]<-4
+```{r Preprocessing of the data}
+#Pre-processing
+#Clean-up isolated pixels and fill in 1-2 pixel separations of obstruction polygons
+#REASON: this is done to 1) save computation time in the alogorithm to follow 2) remove low corn density areas 3) thicken boundaries
+
+f.cleanup=function(raster){
+  nearby<-focal(raster,w=matrix(c(1,1,1,1,0,1,1,1,1),nrow=3,ncol=3),byrow=TRUE)
+  raster[(raster==1)&(nearby==0)]<-0
+  raster[(raster==0)&(nearby==8)]<-1
+  count<-1
+  while(count>0){
+  left<-focal(raster,w=matrix(c(1,1,0,0,0),nrow=1,ncol=5))
+  right<-focal(raster,w=matrix(c(0,0,0,1,1),nrow=1,ncol=5))
+  up<-focal(raster,w=matrix(c(1,1,0,0,0),nrow=5,ncol=1))
+  down<-focal(raster,w=matrix(c(0,0,0,1,1),nrow=5,ncol=1))
+  count<-length(raster[(raster==1)&(((left<2)&(right<2))|((up<2)&(down<2)))])
+  raster[(raster==1)&(((left<2)&(right<2))|((up<2)&(down<2)))]<-0
+  }
   return(raster)
 }
 
-Worth_aggregated<-aggregated(Worth_raster)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_aggregated,maxpixels=2000000)
+Worth<-f.cleanup(Worth_onlycorn)
+par(mfrow=c(2,1),mar=c(1,1,1,1)+0.1)
+plot(Worth_onlycorn,maxpixels=2000000)
+plot(Worth,maxpixels=2000000)
 ```
 
-I will now try to reduce to a binary map of corn and everything else and extract the clumps
+```{r Functions used in miniclustering algorithm}
+#function to split a raster into parts for further processing
+f.split=function(raster){
+  la<-xmax(raster)-xmin(raster)
+  lo<-ymax(raster)-ymin(raster)
+  d1<-nrow(raster)
+  d2<-ncol(raster)
 
-```{r Binary map}
-binary=function(raster){
-  raster[(raster==1)|(raster==2)]<-1
-  raster[(raster==3)|(raster==4)]<-0
-  return(raster)
+  if(d1>1 & d2>1){
+    e_xmin<-vector("list",2)
+    e_xmax<-vector("list",2)
+    e_ymin<-vector("list",2)
+    e_ymax<-vector("list",2)
+      for(i in 1:2){
+      e_xmin[[i]]<-xmin(raster)+(i-1)*(la/2)
+      e_xmax[[i]]<-xmin(raster)+i*(la/2)
+      e_ymin[[i]]<-ymin(raster)+(i-1)*(lo/2)
+      e_ymax[[i]]<-ymin(raster)+i*(lo/2)
+      }
+    split<-vector("list",4)
+    k<-0
+    for(i in 1:2){
+      for(j in 1:2){
+        k<-k+1
+        split[[k]]<-crop(raster,extent(matrix(c(e_xmin[[j]],e_xmax[[j]],e_ymin[[(3-i)]],e_ymax[[(3-i)]]),nrow=2,ncol=2,byrow=TRUE)))
+      }
+    }
+  }else{
+
+  if(d1==1&d2>1){
+    e_xmin<-vector("list",2)
+    e_xmax<-vector("list",2)
+      for(i in 1:2){
+        e_xmin[[i]]<-xmin(raster)+(i-1)*(la/2)
+        e_xmax[[i]]<-xmin(raster)+i*(la/2)
+      }
+    split<-vector("list",2)
+    k<-0
+    for(i in 1:2){
+      k<-k+1
+      split[[k]]<-crop(raster,extent(matrix(c(e_xmin[[i]],e_xmax[[i]],ymin(raster),ymax(raster)),nrow=2,ncol=2,byrow=TRUE)))
+    }
+  }else{
+    
+  if(d1>1&d2==1){
+    e_ymin<-vector("list",2)
+    e_ymax<-vector("list",2)
+      for(i in 1:2){
+        e_ymin[[i]]<-ymin(raster)+(i-1)*(lo/2)
+        e_ymax[[i]]<-ymin(raster)+i*(lo/2)
+      }
+    split<-vector("list",2)
+    k<-0
+      for(i in 1:2){
+        k<-k+1
+        split[[k]]<-crop(raster,extent(matrix(c(xmin(raster),xmax(raster),e_ymin[[i]],e_ymax[[i]]),nrow=2,ncol=2,byrow=TRUE))) 
+      }
+  }}}
+  return(split)
 }
 
-Worth_binary<-binary(Worth_aggregated)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_binary,maxpixels=2000000)
+### function to determine the density of a queue element
+f.density=function(raster){
+  d<-mean(values(raster))
+  return(d)}
 
-```
+### function to perform the iterative step
 
-```{r Clump creation}
-Worth_clumps<-clump(Worth_binary,gaps=FALSE)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_clumps,maxpixels=2000000)
-
-Worth_clumps
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r Smoothing the data}
-smooth=function(raster){
-  nw<-focal(raster,w=matrix(c(1,0,0,0,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
-  n<-focal(raster,w=matrix(c(0,1,0,0,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
-  ne<-focal(raster,w=matrix(c(0,0,1,0,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
-  w<-focal(raster,w=matrix(c(0,0,0,1,0,0,0,0,0),nrow=3,ncol=3,byrow=TRUE))
-  e<-focal(raster,w=matrix(c(0,0,0,0,0,1,0,0,0),nrow=3,ncol=3,byrow=TRUE))
-  sw<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,0,0),nrow=3,ncol=3,byrow=TRUE))
-  s<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,1,0),nrow=3,ncol=3,byrow=TRUE))
-  se<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,1),nrow=3,ncol=3,byrow=TRUE))
-  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==20)]<-20
-  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==40)]<-40
-  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==60)]<-60
-  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==80)]<-80
-  raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==100)]<-100
-    raster[(nw==n)&(n==ne)&(ne==w)&(w==e)&(e==sw)&(sw==s)&(s==se)&(se!=raster)&(se==120)]<-120
-  return(raster)
-}
-
-Worth_smooth<-smooth(Worth_aggregated)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_smooth,maxpixels=2000000)
-```
-
-```{r Corn or soybeans}
-csb=function(raster){
-  raster[(raster==40)|(raster==60)|(raster==80)]<-1
-  raster[(raster==20)]<-0
-  raster[(raster==100)|(raster==120)]<-2
-  return(raster)
-}
-
-Worth_csb<-csb(Worth_smooth)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_csb,maxpixels=2000000)
-```
-
-```{r Clump extraction}
-require(vegan)
-corn=function(raster){
-  raster[(raster==40)|(raster==60)]<-1
-  raster[(raster==20)|(raster==80)|(raster==100)|(raster==120)]<-0
-  return(raster)
-}
-
-tidy=function(raster){
-  ninebynine<-focal(raster,w=matrix(1,nrow=9,ncol=9))
-  count<-length(raster[(raster==1)&(ninebynine<=4)])
-  raster[(raster==1)&(ninebynine<=4)]<-0
-  return(c(raster,count))
-}
-
-Worth_corn<-corn(Worth_smooth)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_corn,maxpixels=2000000)
-
-Worth_corn<-tidy(Worth_corn)[[1]]
-count<-1
-while(count>0){
-  count<-tidy(Worth_corn)[[2]]
-  Worth_corn<-tidy(Worth_corn)[[1]]
-}
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_corn,maxpixels=2000000)
-
-Worth_corn_clumps<-clump(Worth_corn,directions=8,gaps=FALSE)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_corn_clumps,maxpixels=2000000)
-
-d<-dist(as.matrix(Worth_corn_clumps),method="euclidean")
-
-```
-
-```{r extracting operations}
-Worth_clumps<-clump(Worth_AnyCorn,gaps=FALSE)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_clumps,maxpixels=2000000)
-```
-
-####### DEVELOPMENT OF BOUNDARIES ########
-
-```{r Separating boundaries}
-#function to extract boundary pixels
-separate=function(x){
-  if((x[1]==0)|(x[1]==40)){0}else{1}}
-
-#function to extract outer boundary pixels
-outer=function(raster){
-  threebythree<-focal(raster,w=matrix(1,nrow=3,ncol=3))
-  raster[(raster==0)&(threebythree==0)]<-1
-  return(raster)
-}
-
-Worth_boundaries<-calc(Worth_raster,fun=separate)
-Worth_outer<-outer(Worth_boundaries)
-
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_outer,maxpixels=2000000)
-```
-
-Now we must separate into two groups: one for straight boundaries and one for slanted boundaries.
-
-```{r Environment focals}
-#definitiion of focals used to perform actions
-straight_focals=function(raster){
-  up50<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=101,ncol=1))
-  right50<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=101))
-  left50<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=101))
-  down50<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=101,ncol=1))
- up25<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=51,ncol=1))
-  right25<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=51))
-  left25<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=51))
-  down25<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=51,ncol=1))
-  up5<-focal(raster,w=matrix(c(1,1,1,1,1,0,0,0,0,0,0),nrow=11,ncol=1))
-  right5<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,1,1,1,1),nrow=1,ncol=11))
-  left5<-focal(raster,w=matrix(c(1,1,1,1,1,0,0,0,0,0,0),nrow=1,ncol=11))
-  down5<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,1,1,1,1),nrow=11,ncol=1)) 
-  upcheck<-focal(raster,w=matrix(c(1,0,1,1,0,1,0,0,0,0,0,0,0,0,0),nrow=5,ncol=3,byrow=TRUE))
-  rightcheck<-focal(raster,w=matrix(c(0,0,0,1,1,0,0,0,0,0,0,0,0,1,1),nrow=3,ncol=5),byrow=TRUE)
-  leftcheck<-focal(raster,w=matrix(c(1,1,0,0,0,0,0,0,0,0,1,1,0,0,0),nrow=3,ncol=5,byrow=TRUE))
-  downcheck<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,1,0,1,1,0,1),nrow=5,ncol=3),byrow=TRUE)
-  up10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=21,ncol=1))
-  right10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=21))
-  left10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=21))
-  down10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=21,ncol=1))
+f.iterate=function(q,queue_names,queue_location,miniclusters_location,miniboundaries_location,f.density,f.split){
+  #index initialization
+  k<-0
+  l<-length(list.files(miniclusters_location))/2
+  m<-length(list.files(miniboundaries_location))/2
+  
+  #temporary queue initialization
+  temp_names<-list()
+  temp_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/temp_queue/"
+  if(!(file.exists(temp_location))){dir.create(temp_location)}
+  
+  #cycle through queue and direct elements accordingly
+  foreach(i=1:q,.packages=c("raster","sp"),.inorder=FALSE) %dopar% {element_raster<-raster(queue_names[[i]]) #read in queue element
+  density<-f.density(element_raster)
  
- return(c(up50,right50,left50,down50,up25,right25,left25,down25,up5,right5,left5,down5,upcheck,rightcheck,leftcheck,downcheck,up10,right10,left10,down10))
+    if(density==1){
+      l<-l+1+runif(1,0,1)
+      miniclusters_name<-paste(miniclusters_location,"minicluster",l,".grd",sep="")
+      writeRaster(element_raster,file=miniclusters_name)
+      }else{
+        
+    if(density==0){
+      m<-m+1+runif(1,0,1)
+      boundaries_name<-paste(miniboundaries_location,"boundary",m,".grd",sep="")
+      writeRaster(element_raster,file=boundaries_name)
+    }else{
+      
+      element_split<-f.split(element_raster)
+      s<-length(element_split)
+      for(i in 1:s){
+        k<-k+1+runif(1,0,1)
+        temp_name<-paste(temp_location,"queue_raster",k,".grd",sep="")
+        writeRaster(element_split[[i]],file=temp_name)
+        }}}}
+  unlink(queue_location,recursive=TRUE) #clears rasters in queue
+  file.rename(temp_location,queue_location) #makes temp_queue the new queue
 }
 ```
 
-```{r Straight boundary extraction connection extension and closure}
-#straight=function(raster,focals,cutoff){
-#  raster[(raster==0)&(focals[[1]]>=cutoff)&(focals[[4]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[9]]>=1)&(focals[[12]]>=1)&(focals[[11]]>=1)&(focals[[10]]>=1)&(focals[[5]]>=((50-cutoff)/2))&(focals[[8]]>=((50-cutoff)/2))&(focals[[7]]>=((50-cutoff)/2))&(focals[[6]]>=((50-cutoff)/2))]<-1
-#  return(raster)
-#}
+```{r Processing of miniclustering algorithm}
+#file initialization
+queue_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/queue/"
+miniclusters_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/miniclusters/"
+miniboundaries_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/miniboundaries/"
 
-straight=function(raster,focals,cutoff){
-  raster[(raster==0)&(((focals[[9]]==0)|(focals[[12]]==0)|(focals[[11]]==0)|(focals[[10]]==0))|(((focals[[9]]<=2)&(focals[[12]]<=2))|((focals[[10]]<=2)&(focals[[11]]<=2)))|((focals[[1]]<=cutoff)|(focals[[2]]<=cutoff)|(focals[[3]]<=cutoff)|(focals[[4]]<=cutoff)))]<-3
-  raster[(raster==0)]<-1
-  raster[(raster==3)]<-0
-  return(raster)
+if(!(file.exists(queue_location))){dir.create(queue_location)}
+if(!(file.exists(miniclusters_location))){dir.create(miniclusters_location)}
+if(!(file.exists(miniboundaries_location))){dir.create(miniboundaries_location)}
+
+#first step
+queue_start<-f.split(Worth) #splits the original raster into quadrants
+q<-length(queue_start) #set init length of queue
+queue_names<-paste(queue_location,"queue_raster",seq_along(queue_start),".grd",sep="")
+for(i in seq_along(queue_start)){writeRaster(queue_start[[i]],file=queue_names[[i]],overwrite=TRUE)} #writes each raster in the queue to file
+
+#iterative step
+while(q>0){
+registerDoParallel(makeCluster(8))
+f.iterate(q,queue_names,queue_location,miniclusters_location,miniboundaries_location,f.density,f.split)
+if(length(list.files(queue_location))>0){
+  queue_names<-paste(queue_location,list.files(queue_location,pattern=".grd$"),sep="")
+  q<-length(queue_names)}else{
+    queue_names<-list()
+    q<-0}
 }
 
-connect=function(raster,focals,cutoff,cutoff2){
-  count<-length(raster[(raster==1)&((((focals[[17]]<=cutoff)&(focals[[20]]<=cutoff))|((focals[[19]]<=cutoff)&(focals[[18]]<=cutoff)))|(((focals[[5]]<=cutoff2)&(focals[[8]]<=cutoff2))|((focals[[6]]<=cutoff2)&(focals[[7]]<=cutoff2))))])
-  raster[(raster==1)&((((focals[[17]]<=cutoff)&(focals[[20]]<=cutoff))|((focals[[19]]<=cutoff)&(focals[[18]]<=cutoff)))|(((focals[[5]]<=cutoff2)&(focals[[8]]<=cutoff2))|((focals[[6]]<=cutoff2)&(focals[[7]]<=cutoff2))))]<-0
-  return(c(raster,count))
-}
-
-iso=function(raster,focals,cutoff){
-  fivebyfive<-focal(raster,w=matrix(c(0,0,1,0,0,0,0,1,0,0,1,1,0,1,1,0,0,1,0,0,0,0,1,0,0),nrow=5,ncol=5,byrow=TRUE))
-  count<-length(raster[(raster==0)&(fivebyfive>=7)&(focals[[1]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[4]]>=cutoff)])
-  raster[(raster==0)&(fivebyfive>=7)&(focals[[1]]>=cutoff)&(focals[[2]]>=cutoff)&(focals[[3]]>=cutoff)&(focals[[4]]>=cutoff)]<-1
-  return(c(raster,count))
-}
-
-extension=function(raster,focals){
-  ninebynine<-focal(raster,w=matrix(1,nrow=9,ncol=9))
-  count<-length(raster[(raster==1)&(ninebynine>44)&(((focals[[5]]<=1)&(focals[[13]]>2)&(focals[[8]]<25))|((focals[[8]]<=1)&(focals[[16]]>2)&(focals[[5]]<25))|((focals[[7]]<=1)&(focals[[15]]>2)&(focals[[6]]<25))|((focals[[6]]<=1)&(focals[[14]]>2)&(focals[[7]]<25)))])
-  raster[(raster==1)&(ninebynine>44)&(((focals[[5]]<=1)&(focals[[13]]>2)&(focals[[8]]<25))|((focals[[8]]<=1)&(focals[[16]]>2)&(focals[[5]]<25))|((focals[[7]]<=1)&(focals[[15]]>2)&(focals[[6]]<25))|((focals[[6]]<=1)&(focals[[14]]>2)&(focals[[7]]<25)))]<-0
-  return(c(raster,count))
-}
-
-closure=function(raster,focals){  
-  count<-length(raster[(raster==1)&(((focals[[5]]<=5)&(focals[[12]]<=4))|((focals[[8]]<=5)&(focals[[9]]<=4))|((focals[[7]]<=5)&(focals[[10]]<=4))|((focals[[6]]<=5)&(focals[[11]]<=4)))])
-  raster[(raster==1)&(((focals[[5]]<=5)&(focals[[12]]<=4))|((focals[[8]]<=5)&(focals[[9]]<=4))|((focals[[7]]<=5)&(focals[[10]]<=4))|((focals[[6]]<=5)&(focals[[11]]<=4)))]<-0
-  return(c(raster,count))
-}
-
-corners=function(raster,focals,cutoff){
-  count<-length(raster[(raster==1)&(((focals[[1]]<=cutoff)&(focals[[2]]<=cutoff))|((focals[[1]]<=cutoff)&(focals[[3]]<=cutoff))|((focals[[2]]<=cutoff)&(focals[[4]]<=cutoff))|((focals[[3]]<=cutoff)&(focals[[4]]<=cutoff)))])
-  raster[(raster==1)&(((focals[[1]]<=cutoff)&(focals[[2]]<=cutoff))|((focals[[1]]<=cutoff)&(focals[[3]]<=cutoff))|((focals[[2]]<=cutoff)&(focals[[4]]<=cutoff))|((focals[[3]]<=cutoff)&(focals[[4]]<=cutoff)))]<-0
-  return(c(raster,count))
-}
-
-#Performing the actions#
-
-#Straight only#
-Worth_straight<-straight(Worth_outer,straight_focals(Worth_outer),40)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_straight,maxpixels=2000000)
-
-#Connecting segments in close proximity
-Worth_straight_connected<-connect(Worth_straight,straight_focals(Worth_straight),7,20)[[1]]
-count<-1
-while(count>0){
-(count<-connect(Worth_straight_connected,straight_focals(Worth_straight_connected),7,20)[[2]])
-Worth_straight_connected<-connect(Worth_straight_connected,straight_focals(Worth_straight_connected),7,20)[[1]]
-}
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_straight_connected,maxpixels=2000000)
-
-#Extracting outside boundaries only
-Worth_prep_outside<-outer(Worth_straight_connected)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_prep_outside,maxpixels=2000000)
-
-#Eliminating isolated points not along road
-Worth_prep_iso<-iso(Worth_prep_outside,straight_focals(Worth_prep_outside),35)[[1]]
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_prep_iso,maxpixels=2000000)
-count<-1
-while(count>0){
-count<-iso(Worth_prep_iso,straight_focals(Worth_prep_outside),35)[[2]]
-Worth_prep_iso<-iso(Worth_prep_iso,straight_focals(Worth_prep_outside),35)[[1]]
-}
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_prep_iso,maxpixels=2000000)
-
-#Extending segments which are part of long roads
-Worth_straight_extended<-extension(Worth_prep_iso,straight_focals(Worth_prep_iso))[[1]]
-count<-1
-while(count>0){
-count<-extension(Worth_straight_extended,straight_focals(Worth_straight_extended))[[2]]
-Worth_straight_extended<-extension(Worth_straight_extended,straight_focals(Worth_straight_extended))[[1]]
-}
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_straight_extended,maxpixels=2000000)
-
-Worth_straight_closed<-closure(Worth_straight_extended,straight_focals(Worth_straight_extended))[[1]]
-count<-1
-while(count>0){
-  Worth_straight_closed<-closure(Worth_straight_closed,straight_focals(Worth_straight_closed))[[1]]
-  count<-closure(Worth_straight_closed,straight_focals(Worth_straight_closed))[[2]]
-}
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_straight_closed,maxpixels=2000000)
-
-Worth_straight_corners<-corners(Worth_straight_closed,straight_focals(Worth_straight_closed),25)[[1]]
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_straight_corners,maxpixels=2000000)
-
-Worth_straight<-straight_extension(Worth_straight_corners,straight_focals(Worth_straight_corners),48,0)[[1]]
-count<-1
-while(count>0){
-Worth_straight<-straight_extension(Worth_straight,straight_focals(Worth_straight),47,2)[[1]]
-count<-straight_extension(Worth_straight,straight_focals(Worth_straight),47,2)[[2]]
-}
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_straight,maxpixels=2000000)
-
+#remove queue folders
+unlink(queue_location,recursive=TRUE) #clears rasters in queue
+unlink(temp_location,recursive=TRUE) #clears rasters in queue
 ```
 
-##### Slanted boundaries #####
+### STEP 2: Combine miniclusters into clusters
 
-```{r Removal of straight roads}
-slanted=function(raster,cutoff,cutoff2){
-  up10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=21,ncol=1))
-  right10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=21))
-  left10<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=21))
-  down10<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1),nrow=21,ncol=1)) 
-  up25<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=51,ncol=1))
-  right25<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=51))
-  left25<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=51))
-  down25<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=51,ncol=1))
-  up50<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=101,ncol=1))
-  right50<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=1,ncol=101))
-  left50<-focal(raster,w=matrix(c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=1,ncol=101))
-  down50<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),nrow=101,ncol=1))
-  raster[(raster==0)&((up25<=cutoff)|(down25<=cutoff)|(left25<=cutoff)|(right25<=cutoff))&((up50<=cutoff2)|(down50<=cutoff2)|(left50<=cutoff2)|(right50<=cutoff2))]<-1
-  raster[(raster==0)&((up10<=1)|(down10<=1)|(left10<=1)|(right10<=1))]<-1
-  return(raster)
+```{r Clustering algorithm (joining of miniclusters which share two extent boundaries)}
+# STEP 2a: Initial vertical bind
+
+#gathering of the names of the files containing the miniclusters from step 1
+miniclusters_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/miniclusters/"
+miniclusters_names<-paste(miniclusters_location,list.files(miniclusters_location,pattern=".grd"),sep="")
+miniclustersa_names<-paste(miniclusters_location,list.files(miniclusters_location,pattern=".gri"),sep="")
+
+#extracting the extents of each of the minicluster rasters
+extent_extract=function(name){extent(raster(name))}
+extract_list<-lapply(as.list(miniclusters_names),FUN=extent_extract)
+
+#count the number of miniclusters
+num_miniclusters<-length(extract_list)
+
+#derive the extents values for each cluster
+miniclusters_extents<-matrix(data=NA,nrow=num_miniclusters,ncol=4)
+colnames(miniclusters_extents)<-c("xmin","xmax","ymin","ymax")
+
+xmin_extract=function(extents){extents@xmin}
+xmax_extract=function(extents){extents@xmax}
+ymin_extract=function(extents){extents@ymin}
+ymax_extract=function(extents){extents@ymax}
+
+xmins<-lapply(extract_list,xmin_extract)
+xmaxs<-lapply(extract_list,xmax_extract)
+ymins<-lapply(extract_list,ymin_extract)
+ymaxs<-lapply(extract_list,ymax_extract)
+
+miniclusters_extents[,1]<-unlist(xmins)
+miniclusters_extents[,2]<-unlist(xmaxs)
+miniclusters_extents[,3]<-unlist(ymins)
+miniclusters_extents[,4]<-unlist(ymaxs)
+
+#Determine which pair of miniclusters satisfy the criterion for being joined
+a<-Sys.time()
+vertical_bind<-list()
+registerDoParallel(makeCluster(8))
+vertical_bind<-foreach(m=1:num_miniclusters,.packages=c("raster","sp"),.inorder=FALSE) %dopar% {c(m,which((miniclusters_extents[m,1]==miniclusters_extents[,1])&(miniclusters_extents[m,2]==miniclusters_extents[,2])&((miniclusters_extents[m,3]==miniclusters_extents[,4])|(miniclusters_extents[m,4]==miniclusters_extents[,3]))))}
+Sys.time()-a
+
+#creates temp file for the results of vertical binding
+vertcl_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/vertcl/"
+if(!(file.exists(vertcl_location))){dir.create(vertcl_location)}
+
+#Determine which miniclusters are not part of any pair and which are
+vertical_bind_lengths<-lapply(vertical_bind,FUN=length)
+uncombined<-(which(vertical_bind_lengths==1))
+uncombined_filelist<-c(miniclusters_names[uncombined],miniclustersa_names[uncombined])
+combined<-(which(vertical_bind_lengths>1))
+
+#Copy unmatched miniclusters to temp file
+file.copy(uncombined_filelist,vertcl_location)
+
+#Combine pairs which satisfy the criterion transitively
+matching_pairs<-list()
+i<-0
+while(length(combined)>0){
+matching_tree<-vertical_bind[[combined[1]]]
+difference<-length(matching_tree)
+  while(difference>0){
+  m<-length(matching_tree)
+  temp_list<-vector("list",m)
+  for(j in 1:m){temp_list[[j]]<-vertical_bind[[matching_tree[j]]]}
+  matching_tree<-unique(unlist(temp_list))
+  difference<-length(matching_tree)-m
+  }
+matching_tree<-sort(matching_tree)
+i<-i+1
+matching_pairs[[i]]<-matching_tree
+combined<-combined[-which(combined%in%matching_tree)]
 }
 
-Worth_slanted<-slanted(Worth_road,22,35)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_slanted,maxpixels=2000000)
-```
+#Merge each of the matching pairs into an extended raster
+merged_raster=function(items){merge(raster(miniclusters_names[[items]]))}
 
-```{r Isolation of slanted roads}
-slanted=function(raster,cutoff,cutoff2,cutoff3,cutoff4){
-  nl<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nr<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  wu<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  wd<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  sr<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  sl<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ed<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  eu<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwd2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwd1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nw<-focal(raster,w=matrix(c(1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  neu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  neu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ne<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ned1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ned2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  seu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  seu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  se<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1),nrow=25,ncol=25))
-  sed1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0),nrow=25,ncol=25))
-  sed2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swd2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swd1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  sw<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  raster[(raster==0)&(((nwd2<=cutoff)&(seu2<=cutoff))|((nwu2<=cutoff)&(sed2<=cutoff))|((neu2<=cutoff)&(swd2<=cutoff))|((ned2<=cutoff)&(swu2<=cutoff)))]<-3
-  raster[(raster==0)&(((nwd1<=cutoff2)&(seu1<=cutoff2))|((nwu1<=cutoff2)&(sed1<=cutoff2))|((neu1<=cutoff2)&(swd1<=cutoff2))|((ned1<=cutoff2)&(swu1<=cutoff2)))]<-3
-  raster[(raster==0)&(((nw<=cutoff3)&(se<=cutoff3))|((ne<=cutoff3)&(sw<=cutoff3)))]<-3
-  raster[(raster==0)&(((nl<=cutoff4)&(sr<=cutoff4))|((nr<=cutoff4)&(sl<=cutoff4))|((wu<=cutoff4)&(ed<=cutoff4))|((wd<=cutoff4)&(eu<=cutoff4)))]<-3
-  
-  raster[(raster==0)]<-1
-  raster[(raster==3)]<-0
-  return(raster)
+k<-0
+registerDoParallel(makeCluster(8))
+foreach(i=1:length(matching_pairs),.packages=c("raster","sp"),.inorder=FALSE) %dopar% {
+  pair_length<-length(matching_pairs[[i]])
+  raster_list<-list()
+  for(j in 1:pair_length){raster_list[[j]]<-raster(miniclusters_names[[matching_pairs[[i]][[j]]]])}
+  k<-k+1+runif(1,0,1)
+  merged_raster<-do.call(merge,raster_list)
+  writeRaster(merged_raster,file=paste(vertcl_location,"joinedRaster",k,".grd",sep=""),overwrite=TRUE)
 }
 
-Worth_slanted_only<-slanted(Worth_slanted,10,16,30,10)
-Worth_slanted_only2<-slanted(Worth_slanted_only,11,17,32,11)
+#Step 2b: Initial horizontal bind
+vertcl_names<-paste(vertcl_location,list.files(vertcl_location,pattern=".grd"),sep="")
+vertcla_names<-paste(vertcl_location,list.files(vertcl_location,pattern=".gri"),sep="")
 
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_slanted_only,maxpixels=2000000)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_slanted_only2,maxpixels=2000000)
-```
+#extracting the extents of each of the minicluster rasters
+extent_extract=function(name){extent(raster(name))}
+extract_list<-lapply(as.list(vertcl_names),FUN=extent_extract)
 
-```{r Connection of slanted roads}
-slanted_connect=function(raster,cutoff,cutoff2,cutoff3,cutoff4){
-  nl<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nr<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  wu<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  wd<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  sr<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  sl<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ed<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  eu<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwd2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwd1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nw<-focal(raster,w=matrix(c(1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  nwu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  neu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  neu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ne<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ned1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  ned2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  seu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  seu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  se<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1),nrow=25,ncol=25))
-  sed1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0),nrow=25,ncol=25))
-  sed2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swd2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swd1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  sw<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swu1<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  swu2<-focal(raster,w=matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),nrow=25,ncol=25))
-  raster[(raster==1)&(((nwd2<=cutoff)&(seu2<=cutoff))|((nwu2<=cutoff)&(sed2<=cutoff))|((neu2<=cutoff)&(swd2<=cutoff))|((ned2<=cutoff)&(swu2<=cutoff)))]<-0
-  raster[(raster==1)&(((nwd1<=cutoff2)&(seu1<=cutoff2))|((nwu1<=cutoff2)&(sed1<=cutoff2))|((neu1<=cutoff2)&(swd1<=cutoff2))|((ned1<=cutoff2)&(swu1<=cutoff2)))]<-0
-  raster[(raster==1)&(((nw<=cutoff3)&(se<=cutoff3))|((ne<=cutoff3)&(sw<=cutoff3)))]<-0
-  raster[(raster==1)&(((nl<=cutoff4)&(sr<=cutoff4))|((nr<=cutoff4)&(sl<=cutoff4))|((wu<=cutoff4)&(ed<=cutoff4))|((wd<=cutoff4)&(eu<=cutoff4)))]<-0
-  
-  return(raster)
+#count the number of miniclusters
+num_vertclusters<-length(extract_list)
+shrinkage<-num_miniclusters-num_vertclusters
+
+#derive the extents values for each cluster
+vert_extents<-matrix(data=NA,nrow=num_vertclusters,ncol=4)
+colnames(vert_extents)<-c("xmin","xmax","ymin","ymax")
+
+xmin_extract=function(extents){extents@xmin}
+xmax_extract=function(extents){extents@xmax}
+ymin_extract=function(extents){extents@ymin}
+ymax_extract=function(extents){extents@ymax}
+
+xmins<-lapply(extract_list,xmin_extract)
+xmaxs<-lapply(extract_list,xmax_extract)
+ymins<-lapply(extract_list,ymin_extract)
+ymaxs<-lapply(extract_list,ymax_extract)
+
+vert_extents[,1]<-unlist(xmins)
+vert_extents[,2]<-unlist(xmaxs)
+vert_extents[,3]<-unlist(ymins)
+vert_extents[,4]<-unlist(ymaxs)
+
+#Determine which pair of vertclusters satisfy the criterion for being joined
+a<-Sys.time()
+horizontal_bind<-list()
+registerDoParallel(makeCluster(8))
+horizontal_bind<-foreach(m=1:num_vertclusters,.packages=c("raster","sp"),.inorder=FALSE) %dopar% {c(m,which((vert_extents[m,3]==vert_extents[,3])&(vert_extents[m,4]==vert_extents[,4])&((vert_extents[m,1]==vert_extents[,2])|(vert_extents[m,2]==vert_extents[,1]))))}
+Sys.time()-a
+
+#Creates temp file for the results of the horizontal binding
+horcl_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/horcl/"
+if(!(file.exists(horcl_location))){dir.create(horcl_location)}
+
+#Determine which vertclusters are not part of any pair and which are
+horizontal_bind_lengths<-lapply(horizontal_bind,FUN=length)
+uncombined<-(which(horizontal_bind_lengths==1))
+uncombined_filelist<-c(vertcl_names[uncombined],vertcla_names[uncombined])
+combined<-(which(horizontal_bind_lengths>1))
+
+#Copy unmatched rasters into the temp location
+file.copy(uncombined_filelist,horcl_location)
+
+#Combine pairs which satisfy the criterion transitively
+matching_pairs<-list()
+i<-0
+while(length(combined)>0){
+matching_tree<-horizontal_bind[[combined[1]]]
+difference<-length(matching_tree)
+  while(difference>0){
+  m<-length(matching_tree)
+  temp_list<-vector("list",m)
+  for(j in 1:m){temp_list[[j]]<-horizontal_bind[[matching_tree[j]]]}
+  matching_tree<-unique(unlist(temp_list))
+  difference<-length(matching_tree)-m
+  }
+matching_tree<-sort(matching_tree)
+i<-i+1
+matching_pairs[[i]]<-matching_tree
+combined<-combined[-which(combined%in%matching_tree)]
 }
 
-Worth_slanted_connected<-slanted_connect(Worth_slanted_only2,12,16,25,11)
-Worth_slanted_connected2<-slanted_connect(Worth_slanted_connected,10,14,23,11)
+#Merge each of the matching pairs into an extended raster
+merged_raster=function(items){merge(raster(vertcl_names[[items]]))}
+k<-length(list.files(horcl_location,pattern=".grd"))
 
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_slanted_connected,maxpixels=2000000)
-par(mar=c(1,1,1,1)+0.1)
-plot(Worth_slanted_connected2,maxpixels=2000000)
-```
-
-
-#Geographic subset of raster for including google maps
-Worth1<-crop(Worth_raster,extent(xmin(Worth_raster),xFromCol(Worth_raster,col=640),ymin(Worth_raster),yFromRow(Worth_raster,row=640)))
-
-require(ggmap)
-Worth1center<-c(lon = (xmin(Worth1)+xmax(Worth1))/2, lat = (ymin(Worth1)+ymax(Worth1))/2)
-
-Worth1stamen<-get_stamenmap(bbox=c(left=xmin(Worth1),right=xmax(Worth1),bottom=ymin(Worth1),top=ymax(Worth1)),maptype = "watercolor",color="color")
-ggmap(Worth1stamen)
-```
-
-
-
-```{r Aggregating rasters so each pixel is roughly one acre}
-#Defining the mode function
-sample.mode=function(x,...){
-  ux<-unique(x)
-  ux[which.max(tabulate(match(x,ux)))]
+registerDoParallel(makeCluster(8))
+foreach(i=1:length(matching_pairs),.packages=c("raster","sp"),.inorder=FALSE) %dopar% {
+  pair_length<-length(matching_pairs[[i]])
+  raster_list<-list()
+  for(j in 1:pair_length){raster_list[[j]]<-raster(vertcl_names[[matching_pairs[[i]][[j]]]])}
+  k<-k+1+runif(1,0,1)
+  merged_raster<-do.call(merge,raster_list)
+  writeRaster(merged_raster,file=paste(horcl_location,"joinedRaster",k,".grd",sep=""),overwrite=TRUE)
 }
 
-#Resizing the rasters to a lower resolution
-#2011
-Boone_2011_resized<-aggregate(Boone_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-BuenaVista_2011_resized<-aggregate(BuenaVista_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Butler_2011_resized<-aggregate(Butler_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Calhoun_2011_resized<-aggregate(Calhoun_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Carroll_2011_resized<-aggregate(Carroll_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-CerroGordo_2011_resized<-aggregate(CerroGordo_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Clay_2011_resized<-aggregate(Clay_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Dallas_2011_resized<-aggregate(Dallas_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Dickinson_2011_resized<-aggregate(Dickinson_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Emmet_2011_resized<-aggregate(Emmet_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Floyd_2011_resized<-aggregate(Floyd_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Franklin_2011_resized<-aggregate(Franklin_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Greene_2011_resized<-aggregate(Greene_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Grundy_2011_resized<-aggregate(Grundy_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Guthrie_2011_resized<-aggregate(Guthrie_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hamilton_2011_resized<-aggregate(Hamilton_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hancock_2011_resized<-aggregate(Hancock_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hardin_2011_resized<-aggregate(Hardin_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Humboldt_2011_resized<-aggregate(Humboldt_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Jasper_2011_resized<-aggregate(Jasper_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Kossuth_2011_resized<-aggregate(Kossuth_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Marshall_2011_resized<-aggregate(Marshall_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Mitchell_2011_resized<-aggregate(Mitchell_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-PaloAlto_2011_resized<-aggregate(PaloAlto_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Pocahontas_2011_resized<-aggregate(Pocahontas_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Polk_2011_resized<-aggregate(Polk_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Sac_2011_resized<-aggregate(Sac_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Story_2011_resized<-aggregate(Story_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Webster_2011_resized<-aggregate(Webster_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Winnebago_2011_resized<-aggregate(Winnebago_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Worth_2011_resized<-aggregate(Worth_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Wright_2011_resized<-aggregate(Wright_2011,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+##Step 2c: Iterative joining##
+##############################
 
-#2012
-Boone_2012_resized<-aggregate(Boone_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-BuenaVista_2012_resized<-aggregate(BuenaVista_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Butler_2012_resized<-aggregate(Butler_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Calhoun_2012_resized<-aggregate(Calhoun_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Carroll_2012_resized<-aggregate(Carroll_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-CerroGordo_2012_resized<-aggregate(CerroGordo_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Clay_2012_resized<-aggregate(Clay_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Dallas_2012_resized<-aggregate(Dallas_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Dickinson_2012_resized<-aggregate(Dickinson_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Emmet_2012_resized<-aggregate(Emmet_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Floyd_2012_resized<-aggregate(Floyd_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Franklin_2012_resized<-aggregate(Franklin_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Greene_2012_resized<-aggregate(Greene_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Grundy_2012_resized<-aggregate(Grundy_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Guthrie_2012_resized<-aggregate(Guthrie_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hamilton_2012_resized<-aggregate(Hamilton_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hancock_2012_resized<-aggregate(Hancock_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hardin_2012_resized<-aggregate(Hardin_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Humboldt_2012_resized<-aggregate(Humboldt_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Jasper_2012_resized<-aggregate(Jasper_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Kossuth_2012_resized<-aggregate(Kossuth_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Marshall_2012_resized<-aggregate(Marshall_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Mitchell_2012_resized<-aggregate(Mitchell_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-PaloAlto_2012_resized<-aggregate(PaloAlto_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Pocahontas_2012_resized<-aggregate(Pocahontas_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Polk_2012_resized<-aggregate(Polk_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Sac_2012_resized<-aggregate(Sac_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Story_2012_resized<-aggregate(Story_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Webster_2012_resized<-aggregate(Webster_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Winnebago_2012_resized<-aggregate(Winnebago_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Worth_2012_resized<-aggregate(Worth_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Wright_2012_resized<-aggregate(Wright_2012,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+while(shrinkage>0){
+#####Hor->Vert step
+#gathering name of files
+horcl_names<-paste(horcl_location,list.files(horcl_location,pattern=".grd"),sep="")
+horcla_names<-paste(horcl_location,list.files(horcl_location,pattern=".gri"),sep="")
 
-#2013
-Boone_2013_resized<-aggregate(Boone_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-BuenaVista_2013_resized<-aggregate(BuenaVista_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Butler_2013_resized<-aggregate(Butler_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Calhoun_2013_resized<-aggregate(Calhoun_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Carroll_2013_resized<-aggregate(Carroll_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-CerroGordo_2013_resized<-aggregate(CerroGordo_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Clay_2013_resized<-aggregate(Clay_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Dallas_2013_resized<-aggregate(Dallas_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Dickinson_2013_resized<-aggregate(Dickinson_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Emmet_2013_resized<-aggregate(Emmet_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Floyd_2013_resized<-aggregate(Floyd_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Franklin_2013_resized<-aggregate(Franklin_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Greene_2013_resized<-aggregate(Greene_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Grundy_2013_resized<-aggregate(Grundy_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Guthrie_2013_resized<-aggregate(Guthrie_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hamilton_2013_resized<-aggregate(Hamilton_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hancock_2013_resized<-aggregate(Hancock_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Hardin_2013_resized<-aggregate(Hardin_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Humboldt_2013_resized<-aggregate(Humboldt_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Jasper_2013_resized<-aggregate(Jasper_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Kossuth_2013_resized<-aggregate(Kossuth_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Marshall_2013_resized<-aggregate(Marshall_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Mitchell_2013_resized<-aggregate(Mitchell_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-PaloAlto_2013_resized<-aggregate(PaloAlto_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Pocahontas_2013_resized<-aggregate(Pocahontas_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Polk_2013_resized<-aggregate(Polk_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Sac_2013_resized<-aggregate(Sac_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Story_2013_resized<-aggregate(Story_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Webster_2013_resized<-aggregate(Webster_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Winnebago_2013_resized<-aggregate(Winnebago_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Worth_2013_resized<-aggregate(Worth_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
-Wright_2013_resized<-aggregate(Wright_2013,fact=2,fun=sample.mode,expand=FALSE,na.rm=FALSE)
+#extracting the extents of each of the minicluster rasters
+extent_extract=function(name){extent(raster(name))}
+extract_list<-lapply(as.list(horcl_names),FUN=extent_extract)
 
-#Initiate combined rasters
-Boone_combined<-Boone_2013_resized
-BuenaVista_combined<-BuenaVista_2013_resized
-Butler_combined<-Butler_2013_resized
-Calhoun_combined<-Calhoun_2013_resized
-Carroll_combined<-Carroll_2013_resized
-CerroGordo_combined<-CerroGordo_2013_resized
-Clay_combined<-Clay_2013_resized
-Dallas_combined<-Dallas_2013_resized
-Dickinson_combined<-Dickinson_2013_resized
-Emmet_combined<-Emmet_2013_resized
-Floyd_combined<-Floyd_2013_resized
-Franklin_combined<-Franklin_2013_resized
-Greene_combined<-Greene_2013_resized
-Grundy_combined<-Grundy_2013_resized
-Guthrie_combined<-Guthrie_2013_resized
-Hamilton_combined<-Hamilton_2013_resized
-Hancock_combined<-Hancock_2013_resized
-Hardin_combined<-Hardin_2013_resized
-Humboldt_combined<-Humboldt_2013_resized
-Jasper_combined<-Jasper_2013_resized
-Kossuth_combined<-Kossuth_2013_resized
-Marshall_combined<-Marshall_2013_resized
-Mitchell_combined<-Mitchell_2013_resized
-PaloAlto_combined<-PaloAlto_2013_resized
-Pocahontas_combined<-Pocahontas_2013_resized
-Polk_combined<-Polk_2013_resized
-Sac_combined<-Sac_2013_resized
-Story_combined<-Story_2013_resized
-Webster_combined<-Webster_2013_resized
-Winnebago_combined<-Winnebago_2013_resized
-Worth_combined<-Worth_2013_resized
-Wright_combined<-Wright_2013_resized
+#count the number of miniclusters
+num_horclusters<-length(extract_list)
+shrinkage<-num_vertclusters-num_horclusters
+if(shrinkage==0){break}
 
-##Relabelling for inclusion of corn/soybean and continuous corn rotations##
-#Creating cluster for running in parallel
-library(doParallel)
-detectCores()
-cluster<-makeCluster(8)
-registerDoParallel(cluster)
-getDoParWorkers()
+#derive the extents values for each cluster
+hor_extents<-matrix(data=NA,nrow=num_horclusters,ncol=4)
+colnames(hor_extents)<-c("xmin","xmax","ymin","ymax")
 
-#creating function for renumbering
-renumber=function(x,y,z){
-  if((x==111)|(y==111)|(z==111)){111}else{
-    if((x==y)&(y==z)){z}else{
-      if(((x==1)|(x==5))&((y==1)|(y==5))&((z==1)|(z==5))){8}else{paste(x,y,z,sep="/")}}}}
-setGeneric("renumber")
+xmin_extract=function(extents){extents@xmin}
+xmax_extract=function(extents){extents@xmax}
+ymin_extract=function(extents){extents@ymin}
+ymax_extract=function(extents){extents@ymax}
 
-#Pixel by pixel comparison of 2011-2013 county rasters
-Boone1<-foreach(i=1:500,.combine=rbind) %dopar% renumber(Boone_2011_resized[i],Boone_2012_resized[i],Boone_2013_resized[i])
-Boone2<-foreach(i=100001:200000,.combine=rbind) %dopar% renumber(Boone_2011_resized[i],Boone_2012_resized[i],Boone_2013_resized[i])
-Boone3<-foreach(i=200001:300000,.combine=rbind) %dopar% renumber(Boone_2011_resized[i],Boone_2012_resized[i],Boone_2013_resized[i])
-Boone4<-foreach(i=300001:ncell(Boone_combined),.combine=rbind) %dopar% renumber(Boone_2011_resized[i],Boone_2012_resized[i],Boone_2013_resized[i])
-Boone<-rbind(Boone1,Boone2,Boone3,Boone4)
-BuenaVista<-foreach(i=1:ncell(BuenaVista_combined),.combine=rbind) %dopar% renumber(BuenaVista_2011_resized[i],BuenaVista_2012_resized[i],BuenaVista_2013_resized[i])
-Butler<-foreach(i=1:ncell(Butler_combined),.combine=rbind) %dopar% renumber(Butler_2011_resized[i],Butler_2012_resized[i],Butler_2013_resized[i])
-Calhoun<-foreach(i=1:ncell(Calhoun_combined),.combine=rbind) %dopar% renumber(Calhoun_2011_resized[i],Calhoun_2012_resized[i],Calhoun_2013_resized[i])
-Carroll<-foreach(i=1:ncell(Carroll_combined),.combine=rbind) %dopar% renumber(Carroll_2011_resized[i],Carroll_2012_resized[i],Carroll_2013_resized[i])
-CerroGordo<-foreach(i=1:ncell(CerroGordo_combined),.combine=rbind) %dopar% renumber(CerroGordo_2011_resized[i],CerroGordo_2012_resized[i],CerroGordo_2013_resized[i])
-Clay<-foreach(i=1:ncell(Clay_combined),.combine=rbind) %dopar% renumber(Clay_2011_resized[i],Clay_2012_resized[i],Clay_2013_resized[i])
-Dallas<-foreach(i=1:ncell(Dallas_combined),.combine=rbind) %dopar% renumber(Dallas_2011_resized[i],Dallas_2012_resized[i],Dallas_2013_resized[i])
-Dickinson<-foreach(i=1:ncell(Dickinson_combined),.combine=rbind) %dopar% renumber(Dickinson_2011_resized[i],Dickinson_2012_resized[i],Dickinson_2013_resized[i])
-Emmet<-foreach(i=1:ncell(Emmet_combined),.combine=rbind) %dopar% renumber(Emmet_2011_resized[i],Emmet_2012_resized[i],Emmet_2013_resized[i])
-Floyd<-foreach(i=1:ncell(Floyd_combined),.combine=rbind) %dopar% renumber(Floyd_2011_resized[i],Floyd_2012_resized[i],Floyd_2013_resized[i])
-Franklin<-foreach(i=1:ncell(Franklin_combined),.combine=rbind) %dopar% renumber(Franklin_2011_resized[i],Franklin_2012_resized[i],Franklin_2013_resized[i])
-Greene<-foreach(i=1:ncell(Greene_combined),.combine=rbind) %dopar% renumber(Greene_2011_resized[i],Greene_2012_resized[i],Greene_2013_resized[i])
-Grundy<-foreach(i=1:ncell(Grundy_combined),.combine=rbind) %dopar% renumber(Grundy_2011_resized[i],Grundy_2012_resized[i],Grundy_2013_resized[i])
-Guthrie<-foreach(i=1:ncell(Guthrie_combined),.combine=rbind) %dopar% renumber(Guthrie_2011_resized[i],Guthrie_2012_resized[i],Guthrie_2013_resized[i])
-Hamilton<-foreach(i=1:ncell(Hamilton_combined),.combine=rbind) %dopar% renumber(Hamilton_2011_resized[i],Hamilton_2012_resized[i],Hamilton_2013_resized[i])
-Hancock<-foreach(i=1:ncell(Hancock_combined),.combine=rbind) %dopar% renumber(Hancock_2011_resized[i],Hancock_2012_resized[i],Hancock_2013_resized[i])
-Hardin<-foreach(i=1:ncell(Hardin_combined),.combine=rbind) %dopar% renumber(Hardin_2011_resized[i],Hardin_2012_resized[i],Hardin_2013_resized[i])
-Humboldt<-foreach(i=1:ncell(Humboldt_combined),.combine=rbind) %dopar% renumber(Humboldt_2011_resized[i],Humboldt_2012_resized[i],Humboldt_2013_resized[i])
-Jasper<-foreach(i=1:ncell(Jasper_combined),.combine=rbind) %dopar% renumber(Jasper_2011_resized[i],Jasper_2012_resized[i],Jasper_2013_resized[i])
-Kossuth<-foreach(i=1:ncell(Kossuth_combined),.combine=rbind) %dopar% renumber(Kossuth_2011_resized[i],Kossuth_2012_resized[i],Kossuth_2013_resized[i])
-Marshall<-foreach(i=1:ncell(Marshall_combined),.combine=rbind) %dopar% renumber(Marshall_2011_resized[i],Marshall_2012_resized[i],Marshall_2013_resized[i])
-Mitchell<-foreach(i=1:ncell(Mitchell_combined),.combine=rbind) %dopar% renumber(Mitchell_2011_resized[i],Mitchell_2012_resized[i],Mitchell_2013_resized[i])
-PaloAlto<-foreach(i=1:ncell(PaloAlto_combined),.combine=rbind) %dopar% renumber(PaloAlto_2011_resized[i],PaloAlto_2012_resized[i],PaloAlto_2013_resized[i])
-Pocahontas<-foreach(i=1:ncell(Pocahontas_combined),.combine=rbind) %dopar% renumber(Pocahontas_2011_resized[i],Pocahontas_2012_resized[i],Pocahontas_2013_resized[i])
-Polk<-foreach(i=1:ncell(Polk_combined),.combine=rbind) %dopar% renumber(Polk_2011_resized[i],Polk_2012_resized[i],Polk_2013_resized[i])
-Sac<-foreach(i=1:ncell(Sac_combined),.combine=rbind) %dopar% renumber(Sac_2011_resized[i],Sac_2012_resized[i],Sac_2013_resized[i])
-Story<-foreach(i=1:ncell(Story_combined),.combine=rbind) %dopar% renumber(Story_2011_resized[i],Story_2012_resized[i],Story_2013_resized[i])
-Webster<-foreach(i=1:ncell(Webster_combined),.combine=rbind) %dopar% renumber(Webster_2011_resized[i],Webster_2012_resized[i],Webster_2013_resized[i])
-Winnebago<-foreach(i=1:ncell(Winnebago_combined),.combine=rbind) %dopar% renumber(Winnebago_2011_resized[i],Winnebago_2012_resized[i],Winnebago_2013_resized[i])
-Worth<-foreach(i=1:ncell(Worth_combined),.combine=rbind) %dopar% renumber(Worth_2011_resized[i],Worth_2012_resized[i],Worth_2013_resized[i])
-Wright<-foreach(i=1:ncell(Wright_combined),.combine=rbind) %dopar% renumber(Wright_2011_resized[i],Wright_2012_resized[i],Wright_2013_resized[i])
+xmins<-lapply(extract_list,xmin_extract)
+xmaxs<-lapply(extract_list,xmax_extract)
+ymins<-lapply(extract_list,ymin_extract)
+ymaxs<-lapply(extract_list,ymax_extract)
 
-#Assignment of new numbering scheme
-Boone_combined[1:ncell(Boone_combined)]<-Boone
-BuenaVista_combined[1:ncell(BuenaVista_combined)]<-BuenaVista
-Butler_combined[1:ncell(Butler_combined)]<-Butler
-Calhoun_combined[1:ncell(Calhoun_combined)]<-Calhoun
-Carroll_combined[1:ncell(Carroll_combined)]<-Carroll
-CerroGordo_combined[1:ncell(CerroGordo_combined)]<-CerroGordo
-Clay_combined[1:ncell(Clay_combined)]<-Clay
-Dallas_combined[1:ncell(Dallas_combined)]<-Dallas
-Dickinson_combined[1:ncell(Dickinson_combined)]<-Dickinson
-Emmet_combined[1:ncell(Emmet_combined)]<-Emmet
-Floyd_combined[1:ncell(Floyd_combined)]<-Floyd
-Franklin_combined[1:ncell(Franklin_combined)]<-Franklin
-Greene_combined[1:ncell(Greene_combined)]<-Greene
-Grundy_combined[1:ncell(Grundy_combined)]<-Grundy
-Guthrie_combined[1:ncell(Guthrie_combined)]<-Guthrie
-Hamilton_combined[1:ncell(Hamilton_combined)]<-Hamilton
-Hancock_combined[1:ncell(Hancock_combined)]<-Hancock
-Hardin_combined[1:ncell(Hardin_combined)]<-Hardin
-Humboldt_combined[1:ncell(Humboldt_combined)]<-Humboldt
-Jasper_combined[1:ncell(Jasper_combined)]<-Jasper
-Kossuth_combined[1:ncell(Kossuth_combined)]<-Kossuth
-Marshall_combined[1:ncell(Marshall_combined)]<-Marshall
-Mitchell_combined[1:ncell(Mitchell_combined)]<-Mitchell
-PaloAlto_combined[1:ncell(PaloAlto_combined)]<-PaloAlto
-Pocahontas_combined[1:ncell(Pocahontas_combined)]<-Pocahontas
-Polk_combined[1:ncell(Polk_combined)]<-Polk
-Sac_combined[1:ncell(Sac_combined)]<-Sac
-Story_combined[1:ncell(Story_combined)]<-Story
-Webster_combined[1:ncell(Webster_combined)]<-Webster
-Winnebago_combined[1:ncell(Winnebago_combined)]<-Winnebago
-Worth_combined[1:ncell(Worth_combined)]<-Worth
-Wright_combined[1:ncell(Wright_combined)]<-Wright
+hor_extents[,1]<-unlist(xmins)
+hor_extents[,2]<-unlist(xmaxs)
+hor_extents[,3]<-unlist(ymins)
+hor_extents[,4]<-unlist(ymaxs)
 
-#Writing the rasters to file
-writeRaster(Boone_combined,filename='Boone.grd',overwrite=TRUE)
-writeRaster(BuenaVista_combined,filename='BuenaVista.grd',overwrite=TRUE)
-writeRaster(Butler_combined,filename='Butler.grd',overwrite=TRUE)
-writeRaster(Calhoun_combined,filename='Calhoun.grd',overwrite=TRUE)
-writeRaster(Carroll_combined,filename='Carroll.grd',overwrite=TRUE)
-writeRaster(CerroGordo_combined,filename='CerroGordo.grd',overwrite=TRUE)
-writeRaster(Clay_combined,filename='Clay.grd',overwrite=TRUE)
-writeRaster(Dallas_combined,filename='Dallas.grd',overwrite=TRUE)
-writeRaster(Dickinson_combined,filename='Dickinson.grd',overwrite=TRUE)
-writeRaster(Emmet_combined,filename='Emmet.grd',overwrite=TRUE)
-writeRaster(Floyd_combined,filename='Floyd.grd',overwrite=TRUE)
-writeRaster(Franklin_combined,filename='Franklin.grd',overwrite=TRUE)
-writeRaster(Greene_combined,filename='Greene.grd',overwrite=TRUE)
-writeRaster(Grundy_combined,filename='Grundy.grd',overwrite=TRUE)
-writeRaster(Guthrie_combined,filename='Guthrie.grd',overwrite=TRUE)
-writeRaster(Hamilton_combined,filename='Hamilton.grd',overwrite=TRUE)
-writeRaster(Hancock_combined,filename='Hancock.grd',overwrite=TRUE)
-writeRaster(Hardin_combined,filename='Hardin.grd',overwrite=TRUE)
-writeRaster(Humboldt_combined,filename='Humboldt.grd',overwrite=TRUE)
-writeRaster(Jasper_combined,filename='Jasper.grd',overwrite=TRUE)
-writeRaster(Kossuth_combined,filename='Kossuth.grd',overwrite=TRUE)
-writeRaster(Marshall_combined,filename='Marshall.grd',overwrite=TRUE)
-writeRaster(Mitchell_combined,filename='Mitchell.grd',overwrite=TRUE)
-writeRaster(PaloAlto_combined,filename='PaloAlto.grd',overwrite=TRUE)
-writeRaster(Pocahontas_combined,filename='Pocahontas.grd',overwrite=TRUE)
-writeRaster(Polk_combined,filename='Polk.grd',overwrite=TRUE)
-writeRaster(Sac_combined,filename='Sac.grd',overwrite=TRUE)
-writeRaster(Story_combined,filename='Story.grd',overwrite=TRUE)
-writeRaster(Webster_combined,filename='Webster.grd',overwrite=TRUE)
-writeRaster(Winnebago_combined,filename='Winnebago.grd',overwrite=TRUE)
-writeRaster(Worth_combined,filename='Worth.grd',overwrite=TRUE)
-writeRaster(Wright_combined,filename='Wright.grd',overwrite=TRUE)
+#Determine which pair of horclusters satisfy the criterion for being joined
+a<-Sys.time()
+vertical_bind<-list()
+registerDoParallel(makeCluster(8))
+vertical_bind<-foreach(m=1:num_horclusters,.packages=c("raster","sp"),.inorder=FALSE) %dopar% {c(m,which((hor_extents[m,1]==hor_extents[,1])&(hor_extents[m,2]==hor_extents[,2])&((hor_extents[m,3]==hor_extents[,4])|(hor_extents[m,4]==hor_extents[,3]))))}
+Sys.time()-a
 
-require(rasterVis)
-land_codes<-c(0,49.9,99.9,149.9,199.9,249.9)
-land_colors<-c("gray","orange","yellow","green","black")
-plot(Boone_combined,breaks=land_codes,col=land_colors)
+#reset temp file for the results of vertical binding
+old_files<-list.files(vertcl_location)
+make_filename=function(file){paste(vertcl_location,file,sep="")}
+remove_files<-lapply(old_files,FUN=make_filename)
+lapply(remove_files,FUN=file.remove)
+
+#Determine which vertclusters are not part of any pair and which are
+vertical_bind_lengths<-lapply(vertical_bind,FUN=length)
+uncombined<-(which(vertical_bind_lengths==1))
+uncombined_filelist<-c(horcl_names[uncombined],horcla_names[uncombined])
+combined<-(which(vertical_bind_lengths>1))
+
+#Copy unmatched vertclusters to temp file
+file.copy(uncombined_filelist,vertcl_location)
+
+#Combine pairs which satisfy the criterion transitively
+matching_pairs<-list()
+i<-0
+while(length(combined)>0){
+matching_tree<-vertical_bind[[combined[1]]]
+difference<-length(matching_tree)
+  while(difference>0){
+  m<-length(matching_tree)
+  temp_list<-vector("list",m)
+  for(j in 1:m){temp_list[[j]]<-vertical_bind[[matching_tree[j]]]}
+  matching_tree<-unique(unlist(temp_list))
+  difference<-length(matching_tree)-m
+  }
+matching_tree<-sort(matching_tree)
+i<-i+1
+matching_pairs[[i]]<-matching_tree
+combined<-combined[-which(combined%in%matching_tree)]
+}
+
+#Merge each of the matching pairs into an extended raster
+merged_raster=function(items){merge(raster(horcl_names[[items]]))}
+
+k<-0
+registerDoParallel(makeCluster(8))
+foreach(i=1:length(matching_pairs),.packages=c("raster","sp"),.inorder=FALSE) %dopar% {
+  pair_length<-length(matching_pairs[[i]])
+  raster_list<-list()
+  for(j in 1:pair_length){raster_list[[j]]<-raster(horcl_names[[matching_pairs[[i]][[j]]]])}
+  k<-k+1+runif(1,0,1)
+  merged_raster<-do.call(merge,raster_list)
+  writeRaster(merged_raster,file=paste(vertcl_location,"joinedRaster",k,".grd",sep=""),overwrite=TRUE)
+}
+
+#####Vert->Hor step
+#gathering name of files
+vertcl_names<-paste(vertcl_location,list.files(vertcl_location,pattern=".grd"),sep="")
+vertcla_names<-paste(vertcl_location,list.files(vertcl_location,pattern=".gri"),sep="")
+
+#extracting the extents of each of the minicluster rasters
+extent_extract=function(name){extent(raster(name))}
+extract_list<-lapply(as.list(vertcl_names),FUN=extent_extract)
+
+#count the number of miniclusters
+num_vertclusters<-length(extract_list)
+shrinkage<-num_horclusters-num_vertclusters
+if(shrinkage==0){break}
+
+#derive the extents values for each cluster
+vert_extents<-matrix(data=NA,nrow=num_vertclusters,ncol=4)
+colnames(vert_extents)<-c("xmin","xmax","ymin","ymax")
+
+xmin_extract=function(extents){extents@xmin}
+xmax_extract=function(extents){extents@xmax}
+ymin_extract=function(extents){extents@ymin}
+ymax_extract=function(extents){extents@ymax}
+
+xmins<-lapply(extract_list,xmin_extract)
+xmaxs<-lapply(extract_list,xmax_extract)
+ymins<-lapply(extract_list,ymin_extract)
+ymaxs<-lapply(extract_list,ymax_extract)
+
+vert_extents[,1]<-unlist(xmins)
+vert_extents[,2]<-unlist(xmaxs)
+vert_extents[,3]<-unlist(ymins)
+vert_extents[,4]<-unlist(ymaxs)
+
+#Determine which pair of vertclusters satisfy the criterion for being joined
+a<-Sys.time()
+horizontal_bind<-list()
+registerDoParallel(makeCluster(8))
+horizontal_bind<-foreach(m=1:num_vertclusters,.packages=c("raster","sp"),.inorder=FALSE) %dopar% {c(m,which((vert_extents[m,1]==vert_extents[,1])&(vert_extents[m,2]==vert_extents[,2])&((vert_extents[m,3]==vert_extents[,4])|(vert_extents[m,4]==vert_extents[,3]))))}
+Sys.time()-a
+
+#reset temp file for the results of horizontal binding
+old_files<-list.files(horcl_location)
+make_filename=function(file){paste(horcl_location,file,sep="")}
+remove_files<-lapply(old_files,FUN=make_filename)
+lapply(remove_files,FUN=file.remove)
+
+#Determine which horclusters are not part of any pair and which are
+horizontal_bind_lengths<-lapply(horizontal_bind,FUN=length)
+uncombined<-(which(horizontal_bind_lengths==1))
+uncombined_filelist<-c(vertcl_names[uncombined],vertcla_names[uncombined])
+combined<-(which(horizontal_bind_lengths>1))
+
+#Copy unmatched horclusters to temp file
+file.copy(uncombined_filelist,horcl_location)
+
+#Combine pairs which satisfy the criterion transitively
+matching_pairs<-list()
+i<-0
+while(length(combined)>0){
+matching_tree<-horizontal_bind[[combined[1]]]
+difference<-length(matching_tree)
+  while(difference>0){
+  m<-length(matching_tree)
+  temp_list<-vector("list",m)
+  for(j in 1:m){temp_list[[j]]<-horizontal_bind[[matching_tree[j]]]}
+  matching_tree<-unique(unlist(temp_list))
+  difference<-length(matching_tree)-m
+  }
+matching_tree<-sort(matching_tree)
+i<-i+1
+matching_pairs[[i]]<-matching_tree
+combined<-combined[-which(combined%in%matching_tree)]
+}
+
+#Merge each of the matching pairs into an extended raster
+merged_raster=function(items){merge(raster(vertcl_names[[items]]))}
+
+k<-0
+registerDoParallel(makeCluster(8))
+foreach(i=1:length(matching_pairs),.packages=c("raster","sp"),.inorder=FALSE) %dopar% {
+  pair_length<-length(matching_pairs[[i]])
+  raster_list<-list()
+  for(j in 1:pair_length){raster_list[[j]]<-raster(vertcl_names[[matching_pairs[[i]][[j]]]])}
+  k<-k+1+runif(1,0,1)
+  merged_raster<-do.call(merge,raster_list)
+  writeRaster(merged_raster,file=paste(horcl_location,"joinedRaster",k,".grd",sep=""),overwrite=TRUE)
+}
+}
+
+clusters_location<-"/Users/goodrich/Desktop/R Projects/Supply.Chain.Development/clusters/"
+file.rename(horcl_location,clusters_location) #defines the cluster folder
+ 
+unlink(vertcl_location,recursive=TRUE) #removes temp folder
 ```
